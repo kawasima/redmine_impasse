@@ -1,0 +1,19 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+one:
+  id: 1
+
+  project_id: 1
+
+  notes: MyText
+
+  active: false
+
+two:
+  id: 2
+
+  project_id: 1
+
+  notes: MyText
+
+  active: false
+

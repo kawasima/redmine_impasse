@@ -1,0 +1,287 @@
+var jq$ = $.noConflict();
+
+    <%= render :partial =>'impasse/common/impasse_util_js' %>
+
+jQuery(document).ready(function ($) {
+    var AJAX_URL = {
+	"new":"<%=url_for :controller=>:test_case, :action=>:new, :project_id=>@project%>",
+	"edit":"<%=url_for :controller=>:test_case, :action=>:edit, :project_id=>@project%>"
+    };
+    var LEAF_MENU = {
+	contextmenu: {
+	    edit: {
+		label: "Edit",
+		action: function(node) { openDialog({
+		    rslt: {
+			name: $("#testcase-tree").jstree("get_text", node),
+			position: $("#testcase-tree").jstree("get_index", node),
+			obj: node,
+			parent: $(node).parents("li:first")
+		    }
+		}, 'edit'); }
+	    },
+	    remove: {
+		label: "Delete",
+		action: function(node) { this.remove(node); }
+	    }
+	}
+    };
+    var FOLDER_MENU = {
+	contextmenu: {
+	    create: {
+		label: "Create",
+		submenu: {
+		    createTestSuite: {
+			label: "Test suite",
+			action: function(node) {
+			    this.create(node, "last", {attr: {rel: "test_suite"}}, null, true);
+			}
+		    },
+		    createTestCase: {
+			label: "Test case",
+			action: function(node) {
+			    this.create(node, "last", {attr: {rel: "test_case"}}, null, true);
+			}
+		    }
+		}
+	    },
+	    edit: LEAF_MENU.contextmenu.edit,
+	    remove: LEAF_MENU.contextmenu.remove
+	}
+    };
+
+    var dialog = {
+	test_suite: $("#testsuite-dialog").dialog({
+	    autoOpen: false,
+	    modal:true,
+	    minWidth: 700,
+	    title: "<%=l :label_test_suite_edit %>"
+	}),
+	test_case:  $("#testcase-dialog").dialog({
+	    autoOpen: false,
+	    modal:true,
+	    minWidth: 700,
+	    title: "<%=l :label_test_case_edit %>"
+	})
+    };
+
+    var openDialog = function(data, edit_type) {
+	var node = $(data.rslt.obj);
+	var node_type = node.attr("rel");
+	var request = { node_type: node_type };
+	if (node.attr("id")) {
+	    request['node[id]'] = node.attr("id").replace("node_", "");
+	}
+
+	$.ajax({
+	    url: AJAX_URL[edit_type],
+	    data: request,
+	    success: function(html) {
+		dialog[node_type].empty().append(html);
+		dialog[node_type].find(".ui-button-cancel").click(function(e) {
+		    dialog[node_type].dialog('close');
+		});
+		dialog[node_type].dialog('open');
+		dialog[node_type].find(".sortable").sortable({
+		    handle: ".ui-sort-handle",
+		    placeholder: 'ui-state-highlight',
+		    update: function(e, ui) {
+			var i=1;
+			$(this).find("tr").each(function() {
+			    var row = $(this);
+			    $("td.ui-sort-handle", row).text(i);
+			    $("input[name*=step_number]", row).each(function() {
+				$(this).val(i);
+			    });
+			    $("textarea,:hidden", row).each(function() {
+				var f = $(this);
+				f.attr("name", f.attr("name").replace(/\[\d+\]/, "["+i+"]"));
+			    });
+			    i++;
+			});
+		    }
+		});
+		$(".sortable .icon-del", dialog[node_type]).click(function(e) {
+		    $(this).parents("tr:last").remove();
+		});
+
+		dialog[node_type].find(":button.ui-button-submit").click(function(e) {
+		    var tc = {format:"json"};
+		    dialog[node_type].find(":hidden,:text,textarea,:checkbox:checked,radiobutton:checked,select").each(function() {
+			tc[$(this).attr("name")] = $(this).val();
+			
+		    });
+		    if(edit_type == 'edit')
+			tc["node[id]"] = node.attr("id").replace("node_","");
+		    tc["node_type"] = node_type;
+		    tc["node[parent_id]"] = $(data.rslt.parent).attr("id").replace("node_", "");
+		    tc["node[node_order]"] = data.rslt.position;
+		    $.ajax({
+			type: 'POST',
+			url:AJAX_URL[edit_type],
+			data: tc,
+			success: function (r) {
+			    if(r.id) {
+				dialog[node_type].unbind("dialogbeforeclose");
+				node.attr("id", "node_" + r.id);
+				node.data("jstree", (node_type=='test_case')?LEAF_MENU:FOLDER_MENU);
+				$.jstree._reference(node).set_text(node, tc["node[name]"]);
+				show_notification_dialog('success', (edit_type=='edit')?"<%=l(:notice_successful_update)%>":"<%=l(:notice_successful_create)%>");
+			    }
+			},
+			error: ajax_error_handler,
+			complete: function() { dialog[node_type].dialog('close'); }
+		    });
+		});
+	    },
+	    error: ajax_error_handler
+	});
+    };
+
+    var testcaseTree =$("#testcase-tree")
+	.jstree({ 
+	    "plugins": [ 
+		"themes","json_data","ui","crrm","cookies","dnd","search","types","hotkeys","contextmenu" 
+	    ],
+	    core: {
+		animation: 0
+	    },
+	    json_data: { 
+		ajax: {
+		    url: "<%= url_for :controller=>:test_case, :action=>:list, :project_id=>@project %>",
+		    data: function (n) { 
+			return { 
+			    prefix: "node", 
+			    node_id : n.attr ? n.attr("id").replace("node_","") : -1
+			}; 
+		    }
+		}
+	    },
+	    types : {
+		max_depth : -2,
+		max_children : -2,
+		valid_children : [ "test_project" ],
+		types : {
+		    test_case : {
+			valid_children : "none",
+			icon : {
+			    image : "<%=image_path "../stylesheets/images/document-attribute-t.png", :plugin=>'redmine_impasse' %>"
+			}
+		    },
+		    test_suite : {
+			valid_children : [ "test_suite", "test_case" ],
+			icon : {
+			    image : "<%=image_path "../stylesheets/images/documents-stack.png", :plugin=>'redmine_impasse' %>"
+			}
+		    },
+		    test_project : {
+			valid_children : [ "test_suite", "test_case" ],
+			icon : {
+			    image : "<%=image_path "../stylesheets/images/book-brown.png", :plugin=>'redmine_impasse' %>"
+			},
+			start_drag : false,
+			move_node : false,
+			delete_node : false,
+			remove : false
+		    }
+		}
+	    }
+	})
+	.bind("loaded.jstree", function (e, data) {
+	    $(this).find("li[rel=test_project],li[rel=test_suite]").data("jstree", FOLDER_MENU);
+	    $(this).find("li[rel=test_case]").data("jstree", LEAF_MENU);
+	})
+	.bind("refresh.jstree", function (e, data) {
+	    $(this).find("li[rel=test_project],li[rel=test_suite]").data("jstree", FOLDER_MENU);
+	    $(this).find("li[rel=test_case]").data("jstree", LEAF_MENU);
+	})
+	.bind("create.jstree", function (e, data) {
+	    dialog[$(data.rslt.obj).attr("rel")].bind('dialogbeforeclose', function(e) {
+		$.jstree.rollback(data.rlbk);
+	    });
+	    openDialog(data, 'new');
+	})
+	.bind("remove.jstree", function (e, data) {
+	    data.rslt.obj.each(function () {
+		$.ajax({
+		    async : false,
+		    type: 'POST',
+		    url: "<%= url_for :controller=>:test_case, :action=>:destroy, :project_id=>@project %>",
+		    data : { 
+			format: "json",
+			"node[id]": this.id.replace("node_","")
+		    }, 
+		    success : function (r) {
+			if(!r.status) {
+			    data.inst.refresh();
+			}
+		    },
+		    error: ajax_error_handler
+		});
+	    });
+	})
+	.bind("move_node.jstree", function (e, data) {
+	    data.rslt.o.each(function (i) {
+		$.ajax({
+		    async : false,
+		    type: 'POST',
+		    url: "<%= url_for :controller=>:test_case, :action=>:edit, :project_id=>@project %>",
+		    data : {
+			format: "json",
+			node_type: $(this).attr("rel"),
+			"node[id]" : $(this).attr("id").replace("node_",""), 
+			"node[parent_id]" : data.rslt.cr === -1 ? 1 : data.rslt.np.attr("id").replace("node_",""), 
+			"node[node_order]" : data.rslt.cp,
+			"node[name]" : data.rslt.name,
+			"copy" : data.rslt.cy ? 1 : 0
+		    },
+		    success : function (r) {
+			if(!r.id) {
+			    $.jstree.rollback(data.rlbk);
+			}
+			else {
+			    $(data.rslt.oc).attr("id", "node_" + r.id);
+			    if(data.rslt.cy && $(data.rslt.oc).children("UL").length) {
+				data.inst.refresh(data.inst._get_parent(data.rslt.oc));
+			    }
+			}
+		    },
+		    error: function(xhr, status, ex) {
+			$.jstree.rollback(data.rlbk);
+			ajax_error_handler(xhr, status, ex);
+		    }
+		});
+	    });
+	});
+
+    $("#testcase-dialog .add-test-step").live("click", function() {
+	var id = 0;
+	var test_steps = $("#testcase-dialog table.list");
+	test_steps.find("td.ui-sort-handle").each(function() {
+	    if (id < Number($(this).text()))
+		id = Number($(this).text());
+	});
+	id += 1;
+
+	var actions = $("<textarea/>").attr("name", "test_steps["+id+"][actions]")
+	    .attr("rows", 3).css({width:"100%", padding:0, margin:0});
+	var expected_results = $("<textarea/>").attr("name", "test_steps["+id+"][expected_results]")
+	    .attr("rows", 3).css({width:"100%", padding:0, margin:0});
+	var step_number = $("<input/>").attr("type", "hidden")
+	    .attr("name", "test_steps["+id+"][step_number]")
+	    .attr("value", id);
+
+	var del_button = $("<td/>");
+	var test_step = $("<tr/>").addClass("entry")
+	    .append($("<td/>").addClass("ui-sort-handle").text(id))
+	    .append($("<td/>").append(actions).append(step_number))
+	    .append($("<td/>").append(expected_results))
+	    .append(del_button);
+	del_button.append($("<span class='icon icon-del'/>").click(function(e) {
+	    test_step.remove();
+	}));
+	test_steps.append(test_step);
+
+	return false;
+    });
+});

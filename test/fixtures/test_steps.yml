@@ -1,0 +1,27 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+one:
+  id: 1
+
+  step_number: 1
+
+  actions: MyText
+
+  expected_results: MyText
+
+  active: false
+
+  execution_type: 1
+
+two:
+  id: 2
+
+  step_number: 1
+
+  actions: MyText
+
+  expected_results: MyText
+
+  active: false
+
+  execution_type: 1
+

@@ -1,0 +1,33 @@
+<%= stylesheet_link_tag 'jquery-ui', :plugin => 'redmine_impasse' %>
+<style>
+.ui-state-highlight { height: 1.5em; line-height: 1.2em; }
+</style>
+<%= javascript_include_tag 'jquery', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery-ui', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery.cookie.js', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery.hotkeys.js', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery.jstree.js', :plugin => 'redmine_impasse' %>
+<h2><%= l(:label_impasse)%></h2>
+<script>
+<%= render :partial => 'treejs' %>
+</script>
+<div id="testcase-tree">
+</div>
+
+<% content_for :sidebar do %>
+  <h3><%=l(:label_test_plan_plural)%></h3>
+  <div class="contextual">
+    <%= link_to l(:label_test_plan_new), {:controller=>:test_plans, :action=>:new, :project_id=>@project}, :class=>"icon icon-add" %>
+  </div>
+  <% plans, versions = Impasse::TestPlan.find_all_by_version(@project) %>
+    <% versions.each do |version| %>
+  <h4><%=h version.name%></h4>
+      <% plans[version].each do |test_plan| %>
+  <%= link_to test_plan.name, :controller=>:test_plans, :action=>:show, :project_id=>@project, :id=>test_plan%><br/>
+      <% end %>
+    <% end %>
+<% end %>
+
+<div id="testsuite-dialog" style="display:none"></div>
+
+<div id="testcase-dialog" style="display:none"></div>

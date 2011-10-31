@@ -1,0 +1,25 @@
+<div class="tab-content">
+  <table class="list">
+    <tr>
+      <th style="width:20%;"><%=l(:label_date)%></th>
+      <th style="width:15%;"><%=l(:label_impasse_stat_total_cases)%></th>
+      <th style="width:15%;"><%=l(:label_execution_status_1)%></th>
+      <th style="width:15%;"><%=l(:label_execution_status_2)%></th>
+      <th style="width:15%;"><%=l(:label_execution_status_3)%></th>
+    </tr>
+    <% @statistics.each do |st| %>
+    <tr class="entry">
+      <td class="size"><%=h st.execution_date %></td>
+      <td class="size">
+	<% if st.execution_date.nil? %>
+	<%=h st.total.to_i %>
+	<% else %>
+	<%=h (st.ok.to_i + st.ng.to_i + st.block.to_i) %>
+	<% end %>
+      </td>
+      <td class="size"><%=h st.ok %></td>
+      <td class="size"><%=h st.ng %></td>
+      <td class="size"><%=h st.block %></td>
+    <% end %>
+  </table>
+</div>

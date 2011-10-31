@@ -1,0 +1,40 @@
+<%= stylesheet_link_tag 'jquery-ui', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery-ui', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery.cookie.js', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery.hotkeys.js', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery.jstree.js', :plugin => 'redmine_impasse' %>
+
+<%= breadcrumb 
+    [link_to(l(:label_impasse), {:controller => :test_case, :action => :index, :project_id => @project}),
+     h(" > "),
+     link_to(l(:label_test_plans_list), {:controller => :test_plans, :action => :index, :project_id => @project})
+    ]%>
+<h2><%=h @test_plan.name %></h2>
+
+<%= render_impasse_tabs %>
+
+<script>
+  <%= render :partial => 'user_assign_js' %>
+</script>
+
+<div class="tab-content">
+  <div class="splitcontentleft">
+    <div id="testplan-tree"></div>
+  </div>
+  <div class="splitcontentright">
+    <fieldset>
+      <legend><%=l :label_calendar %></legend>
+      <div id="calendar-view"></div>
+    </fieldset>
+    <fieldset>
+      <legend><%=l :label_member_plural %></legend>
+      <ul id="principals">
+	<% for principal in @project.principals %>
+          <li class="jstree-draggable test-member" style="list-style:none; cursor: pointer" id="principal-<%=h principal.id %>"><%= avatar principal, :size=>16 %><%=h principal %></li>
+	  <% end %>
+        </ul>
+      </fieldset>
+    </div>
+  </div>
+

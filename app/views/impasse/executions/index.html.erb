@@ -1,0 +1,51 @@
+<%= stylesheet_link_tag 'default/style.css', :plugin => 'redmine_impasse' %>
+<%= stylesheet_link_tag 'jquery-ui', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery-ui', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery.hotkeys.js', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery.jstree.js', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery.blockUI.js', :plugin => 'redmine_impasse' %>
+<%= include_calendar_headers_tags %>
+
+<%= breadcrumb 
+    [link_to(l(:label_impasse), {:controller => :test_case, :action => :index, :project_id => @project}),
+     h(" > "),
+     link_to(l(:label_test_plans_list), {:controller => :test_plans, :action => :index, :project_id => @project})
+    ]%>
+<h2><%=h @test_plan.name %></h2>
+
+<%= render_impasse_tabs %>
+
+<script>
+  <%= render :partial => 'execute_js' %>
+</script>
+
+<div class="tab-content">
+  <div class="splitcontentleft">
+    <fieldset id="filters" class="collapsible collapsed">
+      <legend onclick="toggleFieldset(this);"><%= l(:label_filter_plural) %></legend>
+      <div style="display:none;">
+	<table>
+	  <tr class="filter">
+	    <td style="width:200px;">
+	      <%= check_box_tag 'myself', true, :id=>'cb_myself' %>
+	      <label for="cb_myself"><%=l(:label_assined_to_myself)%></label>
+	    </td>
+	    <td style="width:150px;">
+	    </td>
+	  </tr>
+	</table>
+      </div>
+    </fieldset>
+    <p class="buttons hide-when-print">
+      <%=link_to l(:button_apply), {:controller=>:executions, :action=>:index, :project_id=>@project, :test_plan_id=>@test_plan}, :class => 'icon icon-checked'%>
+    </p>
+    <div id="testplan-tree"></div>
+  </div>
+  <div class="splitcontentright">
+    <div id="executions-view">
+    </div>
+  </div>
+</div>
+
+<div id="issue-dialog"></div>

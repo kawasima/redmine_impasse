@@ -1,0 +1,43 @@
+# English strings go here for Rails i18n
+en:
+  project_module_impasse: "Test Management"
+
+  label_impasse: "Tests"
+  label_impasse_plan_new: "Add test plans"
+  label_test_plans_list: "test plans list"
+  label_test_plan_plural: "Test plans"
+  label_tc_assign: "Assign test cases"
+  label_user_assign: "Assign users"
+  label_execution: "Execution"
+  label_statistics_assign: "Statistics"
+
+  label_test_plan_new: "New test plan"
+  label_test_case_new: "New test case"
+  label_test_case_edit: "Edit test case"
+  label_test_suite_new: "New test suite"
+  label_test_suite_edit: "Edit test suite"
+
+  label_assined_to_myself: "only assigned to me"
+  label_execution_status_0: "Not yet"
+  label_execution_status_1: "OK"
+  label_execution_status_2: "NG"
+  label_execution_status_3: "Block"
+
+  label_impasse_stat_total_cases: "total cases" 
+  label_impasse_stat_total_executions: "executed cases"
+  label_impasse_stat_total_bugs: "bugs"
+  label_impasse_stat_executions_rate: "progress rate"
+  label_impasse_stat_bugs_rate: "bugs rate"
+
+  field_details: "details"
+  field_preconditions: "preconditions"
+  field_execution_status: "execution status"
+
+  permission_view_testcases: "View test cases"
+  permission_manage_test_cases: "Manage test cases"
+  button_create_test_plan: "Create a test plan"
+
+  error_can_not_manage_test_cases: "You aren't permitted to manage test cases."
+
+  text_assign_cases: "Drag and drop the test case here, you can add that case into the test plan."
+  text_assign_users: "Drag and drop on the test case, you can assign tester to the test case."

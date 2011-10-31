@@ -1,0 +1,19 @@
+<div class="tab-content">
+  <table class="list">
+    <tr>
+      <th style="width:20%;"><%=l(:label_impasse_stat_total_cases)%></th>
+      <th style="width:20%;"><%=l(:label_impasse_stat_total_executions)%></th>
+      <th style="width:20%;"><%=l(:label_impasse_stat_total_bugs)%></th>
+      <th style="width:20%;"><%=l(:label_impasse_stat_executions_rate)%></th>
+      <th style="width:20%;"><%=l(:label_impasse_stat_bugs_rate)%></th>
+    </tr>
+    <tr class="entry">
+      <td class="size"><%=h @statistics.total_cases %></td>
+      <td class="size"><%=h @statistics.total_executions %></td>
+      <td class="size"><%=h @statistics.total_bugs %></td>
+      <td class="size"><%=number_to_percentage (@statistics.total_cases == 0) ? 0 : (@statistics.total_executions.to_f / @statistics.total_cases.to_f) * 100, :precision=>2 %></td>
+      <td class="size"><%=number_to_percentage (@statistics.total_cases == 0) ? 0 : (@statistics.total_bugs.to_f / @statistics.total_cases.to_f) * 100, :precision=>2%></td>
+    </tr>
+  </table>
+</div>
+

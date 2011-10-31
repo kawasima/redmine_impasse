@@ -1,0 +1,9 @@
+<%= error_messages_for 'test_case' %>
+
+<div class="box">
+  <p><%= form.text_field :name, :required => true %></p>
+  <p><%= form.text_area :notes, :rows => 10,
+         :class => 'wiki-edit' %></p>
+  <%= wikitoolbar_for 'test_plan_notes' %>
+  <p><%= form.select :version_id, @versions.collect{|v| [v.name, v.id]}, {:include_blank => false}, :required=>true%></p>
+</div>

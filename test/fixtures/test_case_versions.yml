@@ -1,0 +1,59 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+one:
+  id: 1
+
+  tc_external_id: 1
+
+  version: 1
+
+  layout: 1
+
+  status: 1
+
+  summary: MyText
+
+  preconditions: MyText
+
+  importance: 1
+
+  author_id: 1
+
+  creation_ts: 2011-10-11 18:30:32
+
+  update_id: 1
+
+  modification_ts: 2011-10-11 18:30:32
+
+  active: false
+
+  execution_type: 1
+
+two:
+  id: 2
+
+  tc_external_id: 1
+
+  version: 1
+
+  layout: 1
+
+  status: 1
+
+  summary: MyText
+
+  preconditions: MyText
+
+  importance: 1
+
+  author_id: 1
+
+  creation_ts: 2011-10-11 18:30:32
+
+  update_id: 1
+
+  modification_ts: 2011-10-11 18:30:32
+
+  active: false
+
+  execution_type: 1
+

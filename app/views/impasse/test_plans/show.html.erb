@@ -1,0 +1,31 @@
+<%= stylesheet_link_tag 'default/style.css', :plugin => 'redmine_impasse' %>
+<%= stylesheet_link_tag 'jquery-ui', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery-ui', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery.cookie.js', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery.hotkeys.js', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery.jstree.js', :plugin => 'redmine_impasse' %>
+
+<%= breadcrumb 
+	[link_to(l(:label_impasse), {:controller => :test_case, :action => :index, :project_id => @project}),
+        h(" > "),
+	link_to(l(:label_test_plan_plural), {:controller => :test_plans, :action => :index, :project_id => @project})
+]%>
+<h2><%=h @test_plan.name %></h2>
+
+<%= render_impasse_tabs %>
+
+<div class="issue">
+  <p><strong><%=l :field_notes%></strong><p>
+  <div class="wiki">
+    <%= textilizable @test_plan, :notes %>
+  </div>
+</div>
+
+<div style="clear: both;"/>
+
+<div class="contextual">
+  <%=link_to l(:button_edit), {:controller=>:test_plans, :action=>:edit, :project_id => @project, :id=>@test_plan}, :class=>'icon icon-edit' %>
+  <%=link_to l(:button_delete), {:controller=>:test_plans, :action=>:destroy, :project_id => @project, :id=>@test_plan},
+      :class=>'icon icon-del', :confirm=>l(:text_are_you_sure) %>
+</div>

@@ -1,0 +1,42 @@
+# -*- coding: utf-8 -*-
+ja:
+  project_module_impasse: "テストマネジメント"
+
+  label_impasse: "テスト"
+  label_test_plans_list: "テスト計画の一覧"
+  label_tc_assign: "テストケースの割当"
+  label_user_assign: "テスターの割当"
+  label_execution: "実行"
+  label_statistics_assign: "統計"
+  label_test_plan_plural: "テスト計画"
+  label_test_plan_new: "テスト計画の新規作成"
+  label_impasse_plan_new: "テスト計画を作成する"
+  label_test_case_new: "テストケースの作成"
+  label_test_case_edit: "テストケースの更新"
+  label_test_suite_new: "テストスイートの作成"
+  label_test_suite_edit: "テストスイートの更新"
+  label_impasse_stat_total_cases: "総ケース数"
+  label_impasse_stat_total_executions: "消化ケース数"
+  label_impasse_stat_total_bugs: "不具合数"
+  label_impasse_stat_executions_rate: "消化率"
+  label_impasse_stat_bugs_rate: "バグ密度"
+
+
+  label_assined_to_myself: "自分の担当のみ"
+  label_execution_status_0: "未実行"
+  label_execution_status_1: "合格"
+  label_execution_status_2: "不合格"
+  label_execution_status_3: "保留"
+
+
+  field_details: "詳細"
+  field_preconditions: "前提条件"
+
+  button_create_test_plan: "テスト計画の新規作成"
+  field_execution_status: "実行結果"
+  permission_view_testcases: "テストの参照"
+  permission_manage_test_cases: "テストの更新"
+
+  error_can_not_manage_test_cases: "権限がないため、その操作は行えません。"
+  text_assign_cases: "ここにケースをドラッグ&ドロップするとテスト計画に追加できます"
+  text_assign_users: "日付やメンバをケースにドラッグ&ドロップすると、ケースの実行予定日やテスターの割当ができます"

@@ -1,0 +1,30 @@
+<%= stylesheet_link_tag 'jquery-ui', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery-ui', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery.cookie.js', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery.hotkeys.js', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery.jstree.js', :plugin => 'redmine_impasse' %>
+
+<%= breadcrumb 
+	[link_to(l(:label_impasse), {:controller => :test_case, :action => :index, :project_id => @project}),
+        h(" > "),
+	link_to(l(:label_test_plan_plural), {:controller => :test_plans, :action => :index, :project_id => @project})
+]%>
+<h2><%=h @test_plan.name %></h2>
+
+<%= render_impasse_tabs %>
+
+<script>
+<%= render :partial => 'planjs' %>
+</script>
+<div style="width: 100%;">
+  <div style="float:left; width: 48%;">
+    <div class="jstree-drop" style="background:lime; color:green; height:40px; line-height:40px; text-align:center; border:5px solid green;">
+      <%=l(:text_assign_cases)%>
+    </div>
+    <div id="testplan-tree"></div>
+  </div>
+  <div style="float:right; width: 48%;">
+    <div id="testcase-tree"></div>
+  </div>
+</div>

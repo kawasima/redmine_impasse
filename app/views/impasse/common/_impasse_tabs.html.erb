@@ -1,0 +1,13 @@
+<% selected_tab = params[:tab] ? params[:tab].to_s : tabs.first[:name] %>
+
+<div class="tabs">
+  <ul>
+  <% tabs.each do |tab| -%>
+    <% tab[:url][:project_id] = @project; tab[:url][:id] = @test_plan.id %>
+    <li><%= link_to l(tab[:label]), tab[:url],
+                                    :id => "tab-#{tab[:name]}",
+                                    :class => (tab[:name] != selected_tab ? nil : 'selected') %></li>
+  <% end -%>
+  </ul>
+</div>
+

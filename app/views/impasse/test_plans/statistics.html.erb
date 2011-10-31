@@ -1,0 +1,37 @@
+<%= stylesheet_link_tag 'default/style.css', :plugin => 'redmine_impasse' %>
+<%= stylesheet_link_tag 'jquery-ui', :plugin => 'redmine_impasse' %>
+<%= stylesheet_link_tag 'jquery.jqplot.css', :plugin => 'redmine_impasse' %>
+<!--[if lt IE 9]><%= javascript_include_tag 'excanvas.min.js', :plugin => 'redmine_impasse' %><![endif]-->
+<%= javascript_include_tag 'jquery', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jquery.jqplot.min.js', :plugin => 'redmine_impasse' %>
+<%= javascript_include_tag 'jqplot.json2.min.js', :plugin => 'redmine_impasse' %>
+
+<%= breadcrumb 
+    [link_to(l(:label_impasse), {:controller => :test_case, :action => :index, :project_id => @project}),
+     h(" > "),
+     link_to(l(:label_test_plans_list), {:controller => :test_plans, :action => :index, :project_id => @project})
+    ]%>
+<h2><%=h @test_plan.name %></h2>
+
+<%= render_impasse_tabs %>
+
+<script>
+  <%= render :partial => 'statistics_js' %>
+</script>
+
+<% content_for :sidebar do %>
+<div>
+  <p style="height: 4em;"/>
+  <h3><%=l(:field_category)%></h3>
+  <%=link_to_remote 'overview', :update=>'statistics-view', :url=>{:action=>:statistics, :project_id=>@project, :id=>@test_plan} %><br/>
+
+  <%=link_to_remote 'each members', :update=>'statistics-view', :url=>{:action=>:statistics, :type=>'members', :project_id=>@project, :id=>@test_plan} %><br/>
+
+  <%=link_to_remote 'daily', :update=>'statistics-view', :url=>{:action=>:statistics, :type=>'daily', :project_id=>@project, :id=>@test_plan} %><br/>
+</div>
+<% end %>
+
+<div id="statistics-view">
+<%= render :partial=>"impasse/test_plans/statistics/#{params[:type]}"%>
+</div>
+

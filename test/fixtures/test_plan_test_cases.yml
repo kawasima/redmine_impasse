@@ -1,0 +1,23 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+one:
+  id: 1
+
+  test_plan_id: 1
+
+  test_case_id: 1
+
+  node_order: 1
+
+  urgency: 1
+
+two:
+  id: 2
+
+  test_plan_id: 1
+
+  test_case_id: 1
+
+  node_order: 1
+
+  urgency: 1
+
