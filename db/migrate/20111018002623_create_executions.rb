@@ -10,6 +10,10 @@ class CreateExecutions < ActiveRecord::Migration
       t.column :execution_type, :string, :length => 1
       t.column :notes, :text
     end
+
+    add_index :impasse_executions, :test_plan_case_id, :name => 'IDX_IMPASSE_EXECUTIONS_01'
+    add_index :impasse_executions, :tester_id, :name => 'IDX_IMPASSE_EXECUTIONS_02'
+    add_index :impasse_executions, :excution_ts, :name => 'IDX_IMPASSE_EXECUTIONS_03'
   end
 
   def self.down

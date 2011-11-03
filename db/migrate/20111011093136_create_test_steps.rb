@@ -8,6 +8,8 @@ class CreateTestSteps < ActiveRecord::Migration
       t.column :active, :boolean
       t.column :execution_type, :integer
     end
+
+    add_index :impasse_test_steps, :test_case_id, :name => 'IDX_IMPASSE_TEST_STEPS_01'
   end
 
   def self.down

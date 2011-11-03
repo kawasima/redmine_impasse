@@ -4,6 +4,9 @@ class CreateExecutionBugs < ActiveRecord::Migration
       t.column :execution_id, :integer
       t.column :bug_id, :integer
     end
+
+    add_index :impasse_execution_bugs, :execution_id, :name => 'IDX_IMPASSE_EXECUTION_BUGS_01'
+    add_index :impasse_execution_bugs, :bug_id, :name => 'IDX_IMPASSE_EXECUTION_BUGS_01'
   end
 
   def self.down

@@ -15,11 +15,15 @@ ja:
   label_test_case_edit: "テストケースの更新"
   label_test_suite_new: "テストスイートの作成"
   label_test_suite_edit: "テストスイートの更新"
+
   label_impasse_stat_total_cases: "総ケース数"
   label_impasse_stat_total_executions: "消化ケース数"
   label_impasse_stat_total_bugs: "不具合数"
   label_impasse_stat_executions_rate: "消化率"
   label_impasse_stat_bugs_rate: "バグ密度"
+  label_impasse_stat_overview: "概要"
+  label_impasse_stat_members: "人別集計"
+  label_impasse_stat_daily: "日別集計"
 
 
   label_assined_to_myself: "自分の担当のみ"
@@ -31,6 +35,9 @@ ja:
 
   field_details: "詳細"
   field_preconditions: "前提条件"
+  field_test_steps: "ステップ"
+  field_test_step_actions: "操作"
+  field_test_step_expected_results: "期待する結果"
 
   button_create_test_plan: "テスト計画の新規作成"
   field_execution_status: "実行結果"

@@ -10,7 +10,8 @@ jQuery(document).ready(function ($) {
     var LEAF_MENU = {
 	contextmenu: {
 	    edit: {
-		label: "Edit",
+		label: "<%=l(:button_edit)%>",
+		icon: "<%=image_path 'edit.png'%>",
 		action: function(node) { openDialog({
 		    rslt: {
 			name: $("#testcase-tree").jstree("get_text", node),
@@ -20,8 +21,14 @@ jQuery(document).ready(function ($) {
 		    }
 		}, 'edit'); }
 	    },
+	    copy: {
+		label: "<%=l(:button_copy)%>",
+		icon: "<%=image_path 'copy.png'%>",
+		action: function(node) { this.copy(node); }
+	    },
 	    remove: {
-		label: "Delete",
+		label: "<%=l(:button_delete)%>",
+		icon: "<%=image_path 'delete.png'%>",
 		action: function(node) { this.remove(node); }
 	    }
 	}
@@ -29,16 +36,19 @@ jQuery(document).ready(function ($) {
     var FOLDER_MENU = {
 	contextmenu: {
 	    create: {
-		label: "Create",
+		label: "<%=l(:button_create)%>",
+		icon: "<%=image_path 'add.png'%>",
 		submenu: {
 		    createTestSuite: {
 			label: "Test suite",
+			icon: "<%=image_path('../stylesheets/images/documents-stack.png', :plugin=>'redmine_impasse')%>",
 			action: function(node) {
 			    this.create(node, "last", {attr: {rel: "test_suite"}}, null, true);
 			}
 		    },
 		    createTestCase: {
 			label: "Test case",
+			icon: "<%=image_path('../stylesheets/images/document-attribute-t.png', :plugin=>'redmine_impasse')%>",
 			action: function(node) {
 			    this.create(node, "last", {attr: {rel: "test_case"}}, null, true);
 			}
@@ -46,7 +56,11 @@ jQuery(document).ready(function ($) {
 		}
 	    },
 	    edit: LEAF_MENU.contextmenu.edit,
-	    remove: LEAF_MENU.contextmenu.remove
+	    remove: LEAF_MENU.contextmenu.remove,
+	    paste: {
+		label: "Paste",
+		action: function(node) { this.paste(node); }
+	    }
 	}
     };
 
@@ -222,25 +236,33 @@ jQuery(document).ready(function ($) {
 	})
 	.bind("move_node.jstree", function (e, data) {
 	    data.rslt.o.each(function (i) {
+		var url = (data.rslt.cy) ? "<%= url_for :controller=>:test_case, :action=>:copy, :project_id=>@project %>" : "<%= url_for :controller=>:test_case, :action=>:edit, :project_id=>@project %>";
+		var request = {
+		    format: "json",
+		    node_type: $(this).attr("rel"),
+		    "node[id]" : $(this).attr("id").replace("node_",""), 
+		    "node[parent_id]" : data.rslt.cr === -1 ? 1 : data.rslt.np.attr("id").replace("node_",""), 
+		    "node[node_order]" : data.rslt.cp
+		};
+		if (data.rslt.cy) {
+		    request["original_id"] = data.rslt.oc.attr("id").replace("copy_node_","");
+		} else {
+		    request["node[name]"] = data.rslt.name;
+		}
+
 		$.ajax({
 		    async : false,
 		    type: 'POST',
-		    url: "<%= url_for :controller=>:test_case, :action=>:edit, :project_id=>@project %>",
-		    data : {
-			format: "json",
-			node_type: $(this).attr("rel"),
-			"node[id]" : $(this).attr("id").replace("node_",""), 
-			"node[parent_id]" : data.rslt.cr === -1 ? 1 : data.rslt.np.attr("id").replace("node_",""), 
-			"node[node_order]" : data.rslt.cp,
-			"node[name]" : data.rslt.name,
-			"copy" : data.rslt.cy ? 1 : 0
-		    },
+		    url: url,
+		    data: request,
 		    success : function (r) {
 			if(!r.id) {
 			    $.jstree.rollback(data.rlbk);
 			}
 			else {
 			    $(data.rslt.oc).attr("id", "node_" + r.id);
+			    $(data.rslt.oc).text(r.name);
+			    $(data.rslt.oc).data("jstree", ($(data.rslt.oc).attr("rel")=="test_case") ? LEAF_MENU : FOLDER_MENU);
 			    if(data.rslt.cy && $(data.rslt.oc).children("UL").length) {
 				data.inst.refresh(data.inst._get_parent(data.rslt.oc));
 			    }

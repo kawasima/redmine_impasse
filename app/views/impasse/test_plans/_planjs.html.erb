@@ -6,17 +6,14 @@ jQuery(document).ready(function ($) {
     var PLAN_CASE_MENU = {
 	contextmenu: {
 	    remove: {
-		label: "Delete",
+		label: "<%=l(:button_delete)%>",
+		icon: "<%=image_path 'delete.png'%>",
 		action: function(node) { this.remove(node); }
 	    }
 	}
     };
 
     $("#testcase-tree")
-	.bind("before.jstree", function (e, data) {
-	})
-	.bind("loaded.jstree", function (e, data) {
-	})
 	.jstree({ 
 	    "plugins" : [ 
 		"themes", "json_data","ui","crrm","cookies","dnd","search","types","hotkeys"

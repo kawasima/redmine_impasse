@@ -7,6 +7,9 @@ class CreateNodes < ActiveRecord::Migration
       t.column :node_order, :integer
       t.column :path, :string, :null => false
     end
+
+    add_index :impasse_nodes, :parent_id, :name => 'IDX_IMPASSE_NODES_01'
+    add_index :impasse_nodes, :path, :name => 'IDX_IMPASSE_NODES_02'
   end
 
   def self.down

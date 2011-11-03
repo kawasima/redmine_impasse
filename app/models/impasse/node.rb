@@ -66,11 +66,23 @@ module Impasse
     end
 
     def save!
+      if new_record?
+        # dummy path
+        write_attribute(:path, ".")
+        super
+      end
+
       recalculate_path
       super
     end
 
     def save
+      if new_record?
+        # dummy path
+        write_attribute(:path, ".")
+        return false unless super
+      end
+
       recalculate_path
       super
     end
@@ -120,12 +132,6 @@ WHERE parent_id = #{self.parent_id}
 
     private
     def recalculate_path
-      if new_record?
-        # dummy path
-        write_attribute(:path, ".")
-        super
-      end
-
       if parent.nil?
         write_attribute(:path, ".#{read_attribute(:id)}.")
       else

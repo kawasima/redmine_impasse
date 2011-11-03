@@ -13,6 +13,9 @@ class CreateTestCases < ActiveRecord::Migration
       t.column :active, :boolean
       t.column :execution_type, :integer
     end
+
+    add_index :impasse_test_cases, :author_id, :name => 'IDX_IMPASSE_TEST_CASES_01'
+    add_index :impasse_test_cases, :update_id, :name => 'IDX_IMPASSE_TEST_CASES_02'
   end
 
   def self.down

@@ -21,17 +21,8 @@ module Impasse
     end
 
     def new
-      @node = Node.new(params[:node])
+      new_node
 
-      case params[:node_type]
-      when 'test_case'
-        @test_case = TestCase.new(params[:test_case])
-        @node.node_type_id = 3
-      else
-        @test_case = TestSuite.new(params[:test_case])
-        @node.node_type_id = 2
-      end
-    
       if request.post? and @node.save
         @test_case.id = @node.id
         if @node.is_test_case? and params.include? :test_steps
@@ -45,6 +36,33 @@ module Impasse
         end
       else
         render :partial => 'new'
+      end
+    end
+
+    def copy
+      original_node = Node.find(params[:original_id])
+      @node = original_node.clone
+
+      case params[:node_type]
+      when 'test_case'
+        original_case = TestCase.find(params[:original_id], :include => :test_steps)
+        @test_case = original_case.clone
+        original_case.test_steps.each{|ts| @test_case.test_steps << ts.clone }
+      else
+        original_case = TestSuite.find(params[:original_id], :include => :test_steps)
+        @test_case = original_case.clone
+      end
+
+      @node.attributes = params[:node]
+      @node.name = "#{l(:button_copy)}_#{@node.name}"
+      @node.save!
+
+      @test_case.id = @node.id
+      @test_case.save!
+      @test_case.name = @node.name
+
+      respond_to do |format|
+        format.json { render :json => @test_case }
       end
     end
 
@@ -87,8 +105,10 @@ module Impasse
       case @node.node_type_id
       when 2
         TestSuite.delete(@node.id)
+      when 3
+        TestCase.delete(@node.id)
       end
-
+      
       @node.delete
       
       respond_to do |format|
@@ -97,6 +117,19 @@ module Impasse
     end
 
     private
+    def new_node
+      @node = Node.new(params[:node])
+
+      case params[:node_type]
+      when 'test_case'
+        @test_case = TestCase.new(params[:test_case])
+        @node.node_type_id = 3
+      else
+        @test_case = TestSuite.new(params[:test_case])
+        @node.node_type_id = 2
+      end
+    end
+
     def find_project
       begin
         @project = Project.find(params[:project_id])
@@ -110,7 +143,6 @@ module Impasse
       end
     end
 
-    private
     def convert(nodes, prefix='node')
       node_map = {}
       jstree_nodes = []

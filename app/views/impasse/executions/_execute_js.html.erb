@@ -1,8 +1,8 @@
-var $jq = jQuery.noConflict();
+var jq$ = jQuery.noConflict();
 
     <%= render :partial =>'impasse/common/impasse_util_js' %>
 
-jQuery(document).ready(function ($jq) {
+jQuery(document).ready(function ($) {
     var PLAN_CASE_MENU = {
 	contextmenu: {
 	    remove: {
@@ -20,31 +20,31 @@ jQuery(document).ready(function ($jq) {
     ];
 
     var bind_node_event = function(e, data) {
-	$jq("#testplan-tree").unblock();
-	$jq(this).find("li[rel=test_case]").click(function(e) {
-	    var $node = $jq(this);
-	    $jq("#executions-view").block(impasse_loading_options());
-	    $jq.ajax({
+	jq$("#testplan-tree").unblock();
+	jq$(this).find("li[rel=test_case]").click(function(e) {
+	    var $node = jq$(this);
+	    jq$("#executions-view").block(impasse_loading_options());
+	    jq$.ajax({
 		url: '<%= url_for :controller=>:executions, :action=>:edit, :project_id=>@project%>',
 		data: {
 		    "test_plan_case[test_plan_id]": "<%= @test_plan.id %>",
 		    "test_plan_case[test_case_id]": $node.attr("id").replace("exec_", "")
 		},
 		success: function(html) {
-		    $jq("#executions-view").empty().append($jq(html))
-		    $jq("span.label", $jq("#executions-view"))
+		    jq$("#executions-view").empty().append(jq$(html))
+		    jq$("span.label", jq$("#executions-view"))
 			.css({cursor:'pointer'})
 			.click(function(e) {
-			    $jq(this).prev().attr("checked", "checked");
+			    jq$(this).prev().attr("checked", "checked");
 			});
 		},
 		error: ajax_error_handler,
-		complete: function() { $jq("#executions-view").unblock(); }
+		complete: function() { jq$("#executions-view").unblock(); }
 	    });
 	});
     };
 
-    var $tree = $jq("#testplan-tree")
+    var $tree = jq$("#testplan-tree")
 	.bind("loaded.jstree", bind_node_event)
 	.bind("refresh.jstree", bind_node_event)
 	.jstree({ 
@@ -59,9 +59,12 @@ jQuery(document).ready(function ($jq) {
 			    prefix: "exec",
 			    id : n.attr ? n.attr("id").replace("exec_","") : -1
 			};
-			if ($jq("#filters #myself").is(":checked")) {
+			if (jq$("#filters #cb_myself").is(":checked")) {
 			    params["myself"] = true;
 			}
+			params["execution_status"] = jq$("#filters :checkbox[name=execution_status]:checked").map(function() {
+			    return jq$(this).val();
+			}).get();
 			return params;
 		    }
 		}
@@ -97,20 +100,20 @@ jQuery(document).ready(function ($jq) {
 	    }
 	});
 
-    $jq("p.buttons a.icon.icon-checked").click(function(e) {
+    jq$("p.buttons a.icon.icon-checked").click(function(e) {
 	$tree.jstree("refresh", -1);
-	$jq("#testplan-tree").block(impasse_loading_options());
+	jq$("#testplan-tree").block(impasse_loading_options());
 	return false;
     });
-    $jq("#executions-view form").live("submit", function(e) {
-	var $this = $jq(this);
+    jq$("#executions-view form").live("submit", function(e) {
+	var $this = jq$(this);
 	var post_save_function = function() {};
 	var execution_status = $this.find(":radio[name='execution[status]']:checked").val();
 	if(execution_status == "2") { // NG
 	    post_save_function = function() {
-		$jq.get('<%=url_for :controller=>:execution_bugs, :action=>:new, :project_id=>@project %>', {},
+		jq$.get('<%=url_for :controller=>:execution_bugs, :action=>:new, :project_id=>@project %>', {},
 			function(data) {
-			    $jq("#issue-dialog").empty().append(data).dialog({
+			    jq$("#issue-dialog").empty().append(data).dialog({
 				modal:true,
 				minWidth: 800,
 				title: '<%=l(:label_issue_new)%>'
@@ -118,41 +121,41 @@ jQuery(document).ready(function ($jq) {
 			});
 	    };
 	}
-	$jq.ajax({
+	jq$.ajax({
 	    url: '<%=url_for :controller=>:executions, :action=>:put, :project_id=>@project %>',
 	    type: 'POST',
 	    data: $this.serialize() + "&format=json",
 	    success: function(data) {
-		$jq("#executions-view .flash").remove();
-		$jq("#executions-view").prepend(
-		    $jq("<div/>").addClass("flash").addClass("notice")
+		jq$("#executions-view .flash").remove();
+		jq$("#executions-view").prepend(
+		    jq$("<div/>").addClass("flash").addClass("notice")
 			.text("<%=l :notice_successful_create %>"));
 		post_save_function();
-		var test_case_id = $jq(":hidden[name='test_plan_case[test_case_id]']" ,$this).val();
-		$jq("#testplan-tree li#exec_"+test_case_id+" a  ins").css({backgroundImage: "url("+EXEC_ICONS[execution_status]+")"});
+		var test_case_id = jq$(":hidden[name='test_plan_case[test_case_id]']" ,$this).val();
+		jq$("#testplan-tree li#exec_"+test_case_id+" a  ins").css({backgroundImage: "url("+EXEC_ICONS[execution_status]+")"});
 	    },
 	    error: function(data) {
-		$jq("#executions-view .flash").remove();
-		$jq("#executions-view").prepend(
-		    $jq("<div/>").addClass("flash").addClass("error")
+		jq$("#executions-view .flash").remove();
+		jq$("#executions-view").prepend(
+		    jq$("<div/>").addClass("flash").addClass("error")
 			.text("Save failure."));
 	    }
 	});
 	return false;
     });
 
-    $jq("#issue-dialog form").live("submit", function(e) {
-	var $this = $jq(this);
-	$jq.ajax({
+    jq$("#issue-dialog form").live("submit", function(e) {
+	var $this = jq$(this);
+	jq$.ajax({
 	    url: '<%=url_for :controller=>:execution_bugs, :action=>:create %>',
 	    type: 'POST',
 	    data: $this.serialize()
-		+ "&execution_bug[execution_id]="+ $jq("#executions-view :hidden#execution_id").val()
+		+ "&execution_bug[execution_id]="+ jq$("#executions-view :hidden#execution_id").val()
 		+"&format=json",
 	    success: function(data) {
 	    },
 	    complete: function() {
-		$jq("#issue-dialog").dialog("close");
+		jq$("#issue-dialog").dialog("close");
 	    }
 	});
 	return false;

@@ -6,6 +6,8 @@ class CreateTestPlans < ActiveRecord::Migration
       t.column :notes, :text
       t.column :active, :boolean
     end
+
+    add_index :impasse_test_plans,:version_id, :name => 'IDX_IMPASSE_TEST_PLANS_01'
   end
 
   def self.down

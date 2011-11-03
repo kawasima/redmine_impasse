@@ -6,7 +6,8 @@ jQuery(document).ready(function ($) {
     var PLAN_CASE_MENU = {
 	contextmenu: {
 	    remove: {
-		label: "Delete",
+		label: "<%=l(:button_delete)%>",
+		icon: "<%=image_path 'delete.png'%>",
 		action: function(node) { this.remove(node); }
 	    }
 	}

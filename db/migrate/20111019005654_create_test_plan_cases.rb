@@ -6,6 +6,8 @@ class CreateTestPlanCases < ActiveRecord::Migration
       t.column :node_order, :integer
       t.column :urgency, :integer
     end
+
+    add_index :impasse_test_plan_cases, [:test_plan_id,:test_case_id], :name => 'IDX_IMPASSE_TEST_PLAN_CASES_01'
   end
 
   def self.down

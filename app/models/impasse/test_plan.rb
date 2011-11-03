@@ -5,6 +5,7 @@ module Impasse
 
     has_many :test_plan_cases
     has_many :test_cases, :through => :test_plan_cases
+    belongs_to :version
 
     def self.find_all_by_version(project)
       versions = project.shared_versions || []
