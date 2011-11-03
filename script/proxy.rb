@@ -5,6 +5,7 @@ require 'webrick/httpproxy'
 require 'digest/sha2'
 require 'nokogiri'
 require 'addressable/uri'
+require 'css_parser'
 
 include WEBrick
 
@@ -14,7 +15,23 @@ class HtmlContext
     @host = "http://#{req.host}:#{req.port}"
     @path = (req.path.end_with? '/') ? req.path : req.path[0,req.path.rindex("/")+1]
     @doc = Nokogiri::HTML.parse(res.body)
-    @resources = {"image"=>{}}
+    @resources = {"image"=>{}, 'css'=>{}, 'js'=>{}}
+
+    @doc.search('link[href]').each do |css|
+      @resources['css'][get_fqdn(css['href'])] = css
+    end
+
+    @doc.search('script[src]').each do |js|
+      @resources['js'][get_fqdn(js['src'])] = js
+    end
+
+    @doc.search('*[style*="background-image"]').each do |elm|
+      ruleset = CssParser::RuleSet.new(nil, elm['style'])
+      if /url\(\"?(.*?)\"?\)/ =~ ruleset['background-image']
+        @resources['image'][get_fqdn($1)] = elm
+      end
+    end
+
     @doc.search('img').each do |img|
       @resources['image'][get_fqdn(img['src'])] = img
     end
@@ -24,7 +41,13 @@ class HtmlContext
   def fetch_asset(type, uri, digest)
      asset = @resources[type][uri]
      unless asset.nil?
-       asset['src'] = "../images/#{digest}"
+       if asset.name == 'img'
+         asset['src'] = "../images/#{digest}"
+       elsif !asset['style'].nil?
+         ruleset = CssParser::RuleSet.new(nil, asset['style'])
+         ruleset['background-image'] = ruleset['background-image'].sub(/url(\(\"?(.*?)\"?\))/, "url(../images/#{digest})")
+         asset['style'] = ruleset.to_s
+       end
      end
   end
 
@@ -71,8 +94,10 @@ class TestGatewayServer < HTTPProxyServer
             @current_html.fetch_asset('image', req.request_uri.to_s, digest)
             'images'
           elsif content_type.start_with? 'text/css' or req.path.end_with? '.css'
+            @current_html.fetch_asset('css', req.request_uri.to_s, digest)
             'stylesheets'
           elsif content_type.start_with? 'text/javascript' or req.path.end_with? '.js'
+            @current_html.fetch_asset('js', req.request_uri.to_s, digest)
             'javascripts'
           else
             'others'
