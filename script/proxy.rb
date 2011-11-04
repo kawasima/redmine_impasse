@@ -1,4 +1,5 @@
 #!/usr/bin/env jruby
+# -*- coding: utf-8 -*-
 require 'rubygems'
 require 'webrick'
 require 'webrick/httpproxy'
@@ -7,7 +8,14 @@ require 'nokogiri'
 require 'addressable/uri'
 require 'css_parser'
 
+require File.expand_path('../../../../../config/boot',  __FILE__)
+require File.expand_path("#{RAILS_ROOT}/config/environment",  __FILE__)
+
+dbconfig = YAML.load_file("#{RAILS_ROOT}/config/database.yml")['development']
+ActiveRecord::Base.establish_connection(dbconfig)
+
 include WEBrick
+
 
 class HtmlContext
   def initialize(req, res)
@@ -115,6 +123,31 @@ class TestGatewayServer < HTTPProxyServer
   end
 end
 
+module TestGateway
+  class ControllServlet < HTTPServlet::AbstractServlet
+    def initialize(server, proxy)
+      super(server)
+      @proxy = proxy
+    end
+    def do_GET(req, res)
+      if req.query_string == 'start'
+        Thread.new do
+          @proxy.start
+        end
+        res['Content-Type'] = 'text/plain'
+        res.body = 'started'
+      elsif req.query_string == 'stop'
+        @proxy.stop
+        res['Content-Type'] = 'text/plain'
+        res.body = 'stoped'
+      else
+        res['Content-Type'] = 'text/plain'
+        res.body = @proxy.status.to_s
+      end
+    end
+  end
+end
+
 begin
   Dir.mkdir("meta")
   Dir.mkdir("html")
@@ -136,10 +169,14 @@ s = TestGatewayServer.new({
 	:ProxyVia => false,
 	:ProxyAuthProc => Proc.new() {|req, res|
 		WEBrick::HTTPAuth.proxy_basic_auth(req, res, 'proxy') { |user, pass|
-			user == 'kawasima' and pass == 'kawasima'
+                        user = User.try_to_login(user, pass)
+                        !(user.nil? or user.new_record?)
 		}
 	}
 })
-trap("INT"){ s.shutdown }
-s.start
+
+controll_port = WEBrick::HTTPServer.new({ :Port => 3129 })
+controll_port.mount('/', TestGateway::ControllServlet, s)
+trap(["INT","TERM"]){ controll_port.shutdown }
+controll_port.start
 
