@@ -41,28 +41,10 @@ module Impasse
 
     def copy
       original_node = Node.find(params[:original_id])
-      @node = original_node.clone
-
-      case params[:node_type]
-      when 'test_case'
-        original_case = TestCase.find(params[:original_id], :include => :test_steps)
-        @test_case = original_case.clone
-        original_case.test_steps.each{|ts| @test_case.test_steps << ts.clone }
-      else
-        original_case = TestSuite.find(params[:original_id], :include => :test_steps)
-        @test_case = original_case.clone
-      end
-
-      @node.attributes = params[:node]
-      @node.name = "#{l(:button_copy)}_#{@node.name}"
-      @node.save!
-
-      @test_case.id = @node.id
-      @test_case.save!
-      @test_case.name = @node.name
+      @node, @test_case = copy_node(original_node, params[:node][:parent_id])
 
       respond_to do |format|
-        format.json { render :json => @test_case }
+        format.json { render :json => @test_case.attributes.merge({:name => @node.name}) }
       end
     end
 
@@ -101,18 +83,20 @@ module Impasse
     end
 
     def destroy
-      @node = Node.find(params[:node][:id])
-      case @node.node_type_id
-      when 2
-        TestSuite.delete(@node.id)
-      when 3
-        TestCase.delete(@node.id)
+      params[:node][:id].each do |id|
+        @node = Node.find(id)
+        case @node.node_type_id
+        when 2
+          TestSuite.delete(@node.id)
+        when 3
+          TestCase.delete(@node.id)
+        end
+      
+        Node.delete_all("path like '#{@node.path}%'")
       end
-      
-      @node.delete
-      
+
       respond_to do |format|
-        format.json { render :json => params[:node][:id] }
+        format.json { render :json => {:status => true} }
       end
     end
 
@@ -141,6 +125,33 @@ module Impasse
       rescue ActiveRecord::RecordNotFound
         render_404
       end
+    end
+
+    def copy_node(original_node, parent_id)
+      node = original_node.clone
+
+      if node.is_test_case?
+        original_case = TestCase.find(original_node.id, :include => :test_steps)
+        test_case = original_case.clone
+        original_case.test_steps.each{|ts| test_case.test_steps << ts.clone }
+      else
+        original_case = TestSuite.find(original_node.id)
+        test_case = original_case.clone
+      end
+
+      node.parent_id = parent_id
+      node.name = "#{l(:button_copy)}_#{node.name}"
+      node.save!
+
+      test_case.id = node.id
+      test_case.save!
+
+      if original_node.is_test_suite?
+        original_node.children.each {|child|
+          copy_node(child, node.id)
+        }
+      end
+      [node, test_case]
     end
 
     def convert(nodes, prefix='node')

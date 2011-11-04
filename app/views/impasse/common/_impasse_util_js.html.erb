@@ -20,7 +20,7 @@ function impasse_loading_options() {
     };
 }
 function ajax_error_handler(xhr, status ,ex) {
-    var message = "<%=l :error_unable_to_connect %>";
+    var message = "<%=l(:error_unable_to_connect) %>".replace('%{value}', ex);
     if(xhr.status == 401) {
 	message = "<%=l :error_can_not_manage_test_cases %>";
     }

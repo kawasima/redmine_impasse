@@ -11,7 +11,7 @@ include WEBrick
 
 class HtmlContext
   def initialize(req, res)
-    # TODO
+    # TODO SSL
     @host = "http://#{req.host}:#{req.port}"
     @path = (req.path.end_with? '/') ? req.path : req.path[0,req.path.rindex("/")+1]
     @doc = Nokogiri::HTML.parse(res.body)
