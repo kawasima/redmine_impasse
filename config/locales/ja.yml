@@ -38,6 +38,7 @@ ja:
   field_test_steps: "ステップ"
   field_test_step_actions: "操作"
   field_test_step_expected_results: "期待する結果"
+  field_bug_tracker: "不具合と関連付けるトラッカ"
 
   button_create_test_plan: "テスト計画の新規作成"
   field_execution_status: "実行結果"

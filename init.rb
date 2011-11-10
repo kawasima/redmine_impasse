@@ -1,4 +1,12 @@
 require 'redmine'
+require 'impasse_projects_helper_patch'
+require 'dispatcher'
+
+Dispatcher.to_prepare :redmine_impasse do
+  unless ProjectsHelper.included_modules.include? ImpasseProjectsHelperPatch
+    ProjectsHelper.send(:include, ImpasseProjectsHelperPatch)
+  end
+end
 
 Redmine::Plugin.register :redmine_impasse do
   name 'Redmine Impasse plugin'
@@ -19,8 +27,11 @@ Redmine::Plugin.register :redmine_impasse do
       'impasse/test_plans' => [:new, :edit, :destroy, :add_test_case, :remove_test_case],
       'impasse/executions' => [:new, :edit, :destroy, :put],
       'impasse/execution_bugs' => [:new, :edit, :destroy]
-    },
-    :require => :member
+    }, :require => :member
+
+    permission :setting_testcases, {
+      'impasse/settings' => [:index, :show, :edit],
+    }, :require => :member
   end
 
   menu :project_menu, :impasse, { :controller=> 'impasse/test_case', :action=>'index' },

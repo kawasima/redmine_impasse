@@ -38,6 +38,7 @@ en:
   field_test_step_actions: "Actions"
   field_test_step_expected_results: "Expected Results"
   field_execution_status: "Execution status"
+  field_bug_tracker: "Tracker as bugs"
 
   permission_view_testcases: "View test cases"
   permission_manage_test_cases: "Manage test cases"

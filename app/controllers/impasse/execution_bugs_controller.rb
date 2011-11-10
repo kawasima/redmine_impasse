@@ -27,6 +27,9 @@ module Impasse
     include IssuesHelper
 
   def new
+    setting = Impasse::Setting.find_by_project_id(@project)
+    @issue.tracker_id = setting.bug_tracker_id unless setting.bug_tracker_id.nil?
+
     respond_to do |format|
       format.html { render :partial => 'new' }
     end
