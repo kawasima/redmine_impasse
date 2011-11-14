@@ -40,34 +40,39 @@ module Impasse
     end
 
     def copy
-      original_node = Node.find(params[:original_id])
-      @node, @test_case = copy_node(original_node, params[:node][:parent_id])
+      nodes = []
+      params[:nodes].each do |i,node_params|
+        original_node = Node.find(node_params[:original_id])
+        original_node[:node_order] = node_params[:node_order]
+        node, test_case = copy_node(original_node, node_params[:parent_id])
+        test_case.attributes.merge({:name => node.name})
+        nodes << node
+      end
 
       respond_to do |format|
-        format.json { render :json => @test_case.attributes.merge({:name => @node.name}) }
+        format.json { render :json => nodes }
+      end
+    end
+
+    def move
+      nodes = []
+      params[:nodes].each do |i,node_params|
+        node, test_case = get_node(node_params)
+        save_node(node)
+        nodes << node
+      end
+
+      respond_to do |format|
+        format.json { render :json => nodes }
       end
     end
 
     def edit
-      @node = Node.find(params[:node][:id])
-      old_node = @node.clone
-
-      case params[:node_type]
-      when 'test_case'
-        @test_case = TestCase.find(params[:node][:id])
-      else
-        @test_case = TestSuite.find(params[:node][:id])
-      end
+      @node, @test_case = get_node(params[:node])
+      @test_case.attributes = params[:test_case]
 
       if request.post?
-        @node.attributes = params[:node]
-        @node.save!
-        @node.update_siblings_order!(old_node)
-        # If node has children, must update the node path of child nodes.
-        @node.update_child_nodes_path(old_node.path)
-
-
-        @test_case.attributes = params[:test_case]
+        save_node(@node)
         @test_case.save!
         if @node.is_test_case? and params.include? :test_steps
           test_steps = params[:test_steps].collect{|i, ts| TestStep.new(ts) }
@@ -75,7 +80,7 @@ module Impasse
         end
 
         respond_to do |format|
-          format.json { render :json => @test_case }
+          format.json { render :json => [@test_case] }
         end
       else
         render :partial => 'edit'
@@ -114,6 +119,31 @@ module Impasse
       end
     end
 
+    def get_node(node_params)
+      node = Node.find(node_params[:id])
+      node.attributes = node_params
+
+      if node.is_test_case?
+        test_case = TestCase.find(node_params[:id])
+      else
+        test_case = TestSuite.find(node_params[:id])
+      end
+
+      [node, test_case]
+    end
+
+    def save_node(node)
+      old_node = node.clone
+      node.save!
+      node.update_siblings_order!
+
+      # If node has children, must update the node path of child nodes.
+      node.update_child_nodes_path(old_node.path)
+
+    end
+
+
+
     def find_project
       begin
         @project = Project.find(params[:project_id])
@@ -127,7 +157,7 @@ module Impasse
       end
     end
 
-    def copy_node(original_node, parent_id)
+    def copy_node(original_node, parent_id, level=0)
       node = original_node.clone
 
       if node.is_test_case?
@@ -142,13 +172,14 @@ module Impasse
       node.parent_id = parent_id
       node.name = "#{l(:button_copy)}_#{node.name}"
       node.save!
+      node.update_siblings_order! if level == 0
 
       test_case.id = node.id
       test_case.save!
 
       if original_node.is_test_suite?
         original_node.children.each {|child|
-          copy_node(child, node.id)
+          copy_node(child, node.id, level + 1)
         }
       end
       [node, test_case]

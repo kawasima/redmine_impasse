@@ -8,9 +8,12 @@ jQuery.ajax({
     success: function(data) {
         jQuery.jqplot("test-chart", data, {
             axes: {
-                yaxis:  { label: 'Remain cases', min: 0},
+                yaxis:  { label: 'Remain cases', min: 0,
+			  tickOptions : { formatString : '%d'},
+			  numberTicks: 11
+			},
                 y2axis: { label: 'Bugs', min: 0},
-                xaxis: { renderer: jQuery.jqplot.DateAxisRenderer}
+                xaxis: { renderer: jQuery.jqplot.DateAxisRenderer, numberTicks: 10}
             }
         });
     }

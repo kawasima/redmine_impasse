@@ -136,7 +136,7 @@ jQuery(document).ready(function ($) {
 			url:AJAX_URL[edit_type],
 			data: tc,
 			success: function (r) {
-			    if(r.id) {
+			    if(r && r.length > 0) {
 				dialog[node_type].unbind("dialogbeforeclose");
 				node.attr("id", "node_" + r.id);
 				node.data("jstree", (node_type=='test_case')?LEAF_MENU:FOLDER_MENU);
@@ -243,46 +243,46 @@ jQuery(document).ready(function ($) {
 	.bind("copy.jstree", function(e, data) {
 	})
 	.bind("move_node.jstree", function (e, data) {
-	    data.rslt.o.each(function (i) {
-		var url = (data.rslt.cy) ? "<%= url_for :controller=>:test_case, :action=>:copy, :project_id=>@project %>" : "<%= url_for :controller=>:test_case, :action=>:edit, :project_id=>@project %>";
-		var request = {
-		    format: "json",
-		    node_type: jq$(this).attr("rel"),
-		    "node[id]" : jq$(this).attr("id").replace("node_",""), 
-		    "node[parent_id]" : data.rslt.cr === -1 ? 1 : data.rslt.np.attr("id").replace("node_",""), 
-		    "node[node_order]" : data.rslt.cp
-		};
-		if (data.rslt.cy) {
-		    request["original_id"] = data.rslt.oc.attr("id").replace("copy_node_","");
-		} else {
-		    request["node[name]"] = data.rslt.name;
-		}
+	    var url = (data.rslt.cy) ? "<%= url_for :controller=>:test_case, :action=>:copy, :project_id=>@project %>" : "<%= url_for :controller=>:test_case, :action=>:move, :project_id=>@project %>";
 
-		var dest = jq$(data.rslt.oc);
-		jq$("ins.jstree-icon", dest).css({backgroundImage: "url(<%=image_path 'loading.gif'%>)"});
-		jq$.ajax({
-		    type: 'POST',
-		    url: url,
-		    data: request,
-		    success : function (r) {
-			if(!r.id) {
-			    jq$.jstree.rollback(data.rlbk);
-			}
-			else {
-			    dest.attr("id", "node_" + r.id);
-			    data.inst.set_text(dest, r.name);
-			    dest.data("jstree", (dest.attr("rel")=="test_case") ? LEAF_MENU : FOLDER_MENU);
+	    var request = { format: "json" };
+	    data.rslt.o.each(function (i, node) {
+		request["nodes["+i+"][id]"]         = jq$(node).attr("id").replace("node_","");
+		request["nodes["+i+"][parent_id]"]  = data.rslt.cr === -1 ? 1 : data.rslt.np.attr("id").replace("node_",""), 
+		request["nodes["+i+"][node_order]"] = data.rslt.cp + i
+	    });
+	    if (data.rslt.cy) {
+		data.rslt.oc.each(function(i, node) {
+		    request["nodes["+i+"][original_id]"] = $(node).attr("id").replace("copy_node_","")
+		});
+	    }
+	    var dest = jq$(data.rslt.oc);
+	    jq$("ins.jstree-icon", dest).css({backgroundImage: "url(<%=image_path 'loading.gif'%>)"});
+	    jq$.ajax({
+		type: 'POST',
+		url: url,
+		data: request,
+		success : function (r) {
+		    if(!r || r.length == 0) {
+			jq$.jstree.rollback(data.rlbk);
+		    }
+		    else {
+			dest.each(function(i) {
+			    var node = $(this);
+			    node.attr("id", "node_" + r[i].id);
+			    data.inst.set_text(node, r[i].name);
+			    node.data("jstree", (dest.attr("rel")=="test_case") ? LEAF_MENU : FOLDER_MENU);
 			    if(data.rslt.cy && dest.children("UL").length) {
 				data.inst.refresh(data.inst._get_parent(data.rslt.oc));
 			    }
-			    jq$("ins.jstree-icon", dest).css("backgroundImage", "");
-			}
-		    },
-		    error: function(xhr, status, ex) {
-			jq$.jstree.rollback(data.rlbk);
-			ajax_error_handler(xhr, status, ex);
+			});
+			jq$("ins.jstree-icon", dest).css("backgroundImage", "");
 		    }
-		});
+		},
+		error: function(xhr, status, ex) {
+		    jq$.jstree.rollback(data.rlbk);
+		    ajax_error_handler(xhr, status, ex);
+		}
 	    });
 	});
 

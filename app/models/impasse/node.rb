@@ -87,37 +87,20 @@ module Impasse
       super
     end
 
-    def update_siblings_order!(old_node)
-      sql = if old_node.parent_id == self.parent_id
-              if self.node_order < old_node.node_order
-                <<-END_OF_SQL
-UPDATE impasse_nodes
-SET node_order = node_order + 1
-WHERE parent_id = #{self.parent_id}
-  AND node_order >= #{self.node_order} 
-  AND node_order < #{old_node.node_order}
-  AND id != #{self.id}
-                END_OF_SQL
-              else
-                <<-END_OF_SQL
-UPDATE impasse_nodes
-SET node_order = node_order - 1
-WHERE parent_id = #{self.parent_id}
-  AND node_order > #{old_node.node_order} 
-  AND node_order <= #{self.node_order}
-  AND id != #{self.id}
-                END_OF_SQL
-              end
-            else
-              <<-END_OF_SQL
-UPDATE impasse_nodes
-SET node_order = node_order + 1
-WHERE parent_id = #{self.parent_id}
-  AND node_order >= #{self.node_order} 
-  AND id != #{self.id}
-                END_OF_SQL
-            end
-      connection.update(sql)
+    def update_siblings_order!
+      siblings = Node.find(:all,
+                           :conditions=>["parent_id=? and id != ?", self.parent_id, self.id],
+                           :order=>:node_order)
+      siblings.insert(self.node_order, self)
+
+      change_nodes = []
+      siblings.each_with_index do |sibling, i|
+        next if sibling.id == self.id or sibling.node_order == i
+        sibling.node_order = i
+        change_nodes << sibling
+      end
+
+      change_nodes.each {|node| node.save! }
     end
  
     def update_child_nodes_path(old_path)
