@@ -91,8 +91,12 @@ module Impasse
       siblings = Node.find(:all,
                            :conditions=>["parent_id=? and id != ?", self.parent_id, self.id],
                            :order=>:node_order)
-      siblings.insert(self.node_order, self)
-
+      if self.node_order < siblings.size
+        siblings.insert(self.node_order, self)
+      else
+        siblings << self
+      end
+      
       change_nodes = []
       siblings.each_with_index do |sibling, i|
         next if sibling.id == self.id or sibling.node_order == i

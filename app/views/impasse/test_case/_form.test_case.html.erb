@@ -6,7 +6,7 @@
   <p><%= form.text_area :preconditions,
          :class => 'wiki-edit', :rows => 5 %></p>
   <div style="margin:0; padding: 5px 0 8px 0; padding-left: 180px; height: 1%; clear: left;">
-    <label>TestStep</label>
+    <label><%=l(:field_test_steps)%></label>
     <div>
       <div class="contextual">
 	<a href="#" class="icon icon-add add-test-step">add</a>
@@ -16,8 +16,8 @@
 	<thead>
 	  <tr class="entry">
 	    <th>#</th>
-	    <th>Operation</th>
-	    <th>Expectation</th>
+	    <th><%=l(:field_test_step_actions)%></th>
+	    <th><%=l(:field_test_step_expected_results)%></th>
 	    <th></th>
 	  </tr>
 	</thead>
@@ -37,6 +37,4 @@
       </table>
     </div>
   </div>
-  <p><%= form.check_box :active,
-         :class => 'wiki-edit' %></p>
 </div>
