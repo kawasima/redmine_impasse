@@ -1,10 +1,6 @@
-<%= stylesheet_link_tag 'default/style.css', :plugin => 'redmine_impasse' %>
-<%= stylesheet_link_tag 'jquery-ui', :plugin => 'redmine_impasse' %>
-<%= javascript_include_tag 'jquery', :plugin => 'redmine_impasse' %>
-<%= javascript_include_tag 'jquery-ui', :plugin => 'redmine_impasse' %>
-<%= javascript_include_tag 'jquery.cookie.js', :plugin => 'redmine_impasse' %>
-<%= javascript_include_tag 'jquery.hotkeys.js', :plugin => 'redmine_impasse' %>
-<%= javascript_include_tag 'jquery.jstree.js', :plugin => 'redmine_impasse' %>
+<% content_for :header_tag do %>
+  <%= stylesheet_link_tag 'default/style.css', :plugin => 'redmine_impasse' %>
+<% end %>
 
 <%= breadcrumb 
 	[link_to(l(:label_impasse), {:controller => :test_case, :action => :index, :project_id => @project}),
