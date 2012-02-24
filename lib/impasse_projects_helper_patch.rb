@@ -1,5 +1,19 @@
 require_dependency 'projects_helper'
 
+module Redmine
+  module MenuManager
+    module MenuHelper
+      def render_single_menu_node(item, caption, url, selected)
+        if url.instance_of? Hash and url.include? :controller
+          url = url.clone
+          url[:controller] = "/#{url[:controller]}"
+        end
+        link_to(h(caption), url, item.html_options(:selected => selected))
+      end
+    end
+  end
+end
+
 module ImpasseProjectsHelperPatch
   def self.included(base) # :nodoc:
     base.send(:include, ProjectsHelperMethodsImpasse)
