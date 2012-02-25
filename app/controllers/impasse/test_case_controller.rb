@@ -12,7 +12,14 @@ module Impasse
     end
 
     def list
-      @nodes = Node.find_children(params[:node_id], params[:test_plan_id])
+      if params[:node_id].to_i == -1
+        root = Node.find_by_name_and_node_type_id(@project.identifier, 1)
+        @nodes = Node.find_children(root.id, params[:test_plan_id])
+        root.name = get_root_name(params[:test_plan_id]);
+        @nodes.unshift(root)
+      else
+        @nodes = Node.find_children(params[:node_id], params[:test_plan_id])
+      end
       jstree_nodes = convert(@nodes, params[:prefix])
 
       respond_to do |format|
@@ -142,7 +149,14 @@ module Impasse
 
     end
 
-
+    def get_root_name(test_plan_id)
+      if test_plan_id.nil?
+        @project.name
+      else
+        test_plan = TestPlan.find(test_plan_id)
+        test_plan.name
+      end
+    end
 
     def find_project
       begin

@@ -1,16 +1,48 @@
-<%= stylesheet_link_tag 'jquery-ui', :plugin => 'redmine_impasse' %>
-<style>
-.ui-state-highlight { height: 1.5em; line-height: 1.2em; }
-</style>
-<%= javascript_include_tag 'jquery', :plugin => 'redmine_impasse' %>
-<%= javascript_include_tag 'jquery-ui', :plugin => 'redmine_impasse' %>
-<%= javascript_include_tag 'jquery.cookie.js', :plugin => 'redmine_impasse' %>
-<%= javascript_include_tag 'jquery.hotkeys.js', :plugin => 'redmine_impasse' %>
-<%= javascript_include_tag 'jquery.jstree.js', :plugin => 'redmine_impasse' %>
+<% content_for :header_tags do %>
+  <%= stylesheet_link_tag 'jquery-ui', :plugin => 'redmine_impasse' %>
+  <style>
+    .ui-state-highlight { height: 1.5em; line-height: 1.2em; }
+  </style>
+  <%= javascript_include_tag(
+      'jquery', 'jquery-ui', 'jquery.cookie.js',
+      'jquery.hotkeys.js', 'jquery.jstree.js',
+      'test_case_tree',
+      :plugin => 'redmine_impasse') %>
+  <script type="text/javascript">
+    jQuery.jstree._themes = "<%= image_path '../stylesheets/', :plugin => 'redmine_impasse' %>";
+    var IMPASSE = {
+      url: {
+        testCaseNew:  "<%=url_for :controller=>:test_case, :action=>:new, :project_id=>@project%>",
+        testCaseEdit: "<%=url_for :controller=>:test_case, :action=>:edit, :project_id=>@project%>",
+        testCaseList: "<%= url_for :controller=>:test_case, :action=>:list, :project_id=>@project %>",
+        testCaseDestroy: "<%= url_for :controller=>:test_case, :action=>:destroy, :project_id=>@project %>",
+        testCaseCopy: "<%= url_for :controller=>:test_case, :action=>:copy, :project_id=>@project %>",
+        testCaseMove: "<%= url_for :controller=>:test_case, :action=>:move, :project_id=>@project %>",
+        iconEdit: "<%=image_path 'edit.png'%>",
+        iconCopy: "<%=image_path 'copy.png'%>",
+        iconDelete: "<%=image_path 'delete.png'%>",
+        iconAdd: "<%=image_path 'add.png'%>",
+        iconTestSuite: "<%=image_path('../stylesheets/images/documents-stack.png', :plugin=>'redmine_impasse')%>",
+        iconTestCase:  "<%=image_path('../stylesheets/images/document-attribute-t.png', :plugin=>'redmine_impasse')%>",
+        iconProject:   "<%=image_path "../stylesheets/images/book-brown.png", :plugin=>'redmine_impasse' %>",
+        iconLoading: "<%=image_path 'loading.gif'%>"
+      },
+      label: {
+        buttonEdit: "<%=l(:button_edit)%>",
+        buttonCopy: "<%=l(:button_copy)%>",
+        buttonDelete: "<%=l(:button_delete)%>",
+        buttonCreate: "<%=l(:button_create)%>",
+        testSuiteEdit: "<%=l :label_test_suite_edit %>",
+        testCaseEdit:  "<%=l :label_test_case_edit %>",
+        noticeSuccessfulUpdate: "<%=l(:notice_successful_update)%>",
+        noticeSuccessfulCreate: "<%=l(:notice_successful_create)%>"
+      }
+    }
+  </script>
+<% end %>
+
 <h2><%= l(:label_impasse)%></h2>
-<script>
-<%= render :partial => 'treejs' %>
-</script>
+
 <div id="testcase-tree">
 </div>
 
@@ -29,5 +61,4 @@
 <% end %>
 
 <div id="testsuite-dialog" style="display:none"></div>
-
 <div id="testcase-dialog" style="display:none"></div>

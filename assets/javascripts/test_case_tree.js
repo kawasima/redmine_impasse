@@ -1,34 +1,31 @@
-var jq$ = $.noConflict();
-
-    <%= render :partial =>'impasse/common/impasse_util_js' %>
-
+jQuery.noConflict();
 jQuery(document).ready(function ($) {
     var AJAX_URL = {
-	"new":"<%=url_for :controller=>:test_case, :action=>:new, :project_id=>@project%>",
-	"edit":"<%=url_for :controller=>:test_case, :action=>:edit, :project_id=>@project%>"
+	"new":  IMPASSE.url.testCaseNew,
+	"edit": IMPASSE.url.testCaseEdit
     };
     var LEAF_MENU = {
 	contextmenu: {
 	    edit: {
-		label: "<%=l(:button_edit)%>",
-		icon: "<%=image_path 'edit.png'%>",
+		label: IMPASSE.label.buttonEdit,
+		icon:  IMPASSE.url.iconEdit,
 		action: function(node) { openDialog({
 		    rslt: {
-			name: jq$("#testcase-tree").jstree("get_text", node),
-			position: jq$("#testcase-tree").jstree("get_index", node),
+			name: $("#testcase-tree").jstree("get_text", node),
+			position: $("#testcase-tree").jstree("get_index", node),
 			obj: node,
 			parent: $(node).parents("li:first")
 		    }
 		}, 'edit'); }
 	    },
 	    copy: {
-		label: "<%=l(:button_copy)%>",
-		icon: "<%=image_path 'copy.png'%>",
+		label: IMPASSE.label.buttonCopy,
+		icon:  IMPASSE.url.iconCopy,
 		action: function(node) { this.copy(node); }
 	    },
 	    remove: {
-		label: "<%=l(:button_delete)%>",
-		icon: "<%=image_path 'delete.png'%>",
+		label: IMPASSE.label.buttonDelete,
+		icon:  IMPASSE.url.iconDelete,
 		action: function(node) { this.remove(node); }
 	    }
 	}
@@ -36,19 +33,19 @@ jQuery(document).ready(function ($) {
     var FOLDER_MENU = {
 	contextmenu: {
 	    create: {
-		label: "<%=l(:button_create)%>",
-		icon: "<%=image_path 'add.png'%>",
+		label: IMPASSE.label.buttonCreate,
+		icon:  IMPASSE.url.iconAdd,
 		submenu: {
 		    createTestSuite: {
 			label: "Test suite",
-			icon: "<%=image_path('../stylesheets/images/documents-stack.png', :plugin=>'redmine_impasse')%>",
+			icon: IMPASSE.url.iconTestSuite,
 			action: function(node) {
 			    this.create(node, "last", {attr: {rel: "test_suite"}}, null, true);
 			}
 		    },
 		    createTestCase: {
 			label: "Test case",
-			icon: "<%=image_path('../stylesheets/images/document-attribute-t.png', :plugin=>'redmine_impasse')%>",
+			icon: IMPASSE.url.iconTestCase,
 			action: function(node) {
 			    this.create(node, "last", {attr: {rel: "test_case"}}, null, true);
 			}
@@ -70,13 +67,13 @@ jQuery(document).ready(function ($) {
 	    autoOpen: false,
 	    modal:true,
 	    minWidth: 700,
-	    title: "<%=l :label_test_suite_edit %>"
+	    title: IMPASSE.label.testSuiteEdit
 	}),
 	test_case:  $("#testcase-dialog").dialog({
 	    autoOpen: false,
 	    modal:true,
 	    minWidth: 700,
-	    title: "<%=l :label_test_case_edit %>"
+	    title: IMPASSE.label.testCaseEdit
 	})
     };
 
@@ -102,36 +99,36 @@ jQuery(document).ready(function ($) {
 		    placeholder: 'ui-state-highlight',
 		    update: function(e, ui) {
 			var i=1;
-			jq$(this).find("tr").each(function() {
-			    var row = jq$(this);
-			    jq$("td.ui-sort-handle", row).text(i);
-			    jq$("input[name*=step_number]", row).each(function() {
-				jq$(this).val(i);
+			$(this).find("tr").each(function() {
+			    var row = $(this);
+			    $("td.ui-sort-handle", row).text(i);
+			    $("input[name*=step_number]", row).each(function() {
+				$(this).val(i);
 			    });
-			    jq$("textarea,:hidden", row).each(function() {
-				var f = jq$(this);
+			    $("textarea,:hidden", row).each(function() {
+				var f = $(this);
 				f.attr("name", f.attr("name").replace(/\[\d+\]/, "["+i+"]"));
 			    });
 			    i++;
 			});
 		    }
 		});
-		jq$(".sortable .icon-del", dialog[node_type]).click(function(e) {
-		    jq$(this).parents("tr:last").remove();
+		$(".sortable .icon-del", dialog[node_type]).click(function(e) {
+		    $(this).parents("tr:last").remove();
 		});
 
 		dialog[node_type].find(":button.ui-button-submit").click(function(e) {
 		    var tc = {format:"json"};
 		    dialog[node_type].find(":hidden,:text,textarea,:checkbox:checked,radiobutton:checked,select").each(function() {
-			tc[jq$(this).attr("name")] = jq$(this).val();
+			tc[$(this).attr("name")] = $(this).val();
 			
 		    });
 		    if(edit_type == 'edit')
 			tc["node[id]"] = node.attr("id").replace("node_","");
 		    tc["node_type"] = node_type;
-		    tc["node[parent_id]"] = jq$(data.rslt.parent).attr("id").replace("node_", "");
+		    tc["node[parent_id]"] = $(data.rslt.parent).attr("id").replace("node_", "");
 		    tc["node[node_order]"] = data.rslt.position;
-		    jq$.ajax({
+		    $.ajax({
 			type: 'POST',
 			url:AJAX_URL[edit_type],
 			data: tc,
@@ -140,8 +137,10 @@ jQuery(document).ready(function ($) {
 				dialog[node_type].unbind("dialogbeforeclose");
 				node.attr("id", "node_" + r.id);
 				node.data("jstree", (node_type=='test_case')?LEAF_MENU:FOLDER_MENU);
-				jq$.jstree._reference(node).set_text(node, tc["node[name]"]);
-				show_notification_dialog('success', (edit_type=='edit')?"<%=l(:notice_successful_update)%>":"<%=l(:notice_successful_create)%>");
+				$.jstree._reference(node).set_text(node, tc["node[name]"]);
+				show_notification_dialog(
+				    'success',
+				    edit_type=='edit' ? IMPASSE.label.noticeSuccessfulUpdate : IMPASSE.label.noticeSuccessfulCreate);
 			    }
 			},
 			error: ajax_error_handler,
@@ -153,9 +152,9 @@ jQuery(document).ready(function ($) {
 	});
     };
 
-    var testcaseTree =jq$("#testcase-tree")
+    var testcaseTree =$("#testcase-tree")
 	.jstree({ 
-	    "plugins": [ 
+	    "plugins": [
 		"themes","json_data","ui","crrm","cookies","dnd","search","types","hotkeys","contextmenu" 
 	    ],
 	    core: {
@@ -166,56 +165,56 @@ jQuery(document).ready(function ($) {
 	    },
 	    json_data: { 
 		ajax: {
-		    url: "<%= url_for :controller=>:test_case, :action=>:list, :project_id=>@project %>",
+		    url: IMPASSE.url.testCaseList,
 		    data: function (n) { 
 			return { 
 			    prefix: "node", 
-			    node_id : n.attr ? n.attr("id").replace("node_","") : -1
+			    node_id: n.attr ? n.attr("id").replace("node_","") : -1
 			}; 
 		    }
 		}
 	    },
-	    types : {
-		max_depth : -2,
-		max_children : -2,
-		valid_children : [ "test_project" ],
-		types : {
-		    test_case : {
-			valid_children : "none",
-			icon : {
-			    image : "<%=image_path "../stylesheets/images/document-attribute-t.png", :plugin=>'redmine_impasse' %>"
+	    types: {
+		max_depth: -2,
+		max_children: -2,
+		valid_children: [ "test_project" ],
+		types: {
+		    test_case: {
+			valid_children: "none",
+			icon: {
+			    image: IMPASSE.url.iconTestCase
 			}
 		    },
-		    test_suite : {
-			valid_children : [ "test_suite", "test_case" ],
-			icon : {
-			    image : "<%=image_path "../stylesheets/images/documents-stack.png", :plugin=>'redmine_impasse' %>"
+		    test_suite: {
+			valid_children: [ "test_suite", "test_case" ],
+			icon: {
+			    image: IMPASSE.url.iconTestSuite
 			}
 		    },
-		    test_project : {
-			valid_children : [ "test_suite", "test_case" ],
-			icon : {
-			    image : "<%=image_path "../stylesheets/images/book-brown.png", :plugin=>'redmine_impasse' %>"
+		    test_project: {
+			valid_children: [ "test_suite", "test_case" ],
+			icon: {
+			    image: IMPASSE.url.iconProject
 			},
-			start_drag : false,
-			move_node : false,
-			delete_node : false,
-			remove : false
+			start_drag: false,
+			move_node: false,
+			delete_node: false,
+			remove: false
 		    }
 		}
 	    }
 	})
 	.bind("loaded.jstree", function (e, data) {
-	    jq$(this).find("li[rel=test_project],li[rel=test_suite]").data("jstree", FOLDER_MENU);
-	    jq$(this).find("li[rel=test_case]").data("jstree", LEAF_MENU);
+	    $(this).find("li[rel=test_project],li[rel=test_suite]").data("jstree", FOLDER_MENU);
+	    $(this).find("li[rel=test_case]").data("jstree", LEAF_MENU);
 	})
 	.bind("refresh.jstree", function (e, data) {
-	    jq$(this).find("li[rel=test_project],li[rel=test_suite]").data("jstree", FOLDER_MENU);
-	    jq$(this).find("li[rel=test_case]").data("jstree", LEAF_MENU);
+	    $(this).find("li[rel=test_project],li[rel=test_suite]").data("jstree", FOLDER_MENU);
+	    $(this).find("li[rel=test_case]").data("jstree", LEAF_MENU);
 	})
 	.bind("create.jstree", function (e, data) {
-	    dialog[jq$(data.rslt.obj).attr("rel")].bind('dialogbeforeclose', function(e) {
-		jq$.jstree.rollback(data.rlbk);
+	    dialog[$(data.rslt.obj).attr("rel")].bind('dialogbeforeclose', function(e) {
+		$.jstree.rollback(data.rlbk);
 	    });
 	    openDialog(data, 'new');
 	})
@@ -224,30 +223,29 @@ jQuery(document).ready(function ($) {
 	    data.rslt.obj.each(function() {
 		request["node[id]"].push(this.id.replace("node_", ""));
 	    });
-	    jq$.ajax({
+	    $.ajax({
 		async: false,
 		type: 'POST',
-		url: "<%= url_for :controller=>:test_case, :action=>:destroy, :project_id=>@project %>",
+		url: IMPASSE.url.testCaseDestroy,
 		data: request,
 		success: function (r) {
 		    if(!r.status) {
-			jq$.jstree.rollback(data.rlbk);
+			$.jstree.rollback(data.rlbk);
 		    }
 		},
 		error: function(xhr, status, ex) {
 		    ajax_error_handler(xhr, status, ex);
-		    jq$.jstree.rollback(data.rlbk);
+		    $.jstree.rollback(data.rlbk);
 		}
 	    });
 	})
 	.bind("copy.jstree", function(e, data) {
 	})
 	.bind("move_node.jstree", function (e, data) {
-	    var url = (data.rslt.cy) ? "<%= url_for :controller=>:test_case, :action=>:copy, :project_id=>@project %>" : "<%= url_for :controller=>:test_case, :action=>:move, :project_id=>@project %>";
-
+	    var url = (data.rslt.cy) ? IMPASSE.url.testCaseCopy : IMPASSE.url.testCaseMove;
 	    var request = { format: "json" };
 	    data.rslt.o.each(function (i, node) {
-		request["nodes["+i+"][id]"]         = jq$(node).attr("id").replace("node_","");
+		request["nodes["+i+"][id]"]         = $(node).attr("id").replace("node_","");
 		request["nodes["+i+"][parent_id]"]  = data.rslt.cr === -1 ? 1 : data.rslt.np.attr("id").replace("node_",""), 
 		request["nodes["+i+"][node_order]"] = data.rslt.cp + i
 	    });
@@ -256,15 +254,15 @@ jQuery(document).ready(function ($) {
 		    request["nodes["+i+"][original_id]"] = $(node).attr("id").replace("copy_node_","")
 		});
 	    }
-	    var dest = jq$(data.rslt.oc);
-	    jq$("ins.jstree-icon", dest).css({backgroundImage: "url(<%=image_path 'loading.gif'%>)"});
-	    jq$.ajax({
+	    var dest = $(data.rslt.oc);
+	    $("ins.jstree-icon", dest).css({backgroundImage: "url(" + IMPASSE.url.loading + ")"});
+	    $.ajax({
 		type: 'POST',
 		url: url,
 		data: request,
 		success : function (r) {
 		    if(!r || r.length == 0) {
-			jq$.jstree.rollback(data.rlbk);
+			$.jstree.rollback(data.rlbk);
 		    }
 		    else {
 			dest.each(function(i) {
@@ -276,40 +274,40 @@ jQuery(document).ready(function ($) {
 				data.inst.refresh(data.inst._get_parent(data.rslt.oc));
 			    }
 			});
-			jq$("ins.jstree-icon", dest).css("backgroundImage", "");
+			$("ins.jstree-icon", dest).css("backgroundImage", "");
 		    }
 		},
 		error: function(xhr, status, ex) {
-		    jq$.jstree.rollback(data.rlbk);
+		    $.jstree.rollback(data.rlbk);
 		    ajax_error_handler(xhr, status, ex);
 		}
 	    });
 	});
 
-    jq$("#testcase-dialog .add-test-step").live("click", function() {
+    $("#testcase-dialog .add-test-step").live("click", function() {
 	var id = 0;
-	var test_steps = jq$("#testcase-dialog table.list");
+	var test_steps = $("#testcase-dialog table.list");
 	test_steps.find("td.ui-sort-handle").each(function() {
-	    if (id < Number(jq$(this).text()))
-		id = Number(jq$(this).text());
+	    if (id < Number($(this).text()))
+		id = Number($(this).text());
 	});
 	id += 1;
 
-	var actions = jq$("<textarea/>").attr("name", "test_steps["+id+"][actions]")
+	var actions = $("<textarea/>").attr("name", "test_steps["+id+"][actions]")
 	    .attr("rows", 3).css({width:"100%", padding:0, margin:0});
-	var expected_results = jq$("<textarea/>").attr("name", "test_steps["+id+"][expected_results]")
+	var expected_results = $("<textarea/>").attr("name", "test_steps["+id+"][expected_results]")
 	    .attr("rows", 3).css({width:"100%", padding:0, margin:0});
-	var step_number = jq$("<input/>").attr("type", "hidden")
+	var step_number = $("<input/>").attr("type", "hidden")
 	    .attr("name", "test_steps["+id+"][step_number]")
 	    .attr("value", id);
 
-	var del_button = jq$("<td/>");
-	var test_step = jq$("<tr/>").addClass("entry")
-	    .append(jq$("<td/>").addClass("ui-sort-handle").text(id))
-	    .append(jq$("<td/>").append(actions).append(step_number))
-	    .append(jq$("<td/>").append(expected_results))
+	var del_button = $("<td/>");
+	var test_step = $("<tr/>").addClass("entry")
+	    .append($("<td/>").addClass("ui-sort-handle").text(id))
+	    .append($("<td/>").append(actions).append(step_number))
+	    .append($("<td/>").append(expected_results))
 	    .append(del_button);
-	del_button.append(jq$("<span class='icon icon-del'/>").click(function(e) {
+	del_button.append($("<span class='icon icon-del'/>").click(function(e) {
 	    test_step.remove();
 	}));
 	test_steps.append(test_step);

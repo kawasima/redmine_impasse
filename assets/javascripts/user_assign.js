@@ -1,13 +1,11 @@
 jQuery.noConflict();
 
-    <%= render :partial =>'impasse/common/impasse_util_js' %>
-
 jQuery(document).ready(function ($) {
     var PLAN_CASE_MENU = {
 	contextmenu: {
 	    remove: {
-		label: "<%=l(:button_delete)%>",
-		icon: "<%=image_path 'delete.png'%>",
+		label: IMPASSE.label.buttonDelete,
+		icon:  IMPASSE.url.iconDelete,
 		action: function(node) { this.remove(node); }
 	    }
 	}
@@ -23,12 +21,11 @@ jQuery(document).ready(function ($) {
 	.bind("remove.jstree", function (e, data) {
 	    data.rslt.obj.each(function () {
 		$.ajax({
-		    async : false,
 		    type: 'POST',
-		    url: "<%= url_for :controller=>:test_plans, :action=>:remove_test_case, :id=>@project %>",
+		    url: IMPASSE.url.testPlansRemove,
 		    data : {
 			format: "json",
-			test_plan_id: "<%= @test_plan.id %>",
+			test_plan_id: test_plan_id,
 			test_case_id: this.id.replace("plan_","")
 		    }, 
 		    success : function (r) {
@@ -50,50 +47,44 @@ jQuery(document).ready(function ($) {
 	    core : {
 		animation: 0
 	    },
-	    json_data : { 
-		ajax : {
-		    url : "<%= url_for :controller=>:executions, :action=>:get_list, :project_id=>@project, :test_plan_id=>@test_plan.id %>",
-		    data : function (n) { 
+	    json_data: { 
+		ajax: {
+		    url: IMPASSE.url.executionsList,
+		    data: function (n) { 
 			return { 
 			    prefix: "plan",
-			    id : n.attr ? n.attr("id").replace("plan_","") : -1
+			    id: n.attr ? n.attr("id").replace("plan_","") : -1
 			}; 
 		    },
 		    progressive_render: true
 		}
 	    },
-	    types : {
-		max_depth : -2,
-		max_children : -2,
-		valid_children : [ "test_project" ],
-		types : {
-		    test_case : {
-			valid_children : "none",
-			icon : {
-			    image : "<%=image_path "../stylesheets/images/document-attribute-t.png", :plugin=>'redmine_impasse' %>"
-			}
+	    types: {
+		max_depth: -2,
+		max_children: -2,
+		valid_children: [ "test_project" ],
+		types: {
+		    test_case: {
+			valid_children: "none",
+			icon: { image: IMPASSE.url.iconTestCase }
 		    },
-		    test_suite : {
-			valid_children : [ "test_suite", "test_case" ],
-			icon : {
-			    image : "<%=image_path "../stylesheets/images/documents-stack.png", :plugin=>'redmine_impasse' %>"
-			}
+		    test_suite: {
+			valid_children: [ "test_suite", "test_case" ],
+			icon: { image: IMPASSE.url.iconTestSuite }
 		    },
-		    test_project : {
-			valid_children : [ "test_suite", "test_case" ],
-			icon : {
-			    image : "<%=image_path "../stylesheets/images/book-brown.png", :plugin=>'redmine_impasse' %>"
-			},
-			start_drag : false,
-			move_node : false,
-			delete_node : false,
-			remove : false
+		    test_project: {
+			valid_children: [ "test_suite", "test_case" ],
+			icon: { image: IMPASSE.url.iconProject },
+			start_drag: false,
+			move_node: false,
+			delete_node: false,
+			remove: false
 		    }
 		}
 	    },
 	    crrm: {
 		move: {
-		    check_move : function (m) { 
+		    check_move: function (m) { 
 			var p = this._get_parent(m.o);
 			if(!p) return false;
 			p = p == -1 ? this.get_container() : p;
@@ -110,7 +101,7 @@ jQuery(document).ready(function ($) {
 		    var draggable = $(data.o).hasClass("jstree-draggable") ? $(data.o) : $(data.o).parents(".jstree-draggable");
 		    var request = {
 			format: "json",
-			"test_plan_case[test_plan_id]": '<%= @test_plan.id %>',
+			"test_plan_case[test_plan_id]": test_plan_id,
 			"test_plan_case[test_case_id]": data.r.attr("id").replace("plan_", "")
 		    };
 		    if (draggable.hasClass("test-day")) {
@@ -123,7 +114,7 @@ jQuery(document).ready(function ($) {
 
 		    $.ajax({
 			type: 'POST',
-			url: '<%= url_for :controller=>:executions, :action=>:put, :project_id=>@project %>',
+			url: IMPASSE.url.executionsPut,
 			data: request,
 			success: function(r) {
 			    $this.refresh($this._get_parent(data.r));
