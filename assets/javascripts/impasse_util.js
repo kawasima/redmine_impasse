@@ -1,10 +1,10 @@
 function impasse_loading_options() {
     return {
-	message: '<span><%=l(:label_loading)%></span>',
+	message: '<span>loading...</span>',
 	css: {
 	    backgroundPosition: "0% 40%",
 	    backgroundRepeat: "no-repeat",
-	    backgroundImage: "url(<%=image_path('../images/loading.gif')%>)",
+	    backgroundImage: "url(../images/loading.gif)",
 	    paddingLeft: "26px",
 	    backgroundColor: "#EEE",
 	    border: "1px solid #BBB",
@@ -20,9 +20,9 @@ function impasse_loading_options() {
     };
 }
 function ajax_error_handler(xhr, status ,ex) {
-    var message = "<%=l(:error_unable_to_connect) %>".replace('%{value}', ex);
+    var message = "Can't connect. reasons %{value}".replace('%{value}', ex);
     if(xhr.status == 401) {
-	message = "<%=l :error_can_not_manage_test_cases %>";
+	message = "Unauthorized!";
     }
     show_notification_dialog('error', message);
 }
@@ -61,5 +61,3 @@ function show_notification_dialog(type, message) {
     dialog.dialog('open');
     setTimeout(function() {dialog.dialog('close'); }, 2500);
 }
-
-jQuery.jstree._themes = '<%=Engines::RailsExtensions::AssetHelpers.plugin_asset_path 'redmine_impasse', 'stylesheets', 'themes'%>/';
