@@ -34,6 +34,7 @@ en:
 
   field_details: "Details"
   field_preconditions: "Preconditions"
+  field_importance: "Importance"
   field_test_steps: "Steps"
   field_test_step_actions: "Actions"
   field_test_step_expected_results: "Expected Results"

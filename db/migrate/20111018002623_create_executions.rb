@@ -7,7 +7,6 @@ class CreateExecutions < ActiveRecord::Migration
       t.column :expected_date, :date
       t.column :status, :string, :length => 1, :default=>'0'
       t.column :execution_ts, :datetime
-      t.column :execution_type, :string, :length => 1
       t.column :notes, :text
     end
 

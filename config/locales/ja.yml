@@ -35,6 +35,7 @@ ja:
 
   field_details: "詳細"
   field_preconditions: "前提条件"
+  field_importance: "重要度"
   field_test_steps: "ステップ"
   field_test_step_actions: "操作"
   field_test_step_expected_results: "期待する結果"

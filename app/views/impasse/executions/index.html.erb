@@ -1,6 +1,7 @@
 <% content_for :header_tags do %>
   <%= stylesheet_link_tag 'default/style.css', :plugin => 'redmine_impasse' %>
   <%= stylesheet_link_tag 'jquery-ui', :plugin => 'redmine_impasse' %>
+  <%= heads_for_wiki_formatter %>
   <%= javascript_include_tag('jquery', 'jquery-ui',
 			     'jquery.hotkeys.js',
 			     'jquery.jstree.js',
