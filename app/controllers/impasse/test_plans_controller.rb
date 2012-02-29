@@ -105,8 +105,7 @@ module Impasse
               TestPlanCase.find_or_create_by_test_case_id_and_test_plan_id(
                 :test_case_id => test_case_id,
                 :test_plan_id => params[:test_plan_id],
-                :node_order => 0,
-                :urgency => 2)
+                :node_order => 0)
             new_cases += 1
           end
         end

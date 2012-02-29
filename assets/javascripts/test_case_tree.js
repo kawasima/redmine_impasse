@@ -123,7 +123,7 @@ jQuery(document).ready(function ($) {
 			tc[$(this).attr("name")] = $(this).val();
 			
 		    });
-		    if(edit_type == 'edit')
+		    if (edit_type == 'edit')
 			tc["node[id]"] = node.attr("id").replace("node_","");
 		    tc["node_type"] = node_type;
 		    tc["node[parent_id]"] = $(data.rslt.parent).attr("id").replace("node_", "");
@@ -132,16 +132,20 @@ jQuery(document).ready(function ($) {
 			type: 'POST',
 			url:AJAX_URL[edit_type],
 			data: tc,
-			success: function (r) {
-			    if(r && r.length > 0) {
+			success: function(r, status, xhr) {
+			    if (!r || r.length == 0) {
+				ajax_error_handler(xhr, status, "data not found.");
+				
+			    }
+			    $.each(r, function(i, n) {
 				dialog[node_type].unbind("dialogbeforeclose");
-				node.attr("id", "node_" + r.id);
+				node.attr("id", "node_" + n.id);
 				node.data("jstree", (node_type=='test_case')?LEAF_MENU:FOLDER_MENU);
 				$.jstree._reference(node).set_text(node, tc["node[name]"]);
 				show_notification_dialog(
 				    'success',
 				    edit_type=='edit' ? IMPASSE.label.noticeSuccessfulUpdate : IMPASSE.label.noticeSuccessfulCreate);
-			    }
+			    });
 			},
 			error: ajax_error_handler,
 			complete: function() { dialog[node_type].dialog('close'); }

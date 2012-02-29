@@ -61,3 +61,12 @@ function show_notification_dialog(type, message) {
     dialog.dialog('open');
     setTimeout(function() {dialog.dialog('close'); }, 2500);
 }
+
+jQuery.ajaxSetup({
+    beforeSend: function(req) {
+	var csrf_meta_tag = jQuery("meta[name=csrf-token]");
+	if (csrf_meta_tag.size() > 0) {
+	    req.setRequestHeader("X-CSRF-Token", csrf_meta_tag.attr("content"));
+	}
+    }
+});

@@ -3,14 +3,14 @@
   <style>
     .ui-state-highlight { height: 1.5em; line-height: 1.2em; }
   </style>
-  <%= heads_for_wiki_formatter %>
+  <% heads_for_wiki_formatter %>
   <%= javascript_include_tag(
       'jquery', 'jquery-ui', 'jquery.cookie.js',
       'jquery.hotkeys.js', 'jquery.jstree.js',
       'impasse_util', 'test_case_tree',
       :plugin => 'redmine_impasse') %>
   <script type="text/javascript">
-    jQuery.jstree._themes = "<%= image_path '../stylesheets/', :plugin => 'redmine_impasse' %>";
+    jQuery.jstree._themes = "<%= image_path '../stylesheets/themes/', :plugin => 'redmine_impasse' %>";
     var IMPASSE = {
       url: {
         testCaseNew:  "<%=url_for :controller=>:test_case, :action=>:new, :project_id=>@project%>",

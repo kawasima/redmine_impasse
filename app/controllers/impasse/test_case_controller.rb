@@ -39,7 +39,7 @@ module Impasse
         @test_case.save!
 
         respond_to do |format|
-          format.json { render :json => @test_case }
+          format.json { render :json => [@test_case] }
         end
       else
         render :partial => 'new'
