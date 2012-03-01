@@ -45,7 +45,7 @@ module Impasse
     flash[:notice] = l(:notice_successful_create)
 
     respond_to do |format|
-      format.json  { render :json => {status => true} }
+      format.json  { render :json => { :status => true } }
     end
   end
 

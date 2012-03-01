@@ -1,7 +1,6 @@
 <% content_for :header_tags do %>
-  <%= stylesheet_link_tag 'default/style.css', :plugin => 'redmine_impasse' %>
   <%= stylesheet_link_tag 'jquery-ui', :plugin => 'redmine_impasse' %>
-  <%= heads_for_wiki_formatter %>
+  <% heads_for_wiki_formatter %>
   <%= javascript_include_tag('jquery', 'jquery-ui',
 			     'jquery.hotkeys.js',
 			     'jquery.jstree.js',
@@ -11,15 +10,15 @@
 
   <%= include_calendar_headers_tags %>
   <script>
-    jQuery.jstree._themes = "<%= image_path '../stylesheets/', :plugin => 'redmine_impasse' %>";
-    var test_case_id = "<%= @test_plan.id %>";
+    jQuery.jstree._themes = '<%=Engines::RailsExtensions::AssetHelpers.plugin_asset_path 'redmine_impasse', 'stylesheets', 'themes'%>/';
+    var test_plan_id = "<%= @test_plan.id %>";
     var IMPASSE = {
       url: {
         executionsEdit: "<%= url_for :controller=>:executions, :action=>:edit, :project_id=>@project%>",
         executionsList: "<%= url_for :controller=>:executions, :action=>:get_list, :project_id=>@project, :test_plan_id=>@test_plan.id %>",
         executionsPut:  "<%=url_for :controller=>:executions, :action=>:put, :project_id=>@project %>",
         executionBugsNew: "<%=url_for :controller=>:execution_bugs, :action=>:new, :project_id=>@project %>",
-        executionButsCreate: "<%=url_for :controller=>:execution_bugs, :action=>:create %>",
+        executionBugsCreate: "<%=url_for :controller=>:execution_bugs, :action=>:create %>",
         iconTestSuite: "<%=image_path('../stylesheets/images/documents-stack.png', :plugin=>'redmine_impasse')%>",
         iconTestCase:  "<%=image_path('../stylesheets/images/document-attribute-t.png', :plugin=>'redmine_impasse')%>",
         iconProject:   "<%=image_path "../stylesheets/images/book-brown.png", :plugin=>'redmine_impasse' %>",

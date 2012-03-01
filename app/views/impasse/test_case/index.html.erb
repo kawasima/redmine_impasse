@@ -10,7 +10,7 @@
       'impasse_util', 'test_case_tree',
       :plugin => 'redmine_impasse') %>
   <script type="text/javascript">
-    jQuery.jstree._themes = "<%= image_path '../stylesheets/themes/', :plugin => 'redmine_impasse' %>";
+    jQuery.jstree._themes = '<%=Engines::RailsExtensions::AssetHelpers.plugin_asset_path 'redmine_impasse', 'stylesheets', 'themes'%>/';
     var IMPASSE = {
       url: {
         testCaseNew:  "<%=url_for :controller=>:test_case, :action=>:new, :project_id=>@project%>",
