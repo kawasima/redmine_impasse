@@ -5,6 +5,7 @@ module Impasse
 
     belongs_to :test_plan
     belongs_to :test_case
+    has_many   :executions
 
     def self.delete_cascade!(test_plan_id, test_case_id)
       node = Node.find(test_case_id)
