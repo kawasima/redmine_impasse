@@ -170,11 +170,16 @@ jQuery(document).ready(function ($) {
 	    json_data: { 
 		ajax: {
 		    url: IMPASSE.url.testCaseList,
-		    data: function (n) { 
-			return { 
+		    data: function (n) {
+			var data = {
 			    prefix: "node", 
 			    node_id: n.attr ? n.attr("id").replace("node_","") : -1
-			}; 
+			};
+			$("#filters :input[name]").each(function() {
+			    var el = $(this);
+			    data[el.attr("name")] = el.val();
+			});
+			return data;
 		    }
 		}
 	    },
@@ -250,12 +255,12 @@ jQuery(document).ready(function ($) {
 	    var request = { format: "json" };
 	    data.rslt.o.each(function (i, node) {
 		request["nodes["+i+"][id]"]         = $(node).attr("id").replace("node_","");
-		request["nodes["+i+"][parent_id]"]  = data.rslt.cr === -1 ? 1 : data.rslt.np.attr("id").replace("node_",""), 
-		request["nodes["+i+"][node_order]"] = data.rslt.cp + i
+		request["nodes["+i+"][parent_id]"]  = data.rslt.cr === -1 ? 1 : data.rslt.np.attr("id").replace("node_","");
+		request["nodes["+i+"][node_order]"] = data.rslt.cp + i;
 	    });
 	    if (data.rslt.cy) {
 		data.rslt.oc.each(function(i, node) {
-		    request["nodes["+i+"][original_id]"] = $(node).attr("id").replace("copy_node_","")
+		    request["nodes["+i+"][original_id]"] = $(node).attr("id").replace("copy_node_","");
 		});
 	    }
 	    var dest = $(data.rslt.oc);

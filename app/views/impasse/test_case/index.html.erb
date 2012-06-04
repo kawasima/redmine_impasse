@@ -44,6 +44,24 @@
 
 <h2><%= l(:label_impasse)%></h2>
 
+    <fieldset id="filters" class="collapsible collapsed">
+      <legend onclick="toggleFieldset(this);"><%= l(:label_filter_plural) %></legend>
+      <div style="display:none;">
+	<table>
+	  <tr class="filter">
+	    <td>
+	      <%= label_tag "filters_query", "Text" %>
+	      <%= text_field_tag "filters[query]", "", :id => "filters_query" %>
+	    </td>
+	  </tr>
+	</table>
+      </div>
+    </fieldset>
+    <p class="buttons hide-when-print">
+      <%=link_to_function l(:button_apply),
+	 'jQuery("#testcase-tree").jstree("refresh", jQuery("#testcase-tree li[rel=test_project]"));',
+	 :class => 'icon icon-checked'%>
+    </p>
 <div id="testcase-tree">
 </div>
 

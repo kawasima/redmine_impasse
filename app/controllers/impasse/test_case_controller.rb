@@ -14,11 +14,11 @@ module Impasse
     def list
       if params[:node_id].to_i == -1
         root = Node.find_by_name_and_node_type_id(@project.identifier, 1)
-        @nodes = Node.find_children(root.id, params[:test_plan_id])
+        @nodes = Node.find_children(root.id, params[:test_plan_id], params[:filters])
         root.name = get_root_name(params[:test_plan_id]);
         @nodes.unshift(root)
       else
-        @nodes = Node.find_children(params[:node_id], params[:test_plan_id])
+        @nodes = Node.find_children(params[:node_id], params[:test_plan_id], params[:filters])
       end
       jstree_nodes = convert(@nodes, params[:prefix])
 
@@ -29,6 +29,7 @@ module Impasse
 
     def new
       new_node
+      @keywords = Keyword.find_all_by_project_id(@project)
 
       if request.post? and @node.save
         @test_case.id = @node.id
@@ -77,10 +78,15 @@ module Impasse
     def edit
       @node, @test_case = get_node(params[:node])
       @test_case.attributes = params[:test_case]
+      @keywords = Keyword.find_all_by_project_id(@project)
 
       if request.post?
         save_node(@node)
         @test_case.save!
+
+        node_keywords = params[:node_keywords].collect{|keyword| NodeKeyword.new(keyword.merge(:node_id => @node.id))}
+        @node.node_keywords.replace(node_keywords)
+
         if @node.is_test_case? and params.include? :test_steps
           test_steps = params[:test_steps].collect{|i, ts| TestStep.new(ts) }
           @test_case.test_steps.replace(test_steps)

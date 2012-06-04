@@ -5,6 +5,8 @@ module Impasse
 
     belongs_to :parent, :class_name=>'Node', :foreign_key=> :parent_id
     has_many   :children, :class_name=> 'Node', :foreign_key=> :parent_id
+    has_many   :node_keywords
+    has_many   :keywords, :through => :node_keywords
 
     def is_test_case?
       self.node_type_id == 3
@@ -14,7 +16,7 @@ module Impasse
       self.node_type_id == 2
     end
 
-    def self.find_children(node_id, test_plan_id=nil)
+    def self.find_children(node_id, test_plan_id=nil, filters=nil)
       sql = <<-'END_OF_SQL'
       SELECT distinct parent.*
         FROM impasse_nodes AS parent
@@ -33,6 +35,9 @@ module Impasse
       <% if conditions.include? :path %>
         AND parent.path LIKE :path
       <% end %>
+      <% if conditions.include? :filters_query %>
+        AND (parent.name like :filters_query OR parent.node_type_id != 3)
+      <% end %>
       ORDER BY LENGTH(parent.path) - LENGTH(REPLACE(parent.path,'.','')), node_order
       END_OF_SQL
 
@@ -47,6 +52,10 @@ module Impasse
         conditions[:path] = "#{node.path}_%"
       end
     
+      unless filters.nil? or filters[:query].nil?
+        conditions[:filters_query] = "%#{filters[:query]}%"
+      end
+
       find_by_sql([ERB.new(sql).result(binding), conditions])
     end
 

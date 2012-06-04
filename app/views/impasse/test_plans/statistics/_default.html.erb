@@ -1,19 +1,49 @@
 <div class="tab-content">
   <table class="list">
     <tr>
+      <th style="width:20%;">Name</th>
       <th style="width:20%;"><%=l(:label_impasse_stat_total_cases)%></th>
       <th style="width:20%;"><%=l(:label_impasse_stat_total_executions)%></th>
       <th style="width:20%;"><%=l(:label_impasse_stat_total_bugs)%></th>
       <th style="width:20%;"><%=l(:label_impasse_stat_executions_rate)%></th>
       <th style="width:20%;"><%=l(:label_impasse_stat_bugs_rate)%></th>
     </tr>
-    <tr class="entry">
-      <td class="size"><%=h @statistics.total_cases %></td>
-      <td class="size"><%=h @statistics.total_executions %></td>
-      <td class="size"><%=h @statistics.total_bugs %></td>
-      <td class="size"><%=number_to_percentage (@statistics.total_cases == 0) ? 0 : (@statistics.total_executions.to_f / @statistics.total_cases.to_f) * 100, :precision=>2 %></td>
-      <td class="size"><%=number_to_percentage (@statistics.total_cases == 0) ? 0 : (@statistics.total_bugs.to_f / @statistics.total_cases.to_f) * 100, :precision=>2%></td>
-    </tr>
+    <% @statistics.each do |st| %>
+      <tr class="entry">
+	<td class="collapsible" data-suite-id="<%=h st.id%>" style="padding-left: 16px; background: url(../images/arrow_expanded.png) no-repeat 0% 40%; cursor: pointer;"><%=h st.name %></td>
+	<td class="size"><%=h st.total_cases %></td>
+	<td class="size"><%=h st.total_executions %></td>
+	<td class="size"><%=h st.total_bugs %></td>
+	<td class="size"><%=number_to_percentage (st.total_cases == 0) ? 0 : (st.total_executions.to_f / st.total_cases.to_f) * 100, :precision=>2 %></td>
+	<td class="size"><%=number_to_percentage (st.total_cases == 0) ? 0 : (st.total_bugs.to_f / st.total_cases.to_f) * 100, :precision=>2%></td>
+      </tr>
+    <% end %>
   </table>
 </div>
+<script>
+(function($) {
+  $(".collapsible").live("click", function() {
+    var self = $(this);
+    $.ajax({
+      url: '',
+      data: {
+        format: 'json',
+        test_suite_id: self.attr("data-suite-id")
+      },
+      success: function(results) {
+        $.each(results, function(i, st) {
+          var row = $("<tr/>").addClass("entry");
+          row.append($("<td/>").addClass("collapsible").attr("data-suite-id", st.id).text(st.name))
+             .append($("<td/>").addClass("size").text(st.total_cases))
+             .append($("<td/>").addClass("size").text(st.total_executions))
+             .append($("<td/>").addClass("size").text(st.total_bugs))
+             .append($("<td/>").addClass("size"))
+             .append($("<td/>").addClass("size"));
+          self.parents("tr").after(row);
+        });
+      }   
+    });
+  });
+})(jQuery)
+</script>
 

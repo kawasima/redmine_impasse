@@ -51,10 +51,10 @@ module Impasse
       @test_plan = TestPlan.find(params[:id])
       params[:tab] = 'statistics'
       if params.include? :type
-        @statistics = Statistics.__send__("summary_#{params[:type]}", @test_plan.id)
+        @statistics = Statistics.__send__("summary_#{params[:type]}", @test_plan.id, params[:test_suite_id])
       else
         params[:type] = "default"
-        @statistics = Statistics.summary_default(@test_plan.id)
+        @statistics = Statistics.summary_default(@test_plan.id, params[:test_suite_id])
       end
 
       respond_to do |format|
@@ -63,28 +63,7 @@ module Impasse
         else
           format.html
         end
-        format.json {
-          res = [[], []]
-          remain = 0
-          bug = 0
-          start_date = Date.today
-          @statistics.each{|st|
-            start_date = st.execution_date.to_date if !st.execution_date.nil? and st.execution_date.to_date < start_date
-            remain += st.total.to_i
-          }
-          end_date = @test_plan.version.effective_date
-          (start_date-1..end_date).each{|d|
-            st = @statistics.find{|st| !st.execution_date.nil? and st.execution_date.to_date == d}
-            unless st.nil?
-              bug += st.ng.to_i
-              remain -= st.total.to_i
-            end
-            res[0] << [ d.to_date, remain ]
-            res[1] << [ d.to_date, bug]
-          }
-
-          render :json => res
-        }
+        format.json { render :json => @statistics }
       end
     end
 
