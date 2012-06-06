@@ -1,15 +1,6 @@
 jQuery.noConflict();
 
 jQuery(document).ready(function ($) {
-    var PLAN_CASE_MENU = {
-	contextmenu: {
-	    remove: {
-		label: IMPASSE.url.buttonDelete,
-		action: function(node) { this.remove(node); }
-	    }
-	}
-    };
-
     var bind_node_event = function(e, data) {
 	$("#testplan-tree").unblock();
 	$(this).find("li[rel=test_case]").click(function(e) {
@@ -40,7 +31,7 @@ jQuery(document).ready(function ($) {
 	.bind("refresh.jstree", bind_node_event)
 	.jstree({ 
 	    "plugins" : [
-		"themes","json_data","ui","crrm","search","types","hotkeys", "contextmenu"
+		"themes","json_data","ui","crrm","search","types","hotkeys"
 	    ],
 	    json_data : { 
 		ajax : {
