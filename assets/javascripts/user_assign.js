@@ -144,7 +144,17 @@ jQuery(document).ready(function ($) {
 		}
 	    }
 	});
-    var cal = $("#calendar-view").datepicker();
-    $(".ui-datepicker-calendar td:not(.ui-datepicker-other-month)", cal)
-	.addClass("jstree-draggable").addClass("test-day");
+
+    var orig_updateDatepicker = jQuery.datepicker._updateDatepicker;
+    jQuery.datepicker._updateDatepicker = function(inst) {
+	orig_updateDatepicker.apply(this, [inst]);
+	$(".ui-datepicker-calendar td:not(.ui-datepicker-other-month)", inst.dpDiv)
+	    .addClass("jstree-draggable").addClass("test-day");
+    };
+
+    $("#calendar-view").datepicker({
+	onChangeMonthYear: function(year, month, inst) {
+	    $(this).datepicker("setDate", new Date(year, month-1, 1));
+	}
+    });
 });
