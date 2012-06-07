@@ -8,7 +8,7 @@ module Impasse
     before_filter :find_project, :authorize
 
     def index
-      @nodes = Node.find(:all, :conditions => ["name=? and node_type_id=?", @project.name, 1])
+      @nodes = Node.find(:all, :conditions => ["name=? and node_type_id=?", @project.identifier, 1])
     end
 
     def list
@@ -167,9 +167,9 @@ module Impasse
     def find_project
       begin
         @project = Project.find(params[:project_id])
-        @project_node = Node.find(:first, :conditions=>["name=? and node_type_id=?", @project.name, 1])
+        @project_node = Node.find(:first, :conditions=>["name=? and node_type_id=?", @project.identifier, 1])
         if @project_node.nil?
-          @project_node = Node.new(:name=>@project.name, :node_type_id=>1, :node_order=>1)
+          @project_node = Node.new(:name=>@project.identifier, :node_type_id=>1, :node_order=>1)
           @project_node.save
         end
       rescue ActiveRecord::RecordNotFound
