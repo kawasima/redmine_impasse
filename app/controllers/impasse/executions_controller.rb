@@ -19,6 +19,9 @@ module Impasse
     def put
       @node = Node.find(params[:test_plan_case][:test_case_id])
       test_case_ids = (@node.is_test_case?) ? [ @node.id ] : @node.all_decendant_cases.collect{|tc| tc.id}
+      if params[:execution] and params[:execution][:expected_date]
+        params[:execution][:expected_date] = Time.at(params[:execution][:expected_date].to_i)
+      end
 
       status = true
       for test_case_id in test_case_ids
@@ -31,6 +34,26 @@ module Impasse
         status &= @execution.save
       end
     
+      respond_to do |format|
+        format.json { render :json => { :status => status } }
+      end
+    end
+
+    def destroy
+      node = Node.find(params[:test_plan_case][:test_case_id])
+      test_case_ids = (node.is_test_case?) ? [ node.id ] : node.all_decendant_cases.collect{|tc| tc.id}
+
+      status = true
+      p test_case_ids
+      for test_case_id in test_case_ids
+        test_plan_case = TestPlanCase.find(:first, :conditions=>[
+           "test_plan_id=? AND test_case_id=?", params[:test_plan_case][:test_plan_id], test_case_id])
+        next if test_plan_case.nil?
+        execution = Execution.find_by_test_plan_case_id(test_plan_case.id)
+        execution.tester_id = execution.expected_date = nil
+        satus &= execution.save
+      end
+
       respond_to do |format|
         format.json { render :json => { :status => status } }
       end

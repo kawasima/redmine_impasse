@@ -1,12 +1,30 @@
 jQuery.noConflict();
 
 jQuery(document).ready(function ($) {
-    var PLAN_CASE_MENU = {
+    var USER_ASSIGN_MENU = {
 	contextmenu: {
 	    remove: {
 		label: IMPASSE.label.buttonDelete,
 		icon:  IMPASSE.url.iconDelete,
-		action: function(node) { this.remove(node); }
+		action: function(node) {
+		    var $this = this;
+                    $.ajax({
+                        type: 'POST',
+                        url: IMPASSE.url.executionsDelete,
+                        data: {
+			    format: "json",
+			    "test_plan_case[test_plan_id]": test_plan_id,
+			    "test_plan_case[test_case_id]": node.attr("id").replace("plan_", "")
+			},
+                        success: function(r) {
+                            $this.refresh($this._get_parent(node));
+                        },
+                        error: function(xhr, status, ex) {
+                            ajax_error_handler(xhr, status, ex);
+                        }
+                    });
+		    
+		}
 	    }
 	}
     };
@@ -14,9 +32,9 @@ jQuery(document).ready(function ($) {
     $("#testplan-tree")
 	.bind("before.jstree", function (e, data) {
 	})
-	.bind("loaded.jstree", function (e, data) {
-	    $(this).find("li[rel=test_case]").data("jstree", PLAN_CASE_MENU);
-	    $(this).find("li[rel!=test_case]").data("jstree", {contextmenu:{}});
+	.bind("loaded.jstree refresh.jstree", function (e, data) {
+	    $(this).find("li[rel=test_case]").data("jstree", USER_ASSIGN_MENU);
+	    $(this).find("li[rel!=test_case]").data("jstree", USER_ASSIGN_MENU);
 	})
 	.bind("remove.jstree", function (e, data) {
 	    data.rslt.obj.each(function () {
@@ -34,7 +52,7 @@ jQuery(document).ready(function ($) {
 			}
 		    },
 		    error: function(xhr, status, ex) {
-			ajax_error_handle(xhr, status, ex);
+			ajax_error_handler(xhr, status, ex);
 			$.jstree.rollback(data.rlbk);
 		    }
 		});
@@ -107,7 +125,7 @@ jQuery(document).ready(function ($) {
 		    if (draggable.hasClass("test-day")) {
 			var date = $("#calendar-view").datepicker("getDate");
 			date.setDate($(data.o).text());
-			request["execution[expected_date]"] = date.toUTCString();
+			request["execution[expected_date]"] = date.getTime() / 1000;
 		    } else if (draggable.hasClass("test-member")) {
 			request["execution[tester_id]"] = data.o.id.replace("principal-", "");
 		    }
@@ -120,7 +138,7 @@ jQuery(document).ready(function ($) {
 			    $this.refresh($this._get_parent(data.r));
 			},
 			error: function(xhr, status, ex) {
-			    ajax_error_handle(xhr, status, ex);
+			    ajax_error_handler(xhr, status, ex);
 			}
 		    });
 		}
