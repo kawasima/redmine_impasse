@@ -2,6 +2,7 @@
   <%= stylesheet_link_tag 'jquery-ui', :plugin => 'redmine_impasse' %>
   <style>
     .ui-state-highlight { height: 1.5em; line-height: 1.2em; }
+    li[rel="test_case"][data-inactive="true"] a { color: #999; text-decoration: line-through; }
   </style>
   <% heads_for_wiki_formatter %>
   <%= javascript_include_tag(
@@ -19,6 +20,7 @@
         testCaseDestroy: "<%= url_for :controller=>:test_case, :action=>:destroy, :project_id=>@project %>",
         testCaseCopy: "<%= url_for :controller=>:test_case, :action=>:copy, :project_id=>@project %>",
         testCaseMove: "<%= url_for :controller=>:test_case, :action=>:move, :project_id=>@project %>",
+        testKeywords: "<%= url_for :controller=>:test_case, :action=>:keywords, :project_id=>@project %>",
         iconEdit: "<%=image_path 'edit.png'%>",
         iconCopy: "<%=image_path 'copy.png'%>",
         iconDelete: "<%=image_path 'delete.png'%>",
@@ -49,10 +51,8 @@
       <div style="display:none;">
 	<table>
 	  <tr class="filter">
-	    <td>
-	      <%= label_tag "filters_query", "Text" %>
-	      <%= text_field_tag "filters[query]", "", :id => "filters_query" %>
-	    </td>
+	    <td><%= label_tag "filters_query", "Text" %></td>
+	    <td><%= text_field_tag "filters[query]", "", :id => "filters_query" %></td>
 	  </tr>
 	</table>
       </div>
@@ -61,6 +61,9 @@
       <%=link_to_function l(:button_apply),
 	 'jQuery("#testcase-tree").jstree("refresh", jQuery("#testcase-tree li[rel=test_project]"));',
 	 :class => 'icon icon-checked'%>
+      <%=link_to_function l(:button_clear),
+	 'jQuery("#filters_query").val("");jQuery("#testcase-tree").jstree("refresh", jQuery("#testcase-tree li[rel=test_project]"));',
+	 :class => 'icon icon-reload'%>
     </p>
 <div id="testcase-tree">
 </div>

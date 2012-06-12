@@ -1,30 +1,34 @@
 jQuery.noConflict();
 
 jQuery(document).ready(function ($) {
-    var bind_node_event = function(e, data) {
+    function show_test_case (node_id) {
+	$.ajax({
+	    url: IMPASSE.url.executionsEdit,
+	    data: {
+		"test_plan_case[test_plan_id]": test_plan_id,
+		"test_plan_case[test_case_id]": node_id
+	    },
+	    success: function(html) {
+		$("#executions-view").empty().append($(html))
+		$("span.label", $("#executions-view"))
+		    .css({cursor:'pointer'})
+		    .click(function(e) {
+			$(this).prev().attr("checked", "checked");
+		    });
+	    },
+	    error: ajax_error_handler,
+	    complete: function() { $("#executions-view").unblock(); }
+	});
+    }
+
+    function bind_node_event (e, data) {
 	$("#testplan-tree").unblock();
 	$(this).find("li[rel=test_case]").click(function(e) {
 	    var $node = $(this);
 	    $("#executions-view").block(impasse_loading_options());
-	    $.ajax({
-		url: IMPASSE.url.executionsEdit,
-		data: {
-		    "test_plan_case[test_plan_id]": test_plan_id,
-		    "test_plan_case[test_case_id]": $node.attr("id").replace("exec_", "")
-		},
-		success: function(html) {
-		    $("#executions-view").empty().append($(html))
-		    $("span.label", $("#executions-view"))
-			.css({cursor:'pointer'})
-			.click(function(e) {
-			    $(this).prev().attr("checked", "checked");
-			});
-		},
-		error: ajax_error_handler,
-		complete: function() { $("#executions-view").unblock(); }
-	    });
+	    show_test_case($(this).attr("id").replace("exec_", ""));
 	});
-    };
+    }
 
     var $tree = $("#testplan-tree")
 	.bind("loaded.jstree", bind_node_event)
@@ -83,12 +87,13 @@ jQuery(document).ready(function ($) {
     });
     $("#executions-view form").live("submit", function(e) {
 	var $this = $(this);
-	var post_save_function = function() {};
+	var post_save_function = function() { $.unblockUI() };
 	var execution_status = $this.find(":radio[name='execution[status]']:checked").val();
 	if(execution_status == "2") { // NG
 	    post_save_function = function() {
 		$.get(IMPASSE.url.executionBugsNew, {},
 			function(data) {
+			    $.unblockUI();
 			    $("#issue-dialog").empty().append(data).dialog({
 				modal:true,
 				minWidth: 800,
@@ -115,8 +120,10 @@ jQuery(document).ready(function ($) {
 		$("#executions-view").prepend(
 		    $("<div/>").addClass("flash").addClass("error")
 			.text("Save failure."));
+		$.unblockUI();
 	    }
 	});
+	$.blockUI({ message: "<h1>Saving...</h1>"});
 	return false;
     });
 
@@ -129,11 +136,31 @@ jQuery(document).ready(function ($) {
 		+ "&execution_bug[execution_id]="+ $("#executions-view :hidden#execution_id").val()
 		+"&format=json",
 	    success: function(data) {
-	    },
-	    complete: function() {
+		if (data.errors) {
+		    if ($("#issue-dialog .errorExplanation").size() == 0)
+			$("#issue-dialog").prepend($("<div/>").addClass("errorExplanation").attr("id", "errorExplanation"));
+		    var list = $("<ul/>");
+		    $.each(data.errors, function(i, msg) {
+			list.append($("<li/>").text(msg));
+		    });
+		    $("#issue-dialog #errorExplanation").html(list);
+		    return;
+		}
+		var bugs = $("#execution-bugs-list").text();
+		bugs += (bugs == "" ? "#" : ",#") + data['issue_id'];
+		$("#execution-bugs-list").html(bugs)
+		    .parents("p:first").show();
 		$("#issue-dialog").dialog("close");
-	    }
+	    },
+	    complete: function() { $("#issue-dialog").unblock() }
 	});
+	$("#issue-dialog").block({message:"<h1>Saving...</h1>"})
 	return false;
-    })
+    });
+
+    $("#executions-view").floatmenu();
+    if (location.hash && location.hash.lastIndexOf("#testcase-", 0) == 0) {
+	var testcase_id = location.hash.replace(/^#testcase-/, "");
+	show_test_case(testcase_id);
+    }
 });

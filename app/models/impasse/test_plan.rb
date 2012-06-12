@@ -7,6 +7,9 @@ module Impasse
     has_many :test_cases, :through => :test_plan_cases
     belongs_to :version
 
+    validates_presence_of :name
+    validates_length_of :name, :maximum => 100
+
     def self.find_all_by_version(project)
       versions = project.shared_versions || []
       versions = versions.uniq.sort

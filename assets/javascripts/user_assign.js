@@ -157,4 +157,7 @@ jQuery(document).ready(function ($) {
 	    $(this).datepicker("setDate", new Date(year, month-1, 1));
 	}
     });
+
+    $("#cal-user-view").floatmenu();
 });
+

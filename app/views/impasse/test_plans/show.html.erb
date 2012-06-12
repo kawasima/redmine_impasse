@@ -21,7 +21,7 @@
 <div style="clear: both;"/>
 
 <div class="contextual">
-  <%=link_to l(:button_edit), {:controller=>:test_plans, :action=>:edit, :project_id => @project, :id=>@test_plan}, :class=>'icon icon-edit' %>
-  <%=link_to l(:button_delete), {:controller=>:test_plans, :action=>:destroy, :project_id => @project, :id=>@test_plan},
-      :class=>'icon icon-del', :confirm=>l(:text_are_you_sure) %>
+  <%=link_to_if_authorized l(:button_edit), {:controller=>"impasse/test_plans", :action=>:edit, :project_id => @project, :id=>@test_plan}, :class=>'icon icon-edit' %>
+  <%=link_to_if_authorized l(:button_delete), {:controller=>"impasse/test_plans", :action=>:destroy, :project_id => @project, :id=>@test_plan},
+      :class=>'icon icon-del', :confirm=>l(:text_are_you_sure), :method => :post %>
 </div>

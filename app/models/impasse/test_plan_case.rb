@@ -24,7 +24,7 @@ WHERE test_plan_id=#{test_plan_id}
       AND parent.node_type_id=3
   )
       END_OF_SQL
-
+      
       connection.update(sql)
     end
   end

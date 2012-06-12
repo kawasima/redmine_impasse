@@ -8,9 +8,7 @@
   <p><%= form.select :importance, [[l(:default_priority_high),1], [l(:default_priority_normal),2], [l(:default_priority_low),3]] %></p>
   <p>
     <label>keyword</label>
-    <%= select_tag "node_keywords[][keyword_id]",
-	options_from_collection_for_select(@keywords, :id, :keyword, (@node.keywords.nil?) ? [] : @node.keywords.collect{|w| w.id}),
-	{ :multiple => true } %>
+    <input type="text" name="node_keywords" value="<%= @node.keywords.collect{|w| w.keyword}.join(",")%>"/>
   </p>
   <div style="margin:0; padding: 5px 0 8px 0; padding-left: 180px; height: 1%; clear: left;">
     <label><%=l(:field_test_steps)%></label>
@@ -23,8 +21,8 @@
 	<thead>
 	  <tr class="entry">
 	    <th>#</th>
-	    <th><%=l(:field_test_step_actions)%></th>
-	    <th><%=l(:field_test_step_expected_results)%></th>
+	    <th><%=l(:field_actions)%></th>
+	    <th><%=l(:field_expected_results)%></th>
 	    <th></th>
 	  </tr>
 	</thead>
@@ -44,4 +42,8 @@
       </table>
     </div>
   </div>
+  <% unless @test_case.active %>
+  <p><%= form.check_box :active %></p>
+  <% end %>
+
 </div>

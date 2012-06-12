@@ -37,15 +37,18 @@ module Impasse
 
   def create
     call_hook(:controller_issues_new_before_save, { :params => params, :issue => @issue })
-    @issue.save!
+    if @issue.save
+      execution_bug = ExecutionBug.new(:execution_id => params[:execution_bug][:execution_id], :bug_id => @issue.id)
+      execution_bug.save!
 
-    execution_bug = ExecutionBug.new(:execution_id => params[:execution_bug][:execution_id], :bug_id => @issue.id)
-    execution_bug.save!
-
-    flash[:notice] = l(:notice_successful_create)
-
-    respond_to do |format|
-      format.json  { render :json => { :status => true } }
+      flash[:notice] = l(:notice_successful_create)
+      respond_to do |format|
+        format.json  { render :json => { :status => true, :issue_id => @issue.id } }
+      end
+    else
+      respond_to do |format|
+        format.json { render :json => { :errors => @issue.errors.full_messages } }
+      end
     end
   end
 

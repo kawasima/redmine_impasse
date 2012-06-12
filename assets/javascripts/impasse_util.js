@@ -4,7 +4,6 @@ function impasse_loading_options() {
 	css: {
 	    backgroundPosition: "0% 40%",
 	    backgroundRepeat: "no-repeat",
-	    backgroundImage: "url(../images/loading.gif)",
 	    paddingLeft: "26px",
 	    backgroundColor: "#EEE",
 	    border: "1px solid #BBB",
@@ -70,3 +69,23 @@ jQuery.ajaxSetup({
 	}
     }
 });
+
+(function($) {
+    $.fn.floatmenu = function(options) {
+	return this.each(function() {
+	    var $this = $(this);
+	    var menuPosition = $this.offset().top;
+	    $this.css({zIndex: 10});
+
+	    $(window).scroll(function(e) {
+		var offsetTop = $(window).scrollTop() - menuPosition;
+		if(offsetTop > 0) {
+		    $this.css({position: "absolute", top: offsetTop});
+		} else {
+		    $this.css("position", "static");
+		}
+	    });
+	});
+    }
+})(jQuery);
+

@@ -4,7 +4,7 @@ class CreateTestCases < ActiveRecord::Migration
       t.column :summary, :text
       t.column :preconditions, :text
       t.column :importance, :integer
-      t.column :active, :boolean
+      t.column :active, :boolean, :default => true
     end
   end
 

@@ -6,7 +6,7 @@ jQuery(document).ready(function ($) {
 	    remove: {
 		label: IMPASSE.label.buttonDelete,
 		icon:  IMPASSE.url.iconDelete,
-		action: function(node) { this.remove(node); }
+		action: function(node) { this.remove(node) }
 	    }
 	}
     };
@@ -100,11 +100,11 @@ jQuery(document).ready(function ($) {
 		    url: IMPASSE.url.testPlansRemove,
 		    data : {
 			format: "json",
-			test_plan_id: "<%= @test_plan.id %>",
+			test_plan_id: test_plan_id,
 			test_case_id: this.id.replace("plan_","")
 		    }, 
 		    success : function (r) {
-			show_notification_dialog('success', '<%=l(:notice_successful_delete)%>');
+			show_notification_dialog('success', IMPASSE.label.noticeSuccessfulDelete);
 		    },
 		    error: function(xhr, status, ex) {
 			ajax_error_handler(xhr, status, ex);
@@ -174,4 +174,6 @@ jQuery(document).ready(function ($) {
 		select_node: true
 	    }
 	});
+    $("#drop-area").floatmenu();
 });
+

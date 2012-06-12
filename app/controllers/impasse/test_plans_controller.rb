@@ -35,6 +35,14 @@ module Impasse
       @versions = @project.versions
     end
 
+    def destroy
+      @test_plan = TestPlan.find(params[:id])
+      if request.post? and @test_plan.destroy
+        flash[:notice] = l(:notice_successful_delete)
+        redirect_to :action => :index, :project_id => @project
+      end
+    end
+
     def tc_assign
       params[:tab] = 'tc_assign'
       @versions = @project.versions

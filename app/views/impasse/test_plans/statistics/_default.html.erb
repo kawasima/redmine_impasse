@@ -1,29 +1,68 @@
+<style>
+ul, li {
+  margin:  0;
+  padding: 0;
+}
+
+ul.row {
+  font-size: 0px;
+  width: 800px;
+}
+
+ul.row li {
+  font-size: 10px;
+  list-style: none;
+  display: inline-block;
+}
+ul.row li.suite-count {
+  width: 13%;
+  text-align: right;
+}
+ul.row li.suite-name {
+  cursor:pointer;
+  width: 22%;
+}
+ul.container li {
+  list-style: none;
+}
+.bg-level1 { background-color: #ededed; }
+.bg-level2 { background-color: #dfdbd2; }
+.bg-level3 { background-color: #ccccc9; }
+.bg-level4 { background-color: #bdbaa6; }
+.bg-level5 { background-color: #a19d94; }
+</style>
 <div class="tab-content">
-  <table class="list">
-    <tr>
-      <th style="width:20%;">Name</th>
-      <th style="width:20%;"><%=l(:label_impasse_stat_total_cases)%></th>
-      <th style="width:20%;"><%=l(:label_impasse_stat_total_executions)%></th>
-      <th style="width:20%;"><%=l(:label_impasse_stat_total_bugs)%></th>
-      <th style="width:20%;"><%=l(:label_impasse_stat_executions_rate)%></th>
-      <th style="width:20%;"><%=l(:label_impasse_stat_bugs_rate)%></th>
-    </tr>
-    <% @statistics.each do |st| %>
-      <tr class="entry">
-	<td class="collapsible" data-suite-id="<%=h st.id%>" style="padding-left: 16px; background: url(../images/arrow_expanded.png) no-repeat 0% 40%; cursor: pointer;"><%=h st.name %></td>
-	<td class="size"><%=h st.total_cases %></td>
-	<td class="size"><%=h st.total_executions %></td>
-	<td class="size"><%=h st.total_bugs %></td>
-	<td class="size"><%=number_to_percentage (st.total_cases == 0) ? 0 : (st.total_executions.to_f / st.total_cases.to_f) * 100, :precision=>2 %></td>
-	<td class="size"><%=number_to_percentage (st.total_cases == 0) ? 0 : (st.total_bugs.to_f / st.total_cases.to_f) * 100, :precision=>2%></td>
-      </tr>
-    <% end %>
-  </table>
+  <ul class="row" style="background-color: #EEE; font-weight: bold;">
+    <li class="suite-name" ><%=l(:label_test_suite_name)%></li>
+    <li class="suite-count"><%=l(:label_impasse_stat_total_cases)%></li>
+    <li class="suite-count"><%=l(:label_impasse_stat_total_executions)%></li>
+    <li class="suite-count"><%=l(:label_impasse_stat_total_bugs)%></li>
+    <li class="suite-count"><%=l(:label_impasse_stat_open_bugs)%></li>
+    <li class="suite-count"><%=l(:label_impasse_stat_executions_rate)%></li>
+    <li class="suite-count"><%=l(:label_impasse_stat_bugs_rate)%></li>
+  </ul>
+  <ul class="container">
+  <% @statistics.each do |st| %>
+    <% executed = st.ok.to_i + st.ng.to_i + st.block.to_i %>
+    <li>
+      <ul class="row">
+        <li class="suite-name" data-suite-id="<%=h st.id%>"><%=h st.name %></li>
+        <li class="suite-count"><%=h st.total_cases %></li>
+        <li class="suite-count"><%=h executed %></li>
+        <li class="suite-count"><%=h st.bugs %></li>
+        <li class="suite-count"><%=h st.bugs.to_i - st.closed_bugs.to_i %></li>
+        <li class="suite-count"><%=number_to_percentage (st.total_cases == 0) ? 0 : (executed.to_f / st.total_cases.to_f) * 100, :precision => 2 %></li>
+        <li class="suite-count"><%=number_to_percentage (st.total_cases == 0) ? 0 : (st.bugs.to_f / st.total_cases.to_f) * 100, :precision => 2%></li>
+      </ul>
+    </li>
+  <% end %>
+  </ul>
 </div>
 <script>
 (function($) {
-  $(".collapsible").live("click", function() {
-    var self = $(this);
+  function findChildren(self) {
+    var container = $("<ul/>").addClass("container");
+    self.parents("li:first").append(container);
     $.ajax({
       url: '',
       data: {
@@ -31,18 +70,42 @@
         test_suite_id: self.attr("data-suite-id")
       },
       success: function(results) {
+        container.empty();
+        var level = self.parents("ul.container").size();
         $.each(results, function(i, st) {
-          var row = $("<tr/>").addClass("entry");
-          row.append($("<td/>").addClass("collapsible").attr("data-suite-id", st.id).text(st.name))
-             .append($("<td/>").addClass("size").text(st.total_cases))
-             .append($("<td/>").addClass("size").text(st.total_executions))
-             .append($("<td/>").addClass("size").text(st.total_bugs))
-             .append($("<td/>").addClass("size"))
-             .append($("<td/>").addClass("size"));
-          self.parents("tr").after(row);
+          var row = $("<ul/>").addClass("row").addClass("bg-level" + (level % 5));
+          var caret = $("<span/>").css({display:"inline-block"}).width(12 * level);
+          var executed = Number(st.ok) + Number(st.ng) + Number(st.block);
+          row.append($("<li/>").addClass("suite-name").attr("data-suite-id", st.id)
+                       .append(caret).append(st.name))
+             .append($("<li/>").addClass("suite-count").text(st.total_cases))
+             .append($("<li/>").addClass("suite-count").text(executed))
+             .append($("<li/>").addClass("suite-count").text(st.bugs))
+             .append($("<li/>").addClass("suite-count").text(Number(st.bugs)-Number(st.closed_bugs)))
+             .append($("<li/>").addClass("suite-count").text((executed*100/st.total_cases).toFixed(2) + "%"))
+             .append($("<li/>").addClass("suite-count").text((st.bugs*100/st.total_cases).toFixed(2) + "%"));
+          container.append($("<li/>").append(row));
         });
-      }   
+      }, error: function() { container.empty(); }
     });
+    container.html($('<li><img src="' + "<%= image_path('../stylesheets/themes/default/throbber.gif', :plugin=>'redmine_impasse')%>" + '"></li>'));
+  }
+
+  $(".suite-name").die("click").live("click", function() {
+    var self = $(this);
+    if (self.hasClass("collapsed")) {
+      self.removeClass("collapsed");
+      self.parents("ul.row:first").siblings("ul.container").hide();
+    } else {
+      var container = self.parents("ul.row:first").siblings("ul.container");
+      if (container.size() == 0) {
+        findChildren(self);
+      } else {
+        container.show();
+      }
+      self.addClass("collapsed");
+    }
+
   });
 })(jQuery)
 </script>

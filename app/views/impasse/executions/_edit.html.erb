@@ -39,10 +39,10 @@
       <%= f.radio_button :status, "3"%><span class="label"><%=l(:label_execution_status_3) %></span>
     </div>
   </div>
-  <% if @execution.issues.size > 0 %>
-  <p><%=label_tag :issue, l(:default_tracker_bug) %>
-    <%= @execution.issues.collect{|issue| link_to("##{issue.id}", {:controller=>'/issues', :action=>:show, :id=>issue }, :class => issue.css_classes) }.join(",") %></p>
-  <% end %>
+  <p <% if @execution.issues.size == 0 %>style="display:none;"<% end %>>
+    <%=label_tag :issue, l(:default_tracker_bug) %>
+    <span id="execution-bugs-list"><%= @execution.issues.collect{|issue| link_to("##{issue.id}", {:controller=>'/issues', :action=>:show, :id=>issue }, :class => issue.css_classes) }.join(",") %></span>
+  </p>
   <p><%= f.text_area :notes, :label=>:field_notes, :rows=>4 %></p>
   <p><%= submit_tag l(:button_save) %><p>
 </div>

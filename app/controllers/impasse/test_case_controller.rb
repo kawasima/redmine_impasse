@@ -29,18 +29,32 @@ module Impasse
 
     def new
       new_node
-      @keywords = Keyword.find_all_by_project_id(@project)
 
-      if request.post? and @node.save
-        @test_case.id = @node.id
-        if @node.is_test_case? and params.include? :test_steps
-          test_steps = params[:test_steps].collect{|i, ts| TestStep.new(ts) }
-          @test_case.test_steps.replace(test_steps)
-        end
-        @test_case.save!
-
-        respond_to do |format|
-          format.json { render :json => [@test_case] }
+      if request.post?
+        begin
+          @node.save!
+          save_keywords(@node, params[:node_keywords])
+          @test_case.id = @node.id
+          if @node.is_test_case? and params.include? :test_steps
+            @test_steps = params[:test_steps].collect{|i, ts| TestStep.new(ts) }
+            raise ActiveRecord::RecordInvalid unless @test_steps.all?{|test_step| test_step.valid? }
+            @test_case.test_steps.replace(@test_steps)
+          end
+          @test_case.save!
+          respond_to do |format|
+            format.json { render :json => [@test_case] }
+          end
+        rescue
+          respond_to do |format|
+            errors = []
+            errors.concat(@node.errors.full_messages).concat(@test_case.errors.full_messages)
+            @test_steps.each {|test_step|
+              test_step.errors.each_full {|msg|
+                errors << "##{test_step.step_number} #{msg}"
+              }
+            }
+            format.json { render :json => { :errors => errors }}
+          end
         end
       else
         render :partial => 'new'
@@ -81,19 +95,31 @@ module Impasse
       @keywords = Keyword.find_all_by_project_id(@project)
 
       if request.post?
-        save_node(@node)
-        @test_case.save!
+        begin
+          save_node(@node)
+          @test_case.save!
 
-        node_keywords = params[:node_keywords].collect{|keyword| NodeKeyword.new(keyword.merge(:node_id => @node.id))}
-        @node.node_keywords.replace(node_keywords)
+          save_keywords(@node, params[:node_keywords])
 
-        if @node.is_test_case? and params.include? :test_steps
-          test_steps = params[:test_steps].collect{|i, ts| TestStep.new(ts) }
-          @test_case.test_steps.replace(test_steps)
-        end
-
-        respond_to do |format|
-          format.json { render :json => [@test_case] }
+          if @node.is_test_case? and params.include? :test_steps
+            @test_steps = params[:test_steps].collect{|i, ts| TestStep.new(ts) }
+            raise ActiveRecord::RecordInvalid unless @test_steps.all?{|test_step| test_step.valid? }
+            @test_case.test_steps.replace(@test_steps)
+          end
+          respond_to do |format|
+            format.json { render :json => [@test_case] }
+          end
+        rescue
+          respond_to do |format|
+            errors = []
+            errors.concat(@node.errors.full_messages).concat(@test_case.errors.full_messages)
+            @test_steps.each {|test_step|
+              test_step.errors.each_full {|msg|
+                errors << "##{test_step.step_number} #{msg}"
+              }
+            }
+            format.json { render :json => { :errors => errors }}
+          end
         end
       else
         render :partial => 'edit'
@@ -102,19 +128,43 @@ module Impasse
 
     def destroy
       params[:node][:id].each do |id|
-        @node = Node.find(id)
-        case @node.node_type_id
-        when 2
-          TestSuite.delete(@node.id)
-        when 3
-          TestCase.delete(@node.id)
+        node = Node.find(id)
+        any_planned = false
+        node.all_decendant_cases_with_plan.each do |child|
+          if child.planned
+            TestCase.update_all("active=0", ["id=?", child.id])
+            any_planned = true
+          else
+            TestCase.delete(child.id)
+            child.destroy
+          end
         end
-      
-        Node.delete_all("path like '#{@node.path}%'")
+
+        unless any_planned
+          case node.node_type_id
+          when 2
+            TestSuite.delete(id)
+            node.destroy
+          when 3
+            if TestPlanCase.count_by_test_case_id(id) > 0
+              TestCase.update_all("active=0", ["id=?", child.id])
+            else
+              TestCase.delete(id)
+              node.destroy
+            end
+          end
+        end
       end
 
       respond_to do |format|
         format.json { render :json => {:status => true} }
+      end
+    end
+
+    def keywords
+      keywords = Keyword.find_all_by_project_id(@project).map{|r| r.keyword}
+      respond_to do |format|
+        format.json { render :json => keywords }
       end
     end
 
@@ -153,6 +203,27 @@ module Impasse
       # If node has children, must update the node path of child nodes.
       node.update_child_nodes_path(old_node.path)
 
+    end
+
+    def save_keywords(node, keywords = "")
+      node_keywords = node.node_keywords || []
+      words = keywords.split(/\s*,\s*/)
+      words.delete_if {|word| word =~ /^\s*$/}.uniq!
+      words.each{|word|
+        keyword = @keywords.detect {|k| k.keyword == word}
+        if keyword
+          node_keyword = node_keywords.detect {|nk| nk.keyword_id == keyword.id}
+            if node_keyword
+              node_keywords.delete(node_keyword)
+            else
+              new_node_keyword = NodeKeyword.create(:keyword_id => keyword.id, :node_id => node.id)
+            end
+        else
+          new_keyword = Keyword.create(:keyword => word, :project_id => @project.id)
+          new_node_keyword = NodeKeyword.create(:keyword_id => new_keyword.id, :node_id => node.id)
+        end
+      }
+      node_keywords.each{|node_keyword| node_keyword.destroy}
     end
 
     def get_root_name(test_plan_id)
@@ -208,14 +279,17 @@ module Impasse
     def convert(nodes, prefix='node')
       node_map = {}
       jstree_nodes = []
-    
+
       for node in nodes
         jstree_node = {
-          'attr' => {'id' => "#{prefix}_#{node.id}" , 'rel' => REL[node.node_type_id]},
+          'attr' => {'id' => "#{prefix}_#{node.id}" , 'rel' => REL[node.node_type_id] },
           'data' => { 'title' => node.name },
           'children'=>[]}
         if node.node_type_id != 3
           jstree_node['state'] = 'open'
+        end
+        if node.node_type_id == 3 and !node.active?
+          jstree_node['attr']['data-inactive'] = true
         end
 
         node_map[node.id] = jstree_node

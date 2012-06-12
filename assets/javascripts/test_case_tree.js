@@ -76,6 +76,37 @@ jQuery(document).ready(function ($) {
 	    title: IMPASSE.label.testCaseEdit
 	})
     };
+    function split( val ) {
+	return val.split( /,\s*/ );
+    }
+    function extractLast( term ) {
+	return split( term ).pop();
+    }
+
+    function setupKeyword(dialog, availableTags) {
+	dialog.find(":text[name=node_keywords]").autocomplete({
+	    minLength: 0,
+	    source: function( request, response ) {
+		response( $.ui.autocomplete.filter(
+		    availableTags, extractLast( request.term ) ) );
+	    },
+	    focus: function() {
+		// prevent value inserted on focus
+		return false;
+	    },
+	    select: function( event, ui ) {
+		var terms = split( this.value );
+		// remove the current input
+		terms.pop();
+		// add the selected item
+		terms.push( ui.item.value );
+		// add placeholder to get the comma-and-space at the end
+		terms.push( "" );
+		this.value = terms.join( ", " );
+		return false;
+	    }
+	});
+    }
 
     var openDialog = function(data, edit_type) {
 	var node = $(data.rslt.obj);
@@ -94,6 +125,7 @@ jQuery(document).ready(function ($) {
 		    dialog[node_type].dialog('close');
 		});
 		dialog[node_type].dialog('open');
+		$.getJSON(IMPASSE.url.testKeywords, function(json) { setupKeyword(dialog[node_type], json) });
 		dialog[node_type].find(".sortable").sortable({
 		    handle: ".ui-sort-handle",
 		    placeholder: 'ui-state-highlight',
@@ -121,7 +153,6 @@ jQuery(document).ready(function ($) {
 		    var tc = {format:"json"};
 		    dialog[node_type].find(":hidden,:text,textarea,:checkbox:checked,radiobutton:checked,select").each(function() {
 			tc[$(this).attr("name")] = $(this).val();
-			
 		    });
 		    if (edit_type == 'edit')
 			tc["node[id]"] = node.attr("id").replace("node_","");
@@ -133,9 +164,9 @@ jQuery(document).ready(function ($) {
 			url:AJAX_URL[edit_type],
 			data: tc,
 			success: function(r, status, xhr) {
-			    if (!r || r.length == 0) {
-				ajax_error_handler(xhr, status, "data not found.");
-				
+			    if (r.errors) {
+				console.error(r.errors);
+				return;
 			    }
 			    $.each(r, function(i, n) {
 				dialog[node_type].unbind("dialogbeforeclose");
@@ -146,9 +177,9 @@ jQuery(document).ready(function ($) {
 				    'success',
 				    edit_type=='edit' ? IMPASSE.label.noticeSuccessfulUpdate : IMPASSE.label.noticeSuccessfulCreate);
 			    });
+			    dialog[node_type].dialog('close');
 			},
-			error: ajax_error_handler,
-			complete: function() { dialog[node_type].dialog('close'); }
+			error: ajax_error_handler
 		    });
 		});
 	    },
@@ -324,3 +355,4 @@ jQuery(document).ready(function ($) {
 	return false;
     });
 });
+

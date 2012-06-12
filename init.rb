@@ -3,6 +3,8 @@ require 'impasse_projects_helper_patch'
 require 'dispatcher'
 
 Dispatcher.to_prepare :redmine_impasse do
+  require_dependency 'impasse_hooks'
+
   unless ProjectsHelper.included_modules.include? ImpasseProjectsHelperPatch
     ProjectsHelper.send(:include, ImpasseProjectsHelperPatch)
   end
@@ -18,7 +20,7 @@ Redmine::Plugin.register :redmine_impasse do
 
   project_module :impasse do
     permission :view_testcases, {
-      'impasse/test_case' => [:index, :show, :list],
+      'impasse/test_case' => [:index, :show, :list, :keywords],
       'impasse/test_plans' => [:index, :show, :list, :tc_assign, :user_assign, :statistics],
       'impasse/executions' => [:index, :get_list]
     }

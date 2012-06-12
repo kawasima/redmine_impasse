@@ -1,0 +1,7 @@
+development:
+  adapter: jdbcmysql
+  url: jdbc:mysql://localhost:3306/redmine_131
+  username: redmine
+  password: 
+
+
