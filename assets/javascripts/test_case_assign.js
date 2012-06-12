@@ -123,6 +123,7 @@ jQuery(document).ready(function ($) {
 		    data : function (n) { 
 			return { 
 			    prefix: "plan",
+			    "filters[inactive]": true,
 			    node_id : n.attr ? n.attr("id").replace("plan_","") : -1
 			}; 
 		    }

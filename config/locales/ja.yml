@@ -29,13 +29,14 @@ ja:
   label_impasse_stat_members: "人別集計"
   label_impasse_stat_daily: "日別集計"
 
-
   label_assined_to_myself: "自分の担当のみ"
   label_execution_status_0: "未実行"
   label_execution_status_1: "合格"
   label_execution_status_2: "不合格"
   label_execution_status_3: "保留"
 
+  label_filters_query: "含まれる文字列"
+  label_filters_inactive: "無効なケースも対象にする"
 
   field_details: "詳細"
   field_preconditions: "前提条件"
@@ -54,3 +55,5 @@ ja:
   error_can_not_manage_test_cases: "権限がないため、その操作は行えません。"
   text_assign_cases: "ここにケースをドラッグ&ドロップするとテスト計画に追加できます"
   text_assign_users: "日付やメンバをケースにドラッグ&ドロップすると、ケースの実行予定日やテスターの割当ができます"
+  field_test_step_actions: Actions
+  field_test_step_expected_results: Expected Results

@@ -8,7 +8,6 @@ module Impasse
     before_filter :find_project, :authorize
 
     def index
-      @nodes = Node.find(:all, :conditions => ["name=? and node_type_id=?", @project.identifier, 1])
     end
 
     def list
@@ -44,15 +43,17 @@ module Impasse
           respond_to do |format|
             format.json { render :json => [@test_case] }
           end
-        rescue
+        rescue ActiveRecord::RecordInvalid => e
           respond_to do |format|
             errors = []
             errors.concat(@node.errors.full_messages).concat(@test_case.errors.full_messages)
-            @test_steps.each {|test_step|
-              test_step.errors.each_full {|msg|
-                errors << "##{test_step.step_number} #{msg}"
+            if @test_steps
+              @test_steps.each {|test_step|
+                test_step.errors.each_full {|msg|
+                  errors << "##{test_step.step_number} #{msg}"
+                }
               }
-            }
+            end
             format.json { render :json => { :errors => errors }}
           end
         end
@@ -92,7 +93,6 @@ module Impasse
     def edit
       @node, @test_case = get_node(params[:node])
       @test_case.attributes = params[:test_case]
-      @keywords = Keyword.find_all_by_project_id(@project)
 
       if request.post?
         begin
@@ -109,15 +109,17 @@ module Impasse
           respond_to do |format|
             format.json { render :json => [@test_case] }
           end
-        rescue
+        rescue ActiveRecord::RecordInvalid => e
           respond_to do |format|
             errors = []
             errors.concat(@node.errors.full_messages).concat(@test_case.errors.full_messages)
-            @test_steps.each {|test_step|
-              test_step.errors.each_full {|msg|
-                errors << "##{test_step.step_number} #{msg}"
+            if @test_steps
+              @test_steps.each {|test_step|
+                test_step.errors.each_full {|msg|
+                  errors << "##{test_step.step_number} #{msg}"
+                }
               }
-            }
+            end
             format.json { render :json => { :errors => errors }}
           end
         end
@@ -130,27 +132,30 @@ module Impasse
       params[:node][:id].each do |id|
         node = Node.find(id)
         any_planned = false
-        node.all_decendant_cases_with_plan.each do |child|
-          if child.planned
-            TestCase.update_all("active=0", ["id=?", child.id])
-            any_planned = true
-          else
-            TestCase.delete(child.id)
-            child.destroy
-          end
-        end
 
-        unless any_planned
-          case node.node_type_id
-          when 2
-            TestSuite.delete(id)
-            node.destroy
-          when 3
-            if TestPlanCase.count_by_test_case_id(id) > 0
+        ActiveRecord::Base.transaction do
+          node.all_decendant_cases_with_plan.each do |child|
+            if child.planned?
               TestCase.update_all("active=0", ["id=?", child.id])
+              any_planned = true
             else
-              TestCase.delete(id)
+              TestCase.delete(child.id)
+              child.destroy
+            end
+          end
+
+          unless any_planned
+            case node.node_type_id
+            when 2
+              TestSuite.delete(id)
               node.destroy
+            when 3
+              if TestPlanCase.count_by_test_case_id(id) > 0
+                TestCase.update_all("active=0", ["id=?", child.id])
+              else
+                TestCase.delete(id)
+                node.destroy
+              end
             end
           end
         end
@@ -175,6 +180,7 @@ module Impasse
       case params[:node_type]
       when 'test_case'
         @test_case = TestCase.new(params[:test_case])
+        @test_case.active = true
         @node.node_type_id = 3
       else
         @test_case = TestSuite.new(params[:test_case])
@@ -206,11 +212,12 @@ module Impasse
     end
 
     def save_keywords(node, keywords = "")
+      project_keywords = Keyword.find_all_by_project_id(@project)
       node_keywords = node.node_keywords || []
       words = keywords.split(/\s*,\s*/)
       words.delete_if {|word| word =~ /^\s*$/}.uniq!
       words.each{|word|
-        keyword = @keywords.detect {|k| k.keyword == word}
+        keyword = project_keywords.detect {|k| k.keyword == word}
         if keyword
           node_keyword = node_keywords.detect {|nk| nk.keyword_id == keyword.id}
             if node_keyword

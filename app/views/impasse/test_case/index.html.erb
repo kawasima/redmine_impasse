@@ -51,8 +51,12 @@
       <div style="display:none;">
 	<table>
 	  <tr class="filter">
-	    <td><%= label_tag "filters_query", "Text" %></td>
+	    <td><%= label_tag "filters_query", l(:label_filters_query) %></td>
 	    <td><%= text_field_tag "filters[query]", "", :id => "filters_query" %></td>
+	  </tr>
+	  <tr class="filter">
+	    <td><%= label_tag "filters_inactive", l(:label_filters_inactive) %></td>
+	    <td><%= check_box_tag "filters[inactive]", true, false, :id => "filters_inactive" %></td>
 	  </tr>
 	</table>
       </div>

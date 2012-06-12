@@ -61,6 +61,12 @@ jQuery(document).ready(function ($) {
 	    remove: LEAF_MENU.contextmenu.remove
 	}
     };
+    var ROOT_MENU = {
+	contextmenu: {
+	    create: FOLDER_MENU.contextmenu.create,
+	    paste:  FOLDER_MENU.contextmenu.paste
+	}
+    };
 
     var dialog = {
 	test_suite: $("#testsuite-dialog").dialog({
@@ -206,9 +212,10 @@ jQuery(document).ready(function ($) {
 			    prefix: "node", 
 			    node_id: n.attr ? n.attr("id").replace("node_","") : -1
 			};
-			$("#filters :input[name]").each(function() {
+			$("#filters").find(":text[name],:checkbox:checked").each(function() {
 			    var el = $(this);
-			    data[el.attr("name")] = el.val();
+			    if (el.val())
+				data[el.attr("name")] = el.val();
 			});
 			return data;
 		    }
@@ -245,11 +252,13 @@ jQuery(document).ready(function ($) {
 	    }
 	})
 	.bind("loaded.jstree", function (e, data) {
-	    $(this).find("li[rel=test_project],li[rel=test_suite]").data("jstree", FOLDER_MENU);
+	    $(this).find("li[rel=test_project]").data("jstree", ROOT_MENU);
+	    $(this).find("li[rel=test_suite]").data("jstree", FOLDER_MENU);
 	    $(this).find("li[rel=test_case]").data("jstree", LEAF_MENU);
 	})
 	.bind("refresh.jstree", function (e, data) {
-	    $(this).find("li[rel=test_project],li[rel=test_suite]").data("jstree", FOLDER_MENU);
+	    $(this).find("li[rel=test_project]").data("jstree", ROOT_MENU);
+	    $(this).find("li[rel=test_suite]").data("jstree", FOLDER_MENU);
 	    $(this).find("li[rel=test_case]").data("jstree", LEAF_MENU);
 	})
 	.bind("create.jstree", function (e, data) {

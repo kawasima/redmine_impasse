@@ -5,7 +5,7 @@ module Impasse
 
     belongs_to :parent, :class_name=>'Node', :foreign_key=> :parent_id
     has_many   :children, :class_name=> 'Node', :foreign_key=> :parent_id
-    has_many   :node_keywords
+    has_many   :node_keywords, :class_name => "Impasse::NodeKeyword", :dependent => :delete_all
     has_many   :keywords, :through => :node_keywords
 
     validates_presence_of :name
@@ -20,6 +20,10 @@ module Impasse
 
     def active?
       !(attributes['active'] and attributes['active'].to_i == 0)
+    end
+
+    def planned?
+      attributes['planned'].to_i == 1
     end
 
     def self.find_children(node_id, test_plan_id=nil, filters=nil)
@@ -50,6 +54,9 @@ module Impasse
       ) AS node
       LEFT OUTER JOIN impasse_test_cases AS tc
         ON node.id = tc.id
+      <% unless conditions.include? :filters_inactive %>
+      WHERE tc.active = 1 OR tc.active IS NULL
+      <% end %>
       END_OF_SQL
 
       conditions = {}
@@ -65,6 +72,10 @@ module Impasse
     
       if filters and filters[:query]
         conditions[:filters_query] = "%#{filters[:query]}%"
+      end
+
+      if filters and filters[:inactive]
+        conditions[:filters_inactive] = true
       end
 
       find_by_sql([ERB.new(sql).result(binding), conditions])
