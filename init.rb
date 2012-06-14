@@ -1,8 +1,14 @@
 require 'redmine'
 require 'impasse_projects_helper_patch'
-require 'dispatcher'
 
-Dispatcher.to_prepare :redmine_impasse do
+if Rails::VERSION::MAJOR < 3
+  require 'dispatcher'
+  object_to_prepare = Dispatcher
+else
+  object_to_prepare = Rails.configuration
+end
+
+object_to_prepare.to_prepare do
   require_dependency 'impasse_hooks'
 
   unless ProjectsHelper.included_modules.include? ImpasseProjectsHelperPatch
