@@ -1,2 +1,0 @@
-module Impasse::SettingsHelper
-end

@@ -1,0 +1,47 @@
+<% test_plan_case = @execution.test_plan_case
+   test_case = test_plan_case.test_case %>
+<%= f.hidden_field :id %>
+<%= hidden_field 'test_plan_case', 'test_plan_id', :value => @execution.test_plan_case.test_plan_id %>
+<%= hidden_field 'test_plan_case', 'test_case_id', :value => @execution.test_plan_case.test_case_id %>
+<div class="box">
+  <p><%=label_tag :name, l(:field_name) %><%=h test_case.node.name %></p>
+  <p><%=label_tag :summary, l(:field_summary) %><%=h test_case.summary%></p>
+  <% if !test_case.preconditions.nil? and test_case.preconditions.length > 0 %>
+  <p><%=label_tag :preconditions, l(:field_preconditions)%><%=h test_case.preconditions%></p>
+  <% end %>
+  <% if test_case.test_steps.size > 0 %>
+  <div style="margin:0; padding: 5px 0 8px 0; padding-left: 180px; height: 1%; clear: left;">
+    <label><%=l(:field_test_steps)%></label>
+    <table>
+      <tr>
+	<th>#</th>
+	<th><%=l(:field_actions)%></th>
+	<th><%=l(:field_expected_results)%></th>
+      </tr>
+      <% test_case.test_steps.each{|test_step| %>
+      <tr>
+	<td><%= test_step.step_number %></td>
+	<td><%=h test_step.actions %></td>
+	<td><%=h test_step.expected_results %></td>
+      </tr>
+      <% } %>
+    </table>
+  </div>
+  <% end %>
+
+  <div style="margin:0; padding: 5px 0 8px 0; padding-left: 180px; height: 1%; clear: left;">
+    <label><%=l :field_execution_status %></label>
+    <div>
+      <%= f.radio_button :status, "0" %><span class="label"><%=l(:label_execution_status_0) %></span>
+      <%= f.radio_button :status, "1"%><span class="label"><%=l(:label_execution_status_1) %></span>
+      <%= f.radio_button :status, "2"%><span class="label"><%=l(:label_execution_status_2) %></span>
+      <%= f.radio_button :status, "3"%><span class="label"><%=l(:label_execution_status_3) %></span>
+    </div>
+  </div>
+  <p <% if @execution.issues.size == 0 %>style="display:none;"<% end %>>
+    <%=label_tag :issue, l(:default_tracker_bug) %>
+    <span id="execution-bugs-list"><%= @execution.issues.collect{|issue| link_to("##{issue.id}", {:controller=>'/issues', :action=>:show, :id=>issue }, :class => issue.css_classes) }.join(",") %></span>
+  </p>
+  <p><%= f.text_area :notes, :label=>:field_notes, :rows=>4 %></p>
+  <p><%= submit_tag l(:button_save) %><p>
+</div>

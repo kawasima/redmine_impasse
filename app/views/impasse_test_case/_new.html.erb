@@ -1,0 +1,14 @@
+<% if Rails::VERSION::MAJOR < 3 %>
+  <% labelled_tabular_form_for :test_case, @test_case, {} do |f| %>
+    <%= render :partial => "form.#{params[:node_type]}", :locals => {:form => f} %>
+    <button type="button" class="ui-button-submit"><%=l(:button_create)%></button>
+    <button type="button" class="ui-button-cancel"><%=l(:button_cancel)%></button>
+  <% end %>
+<% else %>
+  <% output = labelled_form_for @test_case, :as => :test_case, :url => { :controller => :impasse_test_case, :action => :new } do |f| %>
+    <%= render :partial => "form.#{params[:node_type]}", :locals => {:form => f} %>
+    <button type="button" class="ui-button-submit"><%=l(:button_create)%></button>
+    <button type="button" class="ui-button-cancel"><%=l(:button_cancel)%></button>
+  <% end %>
+  <%= output %>
+<% end %>

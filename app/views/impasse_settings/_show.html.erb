@@ -1,0 +1,30 @@
+<%
+@impasse_setting = Impasse::Setting.find_or_create_by_project_id(@project)
+%>
+<% if Rails::VERSION::MAJOR < 3 %>
+  <% remote_form_for :setting, @impasse_setting,
+     :url => {:controller => :impasse_settings, :action => :edit, :project_id => @project }, 
+     :builder => TabularFormBuilder,
+     :lang => current_language do |f| %>
+    <%= error_messages_for 'setting' %>
+    <div class="box tabular">
+      <p><%=f.select :bug_tracker_id, @project.trackers.collect {|t| [t.name, t.id]}, :required => true %></p>
+    </div>
+  
+    <%= submit_tag l(:button_save) %>
+  <% end %>
+<% else %>
+  <% output = remote_form_for :setting, @impasse_setting,
+      :url => {:controller => :impasse_settings, :action => :edit, :project_id => @project },
+      :lang => current_language do |f| %>
+    <%= error_messages_for 'setting' %>
+    <div class="box tabular">
+      <p>
+	<label for="bug_traker_id"><%=l(:field_bug_tracker)%><span class="required"> *</span></label>
+	<%=f.select :bug_tracker_id, @project.trackers.collect {|t| [t.name, t.id]}, :required => true %>
+      </p>
+    </div>
+    <%= submit_tag l(:button_save) %>
+  <% end %>
+  <%= output %>
+<% end %>

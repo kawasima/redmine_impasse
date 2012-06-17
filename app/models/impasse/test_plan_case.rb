@@ -2,6 +2,7 @@ module Impasse
   class TestPlanCase < ActiveRecord::Base
     unloadable
     set_table_name "impasse_test_plan_cases"
+    self.include_root_in_json = false
 
     belongs_to :test_plan
     belongs_to :test_case

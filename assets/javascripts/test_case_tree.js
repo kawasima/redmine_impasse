@@ -157,7 +157,7 @@ jQuery(document).ready(function ($) {
 
 		dialog[node_type].find(":button.ui-button-submit").click(function(e) {
 		    var tc = {format:"json"};
-		    dialog[node_type].find(":hidden,:text,textarea,:checkbox:checked,radiobutton:checked,select").each(function() {
+		    dialog[node_type].find(":input:hidden,:text,textarea,:checkbox:checked,radiobutton:checked,select").each(function() {
 			tc[$(this).attr("name")] = $(this).val();
 		    });
 		    if (edit_type == 'edit')
@@ -304,7 +304,7 @@ jQuery(document).ready(function ($) {
 		});
 	    }
 	    var dest = $(data.rslt.oc);
-	    $("ins.jstree-icon", dest).css({backgroundImage: "url(" + IMPASSE.url.loading + ")"});
+	    $("ins.jstree-icon", dest).css({backgroundImage: "url(" + IMPASSE.url.iconLoading + ")"});
 	    $.ajax({
 		type: 'POST',
 		url: url,
