@@ -5,7 +5,7 @@
 <%= breadcrumb 
 	[link_to(l(:label_impasse), {:controller => :test_case, :action => :index, :project_id => @project}),
         h(" > "),
-	link_to(l(:label_test_plan_plural), {:controller => :test_plans, :action => :index, :project_id => @project})
+	link_to(l(:label_test_plans_list), {:controller => :test_plans, :action => :index, :project_id => @project})
 ]%>
 <h2><%=h @test_plan.name %></h2>
 
