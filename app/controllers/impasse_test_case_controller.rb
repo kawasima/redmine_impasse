@@ -64,11 +64,13 @@ class ImpasseTestCaseController < ImpasseAbstractController
     def copy
       nodes = []
       params[:nodes].each do |i,node_params|
-        original_node = Impasse::Node.find(node_params[:original_id])
-        original_node[:node_order] = node_params[:node_order]
-        node, test_case = copy_node(original_node, node_params[:parent_id])
-        test_case.attributes.merge({:name => node.name})
-        nodes << node
+        ActiveRecord::Base.transaction do 
+          original_node = Impasse::Node.find(node_params[:original_id])
+          original_node[:node_order] = node_params[:node_order]
+          node, test_case = copy_node(original_node, node_params[:parent_id])
+          test_case.attributes.merge({:name => node.name})
+          nodes << node
+        end
       end
 
       respond_to do |format|
