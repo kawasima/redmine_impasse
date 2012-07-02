@@ -43,7 +43,7 @@ ja:
   field_importance: "重要度"
   field_test_steps: "ステップ"
   field_test_case: "テストケース"
-  field_actions: "期待する結果"
+  field_actions: "操作"
   field_expected_results: "期待する結果"
   field_bug_tracker: "不具合と関連付けるトラッカ"
 
