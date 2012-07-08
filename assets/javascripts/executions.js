@@ -94,9 +94,10 @@ jQuery(document).ready(function ($) {
 		$.get(IMPASSE.url.executionBugsNew, {},
 			function(data) {
 			    $.unblockUI();
-			    $("#issue-dialog").empty().append(data).dialog({
+			    $("#issue-dialog").html(data).dialog({
 				modal:true,
 				minWidth: 800,
+				zIndex: 50,
 				title: IMPASSE.label.issueNew
 			    });
 			});
