@@ -77,13 +77,20 @@
   <div class="contextual">
     <%= link_to l(:label_test_plan_new), {:controller=>:impasse_test_plans, :action=>:new, :project_id=>@project}, :class=>"icon icon-add" %>
   </div>
-  <% plans, versions = Impasse::TestPlan.find_all_by_version(@project) %>
+  <% plans, versions = Impasse::TestPlan.find_all_by_version(@project, params[:completed]) %>
     <% versions.each do |version| %>
   <h4><%=h version.name%></h4>
       <% plans[version].each do |test_plan| %>
   <%= link_to test_plan.name, :controller=>:impasse_test_plans, :action=>:show, :project_id=>@project, :id=>test_plan%><br/>
       <% end %>
-    <% end %>
+  <% end %>
+  <% form_tag({}, :method => :get) do %>
+    <p>
+      <label for="completed"><%= check_box_tag "completed", true, params[:completed] %> <%= l(:label_show_completed_versions) %></label>
+      <br/>
+      <%= submit_tag l(:button_apply), :class => 'button-small', :name => nil %>
+    </p>
+  <% end %>
 <% end %>
 
 <div id="testsuite-dialog" style="display:none"></div>

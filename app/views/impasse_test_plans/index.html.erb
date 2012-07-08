@@ -32,3 +32,13 @@
 </div>
 <% end %>
 </div>
+
+<% content_for :sidebar do %>
+  <% form_tag({}, :method => :get) do %>
+    <p>
+      <label for="completed"><%= check_box_tag "completed", true, params[:completed] %> <%= l(:label_show_completed_versions) %></label>
+      <br/>
+      <%= submit_tag l(:button_apply), :class => 'button-small', :name => nil %>
+    </p>
+  <% end %>
+<% end %>

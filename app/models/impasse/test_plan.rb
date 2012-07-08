@@ -11,10 +11,12 @@ module Impasse
     validates_presence_of :name
     validates_length_of :name, :maximum => 100
 
-    def self.find_all_by_version(project)
+    def self.find_all_by_version(project, show_closed = false)
       versions = project.shared_versions || []
       versions = versions.uniq.sort
-      versions.reject! {|version| version.closed? || version.completed? }
+      unless show_closed
+        versions.reject! {|version| version.closed? || version.completed? }
+      end
 
       test_plans_by_version = {}
       versions.each do |version|

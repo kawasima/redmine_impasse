@@ -8,7 +8,7 @@ class ImpasseTestPlansController < ImpasseAbstractController
   before_filter :find_project_by_project_id, :authorize
 
   def index
-    @test_plans_by_version, @versions = Impasse::TestPlan.find_all_by_version(@project)
+    @test_plans_by_version, @versions = Impasse::TestPlan.find_all_by_version(@project, params[:completed])
   end
 
   def new
