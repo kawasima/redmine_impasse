@@ -23,7 +23,6 @@ module Impasse
         test_plans = TestPlan.find(:all, :conditions => ["version_id=?", version.id])
         test_plans_by_version[version] = test_plans
       end
-    
       [test_plans_by_version, versions]
     end
   end

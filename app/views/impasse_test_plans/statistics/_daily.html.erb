@@ -2,7 +2,7 @@
 </div>
 <script>
 jQuery.ajax({
-    url: '<%=url_for :controller=>:test_plans, :action=>:statistics, :project_id=>@project, :id=>@test_plan%>',
+    url: '<%=url_for :controller=>:impasse_test_plans, :action=>:statistics, :project_id=>@project, :id=>@test_plan%>',
     type: 'get',
     data: { type: "daily", format: "json" },
     success: function(data) {

@@ -147,6 +147,8 @@ GROUP BY execution_date
         end
         sum[:expected] += st.total.to_i
       }
+      start_date = Date.today if start_date.nil?
+      end_date   = Date.today if end_date.nil?
       (start_date-1..end_date).each{|d|
         st = statistics.detect{|st| st.execution_date and st.execution_date.to_date == d}
         if st
