@@ -1,4 +1,4 @@
-class ImpasseExecutionBugsController < ImpasseApplicationController
+class ImpasseExecutionBugsController < ImpasseAbstractController
   unloadable
 
   menu_item :impasse

@@ -20,6 +20,8 @@
         executionsDel:  "<%=url_for :controller=>:impasse_executions, :action=>:delete, :project_id=>@project %>",
         executionBugsNew: "<%=url_for :controller=>:impasse_execution_bugs, :action=>:new, :project_id=>@project %>",
         executionBugsCreate: "<%=url_for :controller=>:impasse_execution_bugs, :action=>:create %>",
+        executionBugsCreate: "<%=url_for :controller=>:impasse_execution_bugs, :action=>:create %>",
+        issue: "<%= Redmine::Utils::relative_url_root %>/issues",
         iconTestSuite: "<%=Redmine::Utils::relative_url_root%>/plugin_assets/redmine_impasse/stylesheets/images/documents-stack.png",
         iconTestCase:  "<%=Redmine::Utils::relative_url_root%>/plugin_assets/redmine_impasse/stylesheets/images/document-attribute-t.png",
         iconProject:   "<%=Redmine::Utils::relative_url_root%>/plugin_assets/redmine_impasse/stylesheets/images/book-brown.png",

@@ -146,9 +146,13 @@ jQuery(document).ready(function ($) {
 		    $("#issue-dialog #errorExplanation").html(list);
 		    return;
 		}
-		var bugs = $("#execution-bugs-list").text();
-		bugs += (bugs == "" ? "#" : ",#") + data['issue_id'];
-		$("#execution-bugs-list").html(bugs)
+		var bugs = $("#execution-bugs-list");
+		 
+		if (bugs != "")
+		    bugs.append(",")
+		bugs.append($("<a/>")
+			    .attr("href", IMPASSE.url.issue + "/" + data['issue_id'])
+			    .text("#" + data['issue_id']))
 		    .parents("p:first").show();
 		$("#issue-dialog").dialog("close");
 	    },
