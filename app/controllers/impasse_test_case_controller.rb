@@ -29,31 +29,33 @@ class ImpasseTestCaseController < ImpasseAbstractController
       new_node
 
       if request.post? or request.put?
-        begin
-          @node.save!
-          save_keywords(@node, params[:node_keywords])
-          @test_case.id = @node.id
-          if @node.is_test_case? and params.include? :test_steps
-            @test_steps = params[:test_steps].collect{|i, ts| Impasse::TestStep.new(ts) }
-            raise ActiveRecord::RecordInvalid unless @test_steps.all?{|test_step| test_step.valid? }
-            @test_case.test_steps.replace(@test_steps)
-          end
-          @test_case.save!
-          respond_to do |format|
-            format.json { render :json => [@test_case] }
-          end
-        rescue ActiveRecord::RecordInvalid => e
-          respond_to do |format|
-            errors = []
-            errors.concat(@node.errors.full_messages).concat(@test_case.errors.full_messages)
-            if @test_steps
-              @test_steps.each {|test_step|
-                test_step.errors.each_full {|msg|
-                  errors << "##{test_step.step_number} #{msg}"
-                }
-              }
+        ActiveRecord::Base.transaction do
+          begin
+            @node.save!
+            save_keywords(@node, params[:node_keywords])
+            @test_case.id = @node.id
+            if @node.is_test_case? and params.include? :test_steps
+              @test_steps = params[:test_steps].collect{|i, ts| Impasse::TestStep.new(ts) }
+              raise ActiveRecord::RecordInvalid unless @test_steps.all?{|test_step| test_step.valid? }
+              @test_case.test_steps.replace(@test_steps)
             end
-            format.json { render :json => { :errors => errors }}
+            @test_case.save!
+            respond_to do |format|
+              format.json { render :json => [@test_case] }
+            end
+          rescue ActiveRecord::RecordInvalid => e
+            respond_to do |format|
+              errors = []
+              errors.concat(@node.errors.full_messages).concat(@test_case.errors.full_messages)
+              if @test_steps
+                @test_steps.each {|test_step|
+                  test_step.errors.each_full {|msg|
+                    errors << "##{test_step.step_number} #{msg}"
+                  }
+                }
+              end
+              format.json { render :json => { :errors => errors }}
+            end
           end
         end
       else
@@ -96,32 +98,34 @@ class ImpasseTestCaseController < ImpasseAbstractController
       @test_case.attributes = params[:test_case]
 
       if request.post? or request.put?
-        begin
-          save_node(@node)
-          @test_case.save!
+        ActiveRecord::Base.transaction do
+          begin
+            save_node(@node)
+            @test_case.save!
 
-          save_keywords(@node, params[:node_keywords])
+            save_keywords(@node, params[:node_keywords])
 
-          if @node.is_test_case? and params.include? :test_steps
-            @test_steps = params[:test_steps].collect{|i, ts| Impasse::TestStep.new(ts) }
-            raise ActiveRecord::RecordInvalid unless @test_steps.all?{|test_step| test_step.valid? }
-            @test_case.test_steps.replace(@test_steps)
-          end
-          respond_to do |format|
-            format.json { render :json => [@test_case] }
-          end
-        rescue ActiveRecord::RecordInvalid => e
-          respond_to do |format|
-            errors = []
-            errors.concat(@node.errors.full_messages).concat(@test_case.errors.full_messages)
-            if @test_steps
-              @test_steps.each {|test_step|
-                test_step.errors.each_full {|msg|
-                  errors << "##{test_step.step_number} #{msg}"
-                }
-              }
+            if @node.is_test_case? and params.include? :test_steps
+              @test_steps = params[:test_steps].collect{|i, ts| Impasse::TestStep.new(ts) }
+              raise ActiveRecord::RecordInvalid unless @test_steps.all?{|test_step| test_step.valid? }
+              @test_case.test_steps.replace(@test_steps)
             end
-            format.json { render :json => { :errors => errors }}
+            respond_to do |format|
+              format.json { render :json => [@test_case] }
+            end
+          rescue ActiveRecord::RecordInvalid => e
+            respond_to do |format|
+              errors = []
+              errors.concat(@node.errors.full_messages).concat(@test_case.errors.full_messages)
+              if @test_steps
+                @test_steps.each {|test_step|
+                  test_step.errors.each_full {|msg|
+                    errors << "##{test_step.step_number} #{msg}"
+                  }
+                }
+              end
+              format.json { render :json => { :errors => errors }}
+            end
           end
         end
       else
@@ -217,21 +221,25 @@ class ImpasseTestCaseController < ImpasseAbstractController
       node_keywords = node.node_keywords || []
       words = keywords.split(/\s*,\s*/)
       words.delete_if {|word| word =~ /^\s*$/}.uniq!
+
+      keeps = []
       words.each{|word|
         keyword = project_keywords.detect {|k| k.keyword == word}
         if keyword
           node_keyword = node_keywords.detect {|nk| nk.keyword_id == keyword.id}
-            if node_keyword
-              node_keywords.delete(node_keyword)
-            else
-              new_node_keyword = Impasse::NodeKeyword.create(:keyword_id => keyword.id, :node_id => node.id)
-            end
+          if node_keyword
+            keeps << node_keyword.id
+          else
+            new_node_keyword = Impasse::NodeKeyword.create(:keyword_id => keyword.id, :node_id => node.id)
+          end
         else
           new_keyword = Impasse::Keyword.create(:keyword => word, :project_id => @project.id)
           new_node_keyword = Impasse::NodeKeyword.create(:keyword_id => new_keyword.id, :node_id => node.id)
         end
       }
-      node_keywords.each{|node_keyword| node_keyword.destroy}
+      node_keywords.each{|node_keyword|
+        node_keyword.destroy unless keeps.include? node_keyword.id
+      }
     end
 
     def get_root_name(test_plan_id)
