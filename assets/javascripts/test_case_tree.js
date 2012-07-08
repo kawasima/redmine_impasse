@@ -171,7 +171,15 @@ jQuery(document).ready(function ($) {
 			data: tc,
 			success: function(r, status, xhr) {
 			    if (r.errors) {
-				console.error(r.errors);
+				var ul = $("<ul/>");
+				$.each(r.errors, function(i, error) {
+				    ul.append($("<li/>").html(error));
+				});
+				$("#errorExplanation", dialog[node_type])
+				    .html(ul)
+				    .show();
+				var top = $("#errorExplanation", dialog[node_type]).position().top;
+				$(window).scrollTop(top);
 				return;
 			    }
 			    $.each(r, function(i, n) {

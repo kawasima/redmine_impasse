@@ -1,4 +1,4 @@
-<%= error_messages_for 'test_case' %>
+<div id="errorExplanation" style="display:none"></div>
 <div class="box">
   <p><label><span class="required">*</span><%=l :field_name %></label><%= text_field_tag 'node[name]', @node.name, :size => 50, :required=>true %></p>
   <p><%= form.text_area :summary,
