@@ -163,4 +163,18 @@ jQuery(document).ready(function ($) {
 	var testcase_id = location.hash.replace(/^#testcase-/, "");
 	show_test_case(testcase_id);
     }
+
+    $("input[name=execution_status]").change(function() {
+	var checked = $("input[name=execution_status]:checked");
+	if (checked.size() > 0) {
+	    $("#cb_execution_status_all").removeAttr("checked").removeAttr("disabled")
+		.one("change", function() {
+		    $("input[name=execution_status]").removeAttr("checked");
+		    $("#cb_execution_status_all").attr("checked", "checked").attr("disabled", "disabled");
+		});
+	} else {
+	    $("#cb_execution_status_all").attr("checked", "checked").attr("disabled", "disabled")
+		.unbind("change");
+	}
+    });
 });

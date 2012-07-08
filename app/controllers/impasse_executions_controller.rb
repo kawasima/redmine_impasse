@@ -84,10 +84,10 @@ LEFT OUTER JOIN users
   ON users.id = exec.tester_id
 WHERE 1=1
 <% if conditions.include? :user_id %>
-  AND (tester_id = :user_id OR T.node_type_id != 3)
+  AND (tester_id = :user_id OR T.node_type_id != '3')
 <% end %>
 <% if conditions.include? :execution_status %>
-  AND ((exec.status IN (:execution_status) <% if conditions[:execution_status].include? 0 %>OR exec.status IS NULL<% end %> ) OR T.node_type_id != 3)
+  AND ((exec.status IN (:execution_status) <% if conditions[:execution_status].include? "0" %>OR exec.status IS NULL<% end %> ) OR T.node_type_id != '3')
 <% end %>
 ORDER BY LENGTH(T.path) - LENGTH(REPLACE(T.path,'.','')), T.node_order
 END_OF_SQL
@@ -104,7 +104,14 @@ END_OF_SQL
     end
 
     if params.include? :execution_status
-      conditions[:execution_status] = params[:execution_status]
+      conditions[:execution_status] = []
+      if params[:execution_status].is_a? Array
+        params[:execution_status].each {|param|
+          conditions[:execution_status] << param.to_s
+        }
+      else
+        conditiions[:execution_status] << params[:execution_status].to_s
+      end
     end
 
     @nodes = Impasse::Node.find_by_sql([ERB.new(sql).result(binding), conditions])
