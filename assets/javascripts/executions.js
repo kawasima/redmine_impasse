@@ -22,7 +22,6 @@ jQuery(document).ready(function ($) {
     }
 
     function bind_node_event (e, data) {
-	$("#testplan-tree").unblock();
 	$(this).find("li[rel=test_case]").click(function(e) {
 	    var $node = $(this);
 	    $("#executions-view").block(impasse_loading_options());
@@ -52,7 +51,8 @@ jQuery(document).ready(function ($) {
 			    return $(this).val();
 			}).get();
 			return params;
-		    }
+		    },
+		    complete: function() { $("#testplan-tree").unblock(); }
 		}
 	    },
 	    types: {
@@ -81,8 +81,8 @@ jQuery(document).ready(function ($) {
 	});
 
     $("p.buttons a.icon.icon-checked").click(function(e) {
-	$tree.jstree("refresh", -1);
 	$("#testplan-tree").block(impasse_loading_options());
+	$tree.jstree("refresh", -1);
 	return false;
     });
     $("#executions-view form").live("submit", function(e) {
