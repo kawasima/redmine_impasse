@@ -6,5 +6,12 @@ module Impasse
     belongs_to :test_case
     
     validates_presence_of :actions, :expected_results
+
+    if Rails::VERSION::MAJOR < 3 or (Rails::VERSION::MAJOR == 3 and Rails::VERSION::MINOR < 1)
+      def dup
+        clone
+      end
+    end
+
   end
 end

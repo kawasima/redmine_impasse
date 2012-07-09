@@ -11,6 +11,12 @@ module Impasse
 
     validates_presence_of :name
 
+    if Rails::VERSION::MAJOR < 3 or (Rails::VERSION::MAJOR == 3 and Rails::VERSION::MINOR < 1)
+      def dup
+        clone
+      end
+    end
+
     def is_test_case?
       self.node_type_id == 3
     end

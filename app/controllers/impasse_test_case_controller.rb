@@ -265,15 +265,15 @@ class ImpasseTestCaseController < ImpasseAbstractController
     end
 
     def copy_node(original_node, parent_id, level=0)
-      node = original_node.clone
+      node = original_node.dup
 
       if node.is_test_case?
         original_case = Impasse::TestCase.find(original_node.id, :include => :test_steps)
-        test_case = original_case.clone
-        original_case.test_steps.each{|ts| test_case.test_steps << ts.clone }
+        test_case = original_case.dup
+        original_case.test_steps.each{|ts| test_case.test_steps << ts.dup }
       else
         original_case = Impasse::TestSuite.find(original_node.id)
-        test_case = original_case.clone
+        test_case = original_case.dup
       end
 
       node.parent_id = parent_id
