@@ -33,8 +33,7 @@ jQuery(document).ready(function ($) {
 	.bind("before.jstree", function (e, data) {
 	})
 	.bind("loaded.jstree refresh.jstree", function (e, data) {
-	    $(this).find("li[rel=test_case]").data("jstree", USER_ASSIGN_MENU);
-	    $(this).find("li[rel!=test_case]").data("jstree", USER_ASSIGN_MENU);
+	    $("li[rel^=test_]").data("jstree", USER_ASSIGN_MENU);
 	})
 	.bind("remove.jstree", function (e, data) {
 	    data.rslt.obj.each(function () {

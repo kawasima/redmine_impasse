@@ -86,9 +86,9 @@ jQuery(document).ready(function ($) {
     $("#testplan-tree")
 	.bind("before.jstree", function (e, data) {
 	})
-	.bind("loaded.jstree", function (e, data) {
-	    $(this).find("li[rel=test_case]").data("jstree", PLAN_CASE_MENU);
-	    $(this).find("li[rel!=test_case]").data("jstree", {contextmenu:{}});
+	.bind("loaded.jstree refresh.jstree", function (e, data) {
+	    $("li[rel=test_case],li[rel=test_suite]", this).data("jstree", PLAN_CASE_MENU);
+	    $("li[rel=test_project]", this).data("jstree", {contextmenu:{}});
 	})
 	.bind("contextmenu.jstree", function(e,data) {
 	})

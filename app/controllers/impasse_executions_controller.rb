@@ -47,9 +47,10 @@ class ImpasseExecutionsController < ImpasseAbstractController
     status = true
     for test_case_id in test_case_ids
       test_plan_case = Impasse::TestPlanCase.find(:first, :conditions=>[
-                                                               "test_plan_id=? AND test_case_id=?", params[:test_plan_case][:test_plan_id], test_case_id])
+                         "test_plan_id=? AND test_case_id=?", params[:test_plan_case][:test_plan_id], test_case_id])
       next if test_plan_case.nil?
       execution = Impasse::Execution.find_by_test_plan_case_id(test_plan_case.id)
+      next if execution.nil?
       execution.tester_id = execution.expected_date = nil
       satus &= execution.save
     end
