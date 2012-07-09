@@ -10,11 +10,11 @@
     </tr>
     <% @statistics.each do |st|
          user = User.new
-         st.attributes.each{|k,v| user[k] = v }%>
+	 st.attributes.each {|k, v| user[k] = v if user.has_attribute? k} %>
     <tr class="entry">
       <td class="size">
 	<% if st.login.nil? %>
-	<span>Not assigned</span>
+          <span><%= (st.tester_id)? l(:label_user_anonymous) : "Not assigned" %></span>
 	<% else %>
 	  <%=avatar user, :size=>16%><%=h user.name %>
 	<% end %>
