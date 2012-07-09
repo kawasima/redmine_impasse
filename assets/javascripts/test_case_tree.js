@@ -12,7 +12,6 @@ jQuery(document).ready(function ($) {
 		action: function(node) { openDialog({
 		    rslt: {
 			name: $("#testcase-tree").jstree("get_text", node),
-			position: $("#testcase-tree").jstree("get_index", node),
 			obj: node,
 			parent: $(node).parents("li:first")
 		    }
@@ -164,7 +163,6 @@ jQuery(document).ready(function ($) {
 			tc["node[id]"] = node.attr("id").replace("node_","");
 		    tc["node_type"] = node_type;
 		    tc["node[parent_id]"] = $(data.rslt.parent).attr("id").replace("node_", "");
-		    tc["node[node_order]"] = data.rslt.position;
 		    $.ajax({
 			type: 'POST',
 			url:AJAX_URL[edit_type],
@@ -259,15 +257,10 @@ jQuery(document).ready(function ($) {
 		}
 	    }
 	})
-	.bind("loaded.jstree", function (e, data) {
-	    $(this).find("li[rel=test_project]").data("jstree", ROOT_MENU);
-	    $(this).find("li[rel=test_suite]").data("jstree", FOLDER_MENU);
-	    $(this).find("li[rel=test_case]").data("jstree", LEAF_MENU);
-	})
-	.bind("refresh.jstree", function (e, data) {
-	    $(this).find("li[rel=test_project]").data("jstree", ROOT_MENU);
-	    $(this).find("li[rel=test_suite]").data("jstree", FOLDER_MENU);
-	    $(this).find("li[rel=test_case]").data("jstree", LEAF_MENU);
+	.bind("loaded.jstree refresh.jstree", function (e, data) {
+	    $("li[rel=test_project]", this).data("jstree", ROOT_MENU);
+	    $("li[rel=test_suite]", this).data("jstree", FOLDER_MENU);
+	    $("li[rel=test_case]", this).data("jstree", LEAF_MENU);
 	})
 	.bind("create.jstree", function (e, data) {
 	    dialog[$(data.rslt.obj).attr("rel")].bind('dialogbeforeclose', function(e) {

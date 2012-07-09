@@ -83,9 +83,11 @@ class ImpasseTestCaseController < ImpasseAbstractController
     def move
       nodes = []
       params[:nodes].each do |i,node_params|
-        node, test_case = get_node(node_params)
-        save_node(node)
-        nodes << node
+        ActiveRecord::Base.transaction do 
+          node, test_case = get_node(node_params)
+          save_node(node)
+          nodes << node
+        end
       end
 
       respond_to do |format|
@@ -213,7 +215,6 @@ class ImpasseTestCaseController < ImpasseAbstractController
 
       # If node has children, must update the node path of child nodes.
       node.update_child_nodes_path(old_node.path)
-
     end
 
     def save_keywords(node, keywords = "")
