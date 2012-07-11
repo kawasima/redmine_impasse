@@ -108,4 +108,9 @@ class ImpasseTestPlansController < ImpasseAbstractController
       format.json { render :json => { :status => true} }
     end
   end
+
+  def autocomplete
+    @users = @project.users.like(params[:q]).all(:limit => 100)
+    render :layout => false
+  end
 end

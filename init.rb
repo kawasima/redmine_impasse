@@ -27,7 +27,7 @@ Redmine::Plugin.register :redmine_impasse do
   project_module :impasse do
     permission :view_testcases, {
       'impasse_test_case' => [:index, :show, :list, :keywords],
-      'impasse_test_plans' => [:index, :show, :list, :tc_assign, :user_assign, :statistics],
+      'impasse_test_plans' => [:index, :show, :list, :tc_assign, :user_assign, :statistics, :autocomplete],
       'impasse_executions' => [:index, :get_list]
     }
     permission :manage_testcases, {

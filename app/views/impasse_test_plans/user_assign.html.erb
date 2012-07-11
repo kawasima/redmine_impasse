@@ -45,12 +45,24 @@
 	<div id="calendar-view" style="width: 100%"></div>
       </fieldset>
       <fieldset>
+        <p><%= label_tag "principal_search", l(:label_user_search) %><%= text_field_tag 'principal_search', nil %></p>
+        <%= observe_field(:principal_search,
+                 :frequency => 0.5,
+                 :update => :principals,
+                 :url => { :controller => :impasse_test_plans, :action => :autocomplete, :project_id => @project },
+                 :method => :get,
+                 :before => '$("principal_search").addClassName("ajax-loading")',
+                 :complete => '$("principal_search").removeClassName("ajax-loading")',
+                 :with => 'q')
+                  %>
 	<legend><%=l :label_member_plural %></legend>
-	<ul id="principals">
-	  <% for principal in @project.principals %>
-            <li class="jstree-draggable test-member" style="list-style:none; cursor: pointer" id="principal-<%=h principal.id %>"><%= avatar principal, :size=>16 %><%=h principal %></li>
-	  <% end %>
-	</ul>
+	<div id="principals">
+	  <ul>
+	    <% for user in @project.users.all(:limit => 100) %>
+	      <li class="jstree-draggable test-member" style="list-style:none; cursor: pointer" id="principal-<%=h user.id %>"><%= avatar user, :size=>16 %><%=h user %></li>
+  <% end %>
+	  </ul>
+	</div>
       </fieldset>
     </div>
   </div>

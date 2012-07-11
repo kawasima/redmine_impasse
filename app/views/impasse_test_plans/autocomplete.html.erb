@@ -1,0 +1,5 @@
+<ul>
+  <% for user in @users %>
+    <li class="jstree-draggable test-member" style="list-style:none; cursor: pointer" id="principal-<%=h user.id %>"><%= avatar user, :size=>16 %><%=h user %></li>
+  <% end %>
+</ul>
