@@ -1,10 +1,9 @@
 <%
-@impasse_setting = Impasse::Setting.find_or_create_by_project_id(@project)
+@impasse_setting = Impasse::Setting.find_or_create_by_project_id(:project_id => @project.id)
 %>
 <% if Rails::VERSION::MAJOR < 3 %>
-  <% remote_form_for :setting, @impasse_setting,
+  <% labelled_form_for :setting, @impasse_setting,
      :url => {:controller => :impasse_settings, :action => :edit, :project_id => @project }, 
-     :builder => TabularFormBuilder,
      :lang => current_language do |f| %>
     <%= error_messages_for 'setting' %>
     <div class="box tabular">
@@ -14,7 +13,8 @@
     <%= submit_tag l(:button_save) %>
   <% end %>
 <% else %>
-  <% output = remote_form_for :setting, @impasse_setting,
+  <% output = labelled_form_for @impasse_setting,
+      :as => :setting,
       :url => {:controller => :impasse_settings, :action => :edit, :project_id => @project },
       :lang => current_language do |f| %>
     <%= error_messages_for 'setting' %>
