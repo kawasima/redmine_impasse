@@ -1,18 +1,37 @@
+<p class="contextual">
+</p>
 <div id="test-chart">
 </div>
 <script>
+var ypadding = 1;
 jQuery.ajax({
     url: '<%=url_for :controller=>:impasse_test_plans, :action=>:statistics, :project_id=>@project, :id=>@test_plan%>',
     type: 'get',
     data: { type: "daily", format: "json" },
     success: function(data) {
-        jQuery.jqplot("test-chart", data, {
+        var minDate, maxDate, maxCount = 0;
+        jQuery.each(data, function(i, series) {
+            if (!minDate || minDate > new Date(series[0][0])) {
+                minDate = new Date(series[0][0]);
+            }
+            if (!maxDate || maxDate < new Date(series[series.length - 1][0])) {
+                maxDate = new Date(series[series.length - 1][0]);
+            }
+            if (series[0][1] > maxCount) maxCount = series[0][1];
+            if (series[series.length - 1][1] > maxCount) maxCount = series[series.length - 1][1];
+        });
+        maxCount += ypadding;
+        var intervalDate = (maxDate - minDate) / (24 * 60 * 60 * 1000);
+        var jqplot_option = { 
             axes: {
-                yaxis:  { min: 0,
-			  tickOptions : { formatString : '%d'},
-			  numberTicks: 11
+                yaxis:  { min: 0, max: maxCount,
+			  tickOptions : { formatString : '%d'}
 			},
-                xaxis: { renderer: jQuery.jqplot.DateAxisRenderer, numberTicks: 10}
+                xaxis: {
+                    renderer: jQuery.jqplot.DateAxisRenderer,
+                    min: jQuery.datepicker.formatDate("yy-mm-dd", minDate),
+                    max: jQuery.datepicker.formatDate("yy-mm-dd", maxDate)
+                }
             },
             series: [
                 {label: "<%=l(:label_impasse_stat_expected_cases)%>"},
@@ -22,7 +41,15 @@ jQuery.ajax({
             legend: {
                 show: true
             }
-        });
+        };
+        if (intervalDate < 10) {
+            jqplot_option.axes.xaxis.numberTicks = intervalDate + 1;
+        }
+        if (maxCount < 10) {
+            jqplot_option.axes.yaxis.numberTicks = maxCount + 1;
+        }
+
+        jQuery.jqplot("test-chart", data, jqplot_option);
     }
 });
 </script>
