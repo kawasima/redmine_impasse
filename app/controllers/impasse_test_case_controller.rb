@@ -41,7 +41,7 @@ class ImpasseTestCaseController < ImpasseAbstractController
             end
             @test_case.save!
             respond_to do |format|
-              format.json { render :json => [@test_case] }
+              format.json { render :json => { :status => 'success', :message => l(:notice_successful_create), :ids => [@test_case.id] } }
             end
           rescue ActiveRecord::RecordInvalid => e
             respond_to do |format|
@@ -113,7 +113,7 @@ class ImpasseTestCaseController < ImpasseAbstractController
               @test_case.test_steps.replace(@test_steps)
             end
             respond_to do |format|
-              format.json { render :json => [@test_case] }
+              format.json { render :json => { :status => 'success', :message => l(:notice_successful_update), :ids => [@test_case.id] } }
             end
           rescue ActiveRecord::RecordInvalid => e
             respond_to do |format|

@@ -98,14 +98,14 @@ class ImpasseTestPlansController < ImpasseAbstractController
     end
 
     respond_to do |format|
-      format.json { render :json => {'num'=>new_cases} }
+      format.json { render :json => { :status => 'success', :message => l(:notice_successful_create) } }
     end
   end
 
   def remove_test_case
     Impasse::TestPlanCase.delete_cascade!(params[:test_plan_id], params[:test_case_id])
     respond_to do |format|
-      format.json { render :json => { :status => true} }
+      format.json { render :json => { :status => 'success', :message => l(:notice_successful_delete) } }
     end
   end
 

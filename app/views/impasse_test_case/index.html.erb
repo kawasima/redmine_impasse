@@ -1,5 +1,5 @@
 <% content_for :header_tags do %>
-  <%= stylesheet_link_tag 'jquery-ui', :plugin => 'redmine_impasse' %>
+  <%= stylesheet_link_tag 'jquery-ui', 'jquery.noty.css', 'noty_theme_twitter.css', :plugin => 'redmine_impasse' %>
   <style>
     .ui-state-highlight { height: 1.5em; line-height: 1.2em; }
     li[rel="test_case"][data-inactive="true"] a { color: #999; text-decoration: line-through; }
@@ -7,7 +7,7 @@
   <% heads_for_wiki_formatter %>
   <%= javascript_include_tag(
       'jquery', 'jquery-ui', 'jquery.cookie.js',
-      'jquery.hotkeys.js', 'jquery.jstree.js',
+      'jquery.hotkeys.js', 'jquery.jstree.js', 'jquery.noty.js',
       'impasse_util', 'test_case_tree',
       :plugin => 'redmine_impasse') %>
   <script type="text/javascript">

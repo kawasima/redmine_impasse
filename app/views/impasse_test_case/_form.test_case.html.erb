@@ -1,5 +1,5 @@
 <div id="errorExplanation" style="display:none"></div>
-<div class="box">
+<div class="box tabular">
   <p><label><span class="required">*</span><%=l :field_name %></label><%= text_field_tag 'node[name]', @node.name, :size => 50, :required=>true %></p>
   <p><%= form.text_area :summary,
          :class => 'wiki-edit', :rows => 5 %></p>

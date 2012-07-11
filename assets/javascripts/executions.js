@@ -108,19 +108,13 @@ jQuery(document).ready(function ($) {
 	    type: 'POST',
 	    data: $this.serialize() + "&format=json",
 	    success: function(data) {
-		$("#executions-view .flash").remove();
-		$("#executions-view").prepend(
-		    $("<div/>").addClass("flash").addClass("notice")
-			.text(IMPASSE.label.noticeSuccessfulUpdate));
+		show_notification_dialog(data.status, data.message);
+		
 		post_save_function();
 		var test_case_id = $(":hidden[name='test_plan_case[test_case_id]']" ,$this).val();
 		$("#testplan-tree li#exec_"+test_case_id+" a  ins").css({backgroundImage: "url("+EXEC_ICONS[execution_status]+")"});
 	    },
 	    error: function(data) {
-		$("#executions-view .flash").remove();
-		$("#executions-view").prepend(
-		    $("<div/>").addClass("flash").addClass("error")
-			.text("Save failure."));
 		$.unblockUI();
 	    }
 	});
@@ -149,8 +143,8 @@ jQuery(document).ready(function ($) {
 		}
 		var bugs = $("#execution-bugs-list");
 		 
-		if (bugs != "")
-		    bugs.append(",")
+		if (bugs)
+		    bugs.append(",");
 		bugs.append($("<a/>")
 			    .attr("href", IMPASSE.url.issue + "/" + data['issue_id'])
 			    .text("#" + data['issue_id']))

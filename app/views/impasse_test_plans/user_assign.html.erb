@@ -1,7 +1,7 @@
 <% content_for :header_tags do %>
-  <%= stylesheet_link_tag 'jquery-ui', :plugin => 'redmine_impasse' %>
+  <%= stylesheet_link_tag 'jquery-ui', 'jquery.noty.css', 'noty_theme_twitter.css', :plugin => 'redmine_impasse' %>
   <%= javascript_include_tag('jquery', 'jquery-ui', 'jquery.cookie.js',
-			     'jquery.hotkeys.js', 'jquery.jstree.js',
+			     'jquery.hotkeys.js', 'jquery.jstree.js', 'jquery.noty.js',
 			     'impasse_util', 'user_assign',
 			     :plugin => 'redmine_impasse') %>
   <script type="text/javascript">

@@ -22,21 +22,27 @@ class ImpasseExecutionsController < ImpasseAbstractController
       params[:execution][:expected_date] = Time.at(params[:execution][:expected_date].to_i)
     end
 
-    status = true
+    status = 'success'
     for test_case_id in test_case_ids
-      @test_plan_case = Impasse::TestPlanCase.find(:first, :conditions=>[
+      begin
+        @test_plan_case = Impasse::TestPlanCase.find(:first, :conditions=>[
                                                                 "test_plan_id=? AND test_case_id=?",
                                                                 params[:test_plan_case][:test_plan_id],
                                                                 test_case_id])
-      next if @test_plan_case.nil?
-      @execution = Impasse::Execution.find_or_initialize_by_test_plan_case_id(@test_plan_case.id)
-      @execution.attributes = params[:execution]
-      @execution.execution_ts = Time.now.to_datetime
-      status &= @execution.save
+        next if @test_plan_case.nil?
+        @execution = Impasse::Execution.find_or_initialize_by_test_plan_case_id(@test_plan_case.id)
+        @execution.attributes = params[:execution]
+        @execution.execution_ts = Time.now.to_datetime
+        unless @execution.save
+          status = 'error'
+        end
+      rescue
+        status = 'error'
+      end
     end
     
     respond_to do |format|
-      format.json { render :json => { :status => status } }
+      format.json { render :json => { :status => status, :message => status ? l(:notice_successful_update) : l(:error_unable_to_connect) } }
     end
   end
 
@@ -62,7 +68,7 @@ class ImpasseExecutionsController < ImpasseAbstractController
 
   def get_list
     sql = <<-'END_OF_SQL'
-SELECT T.*, users.login, exec.expected_date, exec.status
+SELECT T.*, users.firstname, users.lastname, exec.expected_date, exec.status
 FROM (
   SELECT distinct parent.*, tpc.test_plan_id
   FROM impasse_nodes AS parent
@@ -166,9 +172,17 @@ END_OF_SQL
       if node.node_type_id != 3
         jstree_node['state'] = 'open'
       end
-      if !node.login.nil? or !node.expected_date.nil?
-        
-        jstree_node['data']['title'] << " (#{node.login} #{node.expected_date})"
+      assign_text = []
+      if node.firstname or node.lastname
+        firstname = node.firstname
+        lastname  = node.lastname
+        assign_text << eval('"' + User.name_formatter[:string] + '"')
+      end
+      if node.expected_date
+        assign_text << format_date(node.expected_date)
+      end
+      if assign_text.size > 0
+        jstree_node['data']['title'] << " (#{assign_text.join(' ')})"
       end
 
       jstree_node['data']['icon'] = status_icon(node.status) if node.node_type_id == 3

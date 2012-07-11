@@ -163,6 +163,7 @@ jQuery(document).ready(function ($) {
 			tc["node[id]"] = node.attr("id").replace("node_","");
 		    tc["node_type"] = node_type;
 		    tc["node[parent_id]"] = $(data.rslt.parent).attr("id").replace("node_", "");
+		    tc["node[node_order"] = data.rslt.obj.parent().children().index(data.rslt.obj);
 		    $.ajax({
 			type: 'POST',
 			url:AJAX_URL[edit_type],
@@ -180,16 +181,14 @@ jQuery(document).ready(function ($) {
 				$(window).scrollTop(top);
 				return;
 			    }
-			    $.each(r, function(i, n) {
+			    $.each(r.ids, function(i, id) {
 				dialog[node_type].unbind("dialogbeforeclose");
-				node.attr("id", "node_" + n.id);
+				node.attr("id", "node_" + id);
 				node.data("jstree", (node_type=='test_case')?LEAF_MENU:FOLDER_MENU);
 				$.jstree._reference(node).set_text(node, tc["node[name]"]);
-				show_notification_dialog(
-				    'success',
-				    edit_type=='edit' ? IMPASSE.label.noticeSuccessfulUpdate : IMPASSE.label.noticeSuccessfulCreate);
 			    });
 			    dialog[node_type].dialog('close');
+			    show_notification_dialog(r.status, r.message);
 			},
 			error: ajax_error_handler
 		    });

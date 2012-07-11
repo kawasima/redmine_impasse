@@ -73,8 +73,8 @@ jQuery(document).ready(function ($) {
 			  test_plan_id: test_plan_id,
 			  format: "json"
 			},
-			function(result) {
-			    if(result.num) {
+			function(r) {
+			    if(r.status == 'success') {
 				$("#testplan-tree").jstree("refresh", -1);
 			    }
 			}
@@ -104,7 +104,7 @@ jQuery(document).ready(function ($) {
 			test_case_id: this.id.replace("plan_","")
 		    }, 
 		    success : function (r) {
-			show_notification_dialog('success', IMPASSE.label.noticeSuccessfulDelete);
+			show_notification_dialog(r.status, r.message);
 		    },
 		    error: function(xhr, status, ex) {
 			ajax_error_handler(xhr, status, ex);
