@@ -92,7 +92,7 @@ ul.container li {
         });
       }, error: function() { container.empty(); }
     });
-    container.html($('<li><img src="' + "<%=Redmine::Utils::relative_url_root%>/plugin_assets/redmine_impasse/stylesheets/theme/default/throbber.gif" + '"></li>'));
+    container.html($('<li><img src="<%=Redmine::Utils::relative_url_root%>/plugin_assets/redmine_impasse/stylesheets/themes/default/throbber.gif"></li>'));
   }
 
   $(".suite-name").die("click").live("click", function() {

@@ -24,6 +24,14 @@ class ImpasseTestCaseController < ImpasseAbstractController
         format.json { render :json => jstree_nodes }
       end
     end
+    
+    def show
+      @node, @test_case = get_node(params[:node])
+
+      respond_to do |format|
+        format.html { render :partial => 'show' }
+      end
+    end
 
     def new
       new_node

@@ -9,7 +9,7 @@ jQuery(document).ready(function ($) {
 		"test_plan_case[test_case_id]": node_id
 	    },
 	    success: function(html) {
-		$("#executions-view").empty().append($(html))
+		$("#executions-view").empty().append($(html));
 		$("span.label", $("#executions-view"))
 		    .css({cursor:'pointer'})
 		    .click(function(e) {
@@ -30,8 +30,7 @@ jQuery(document).ready(function ($) {
     }
 
     var $tree = $("#testplan-tree")
-	.bind("loaded.jstree", bind_node_event)
-	.bind("refresh.jstree", bind_node_event)
+	.bind("loaded.jstree refresh.jstree", bind_node_event)
 	.jstree({ 
 	    "plugins" : [
 		"themes","json_data","ui","crrm","search","types","hotkeys"

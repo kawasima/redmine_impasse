@@ -29,6 +29,10 @@ jQuery(document).ready(function ($) {
 	}
     };
 
+    var plugins = ["themes","json_data","ui","cookies","types","hotkeys"];
+    if (IMPASSE.canEdit) {
+	plugins = plugins.concat(["dnd", "crrm", "contextmenu"]);
+    }
     $("#testplan-tree")
 	.bind("before.jstree", function (e, data) {
 	})
@@ -58,9 +62,7 @@ jQuery(document).ready(function ($) {
 	    });
 	})
 	.jstree({ 
-	    "plugins" : [ 
-		"themes","json_data","ui","crrm","cookies","dnd","search","types","hotkeys", "contextmenu"
-	    ],
+	    "plugins" : plugins,
 	    core : {
 		animation: 0
 	    },

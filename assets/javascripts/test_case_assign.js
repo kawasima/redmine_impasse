@@ -11,11 +11,14 @@ jQuery(document).ready(function ($) {
 	}
     };
 
+    var plugins = ["themes","json_data","ui","cookies","types","hotkeys"];
+    if (IMPASSE.canEdit) {
+	plugins = plugins.concat(["crrm","dnd"]);
+    }
+
     $("#testcase-tree")
 	.jstree({ 
-	    "plugins": [ 
-		"themes", "json_data","ui","crrm","cookies","dnd","search","types","hotkeys"
-	    ],
+	    "plugins": plugins,
 	    json_data: { 
 		ajax: {
 		    url: IMPASSE.url.testCaseList,
@@ -83,6 +86,10 @@ jQuery(document).ready(function ($) {
 	    }
 	});
 
+    var plugins = ["themes","json_data","ui","cookies","types","hotkeys"];
+    if (IMPASSE.canEdit) {
+	plugins = plugins.concat(["contextmenu"]);
+    }
     $("#testplan-tree")
 	.bind("before.jstree", function (e, data) {
 	})
@@ -114,9 +121,7 @@ jQuery(document).ready(function ($) {
 	    });
 	})
 	.jstree({ 
-	    "plugins" : [ 
-		"themes", "json_data","ui","crrm", "cookies","dnd","search","types","hotkeys", "contextmenu"
-	    ],
+	    "plugins" : plugins,
 	    json_data : { 
 		ajax : {
 		    url : IMPASSE.url.testPlanCaseList,

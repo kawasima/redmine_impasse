@@ -1,0 +1,38 @@
+<div class="details">
+  <table class="attributes">
+    <tr>
+      <th class="subject"><%=l(:field_name)%></th>
+      <td><%=h @node.name %></td>
+    </tr>
+  </table>
+  
+  <% if @test_case.summary? %>
+  <p><strong><%=l(:field_summary)%></strong></p>
+  <div class="wiki">
+  <%= textilizable @test_case, :summary %>
+  </div>
+  <% end %>
+
+  <% if @test_case.preconditions? %>
+  <p><strong><%=l(:field_preconditions)%></strong></p>
+  <%= textilizable @test_case, :preconditions %>
+  <% end %>
+
+  <% if @test_case.test_steps.size > 0 %>    
+    <p><strong><%=l(:field_test_steps)%></strong></p>
+    <table>
+      <tr>
+	<th>#</th>
+	<th><%=l(:field_actions)%></th>
+	<th><%=l(:field_expected_results)%></th>
+      </tr>
+      <% @test_case.test_steps.each do |test_step| %>
+	<tr>
+	  <td><%= test_step.step_number %></td>
+	  <td><%=h test_step.actions %></td>
+	  <td><%=h test_step.expected_results %></td>
+	</tr>
+      <% end %>
+    </table>
+  <% end %>
+</div>

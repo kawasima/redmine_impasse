@@ -198,11 +198,14 @@ jQuery(document).ready(function ($) {
 	});
     };
 
+    var plugins = ["themes","json_data","ui","cookies","types","hotkeys"];
+    if (IMPASSE.canEdit) {
+	plugins = plugins.concat(["crrm","dnd","contextmenu"]);
+    }
+
     var testcaseTree =$("#testcase-tree")
 	.jstree({ 
-	    "plugins": [
-		"themes","json_data","ui","crrm","cookies","dnd","search","types","hotkeys","contextmenu" 
-	    ],
+	    plugins: plugins,
 	    core: {
 		animation: 0
 	    },
@@ -362,6 +365,24 @@ jQuery(document).ready(function ($) {
 	test_steps.append(test_step);
 
 	return false;
+    });
+
+    $("li[rel=test_case]", testcaseTree).live("click", function() {
+	$("#test-case-view").block(impasse_loading_options());
+	var $node = $(this);
+	var node_id = $(this).attr("id").replace("node_", "");
+	$.ajax({
+	    url: IMPASSE.url.testCaseShow,
+	    data: { "node[id]": node_id },
+	    success: function(html) {
+		$("#test-case-view").html(html).show();
+	    },
+	    error: ajax_error_handler,
+	    complete: function() {
+		$("#test-case-view").unblock();
+	    }
+	});
+	
     });
 });
 

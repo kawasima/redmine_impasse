@@ -1,13 +1,22 @@
 <% content_for :header_tags do %>
   <%= stylesheet_link_tag 'jquery-ui', 'jquery.noty.css', 'noty_theme_twitter.css', :plugin => 'redmine_impasse' %>
   <style>
+    #test-case-view {
+      background: #ffd;
+      padding: 6px;
+      margin-bottom: 6px;
+      border: 1px solid #d7d7d7;
+    }
+    #testcase-tree {
+      overflow-x: auto;
+    }
     .ui-state-highlight { height: 1.5em; line-height: 1.2em; }
     li[rel="test_case"][data-inactive="true"] a { color: #999; text-decoration: line-through; }
   </style>
   <% heads_for_wiki_formatter %>
   <%= javascript_include_tag(
       'jquery', 'jquery-ui', 'jquery.cookie.js',
-      'jquery.hotkeys.js', 'jquery.jstree.js', 'jquery.noty.js',
+      'jquery.hotkeys.js', 'jquery.jstree.js', 'jquery.blockUI.js', 'jquery.noty.js',
       'impasse_util', 'test_case_tree',
       :plugin => 'redmine_impasse') %>
   <script type="text/javascript">
@@ -17,6 +26,7 @@
         testCaseNew:  "<%=url_for :controller=>:impasse_test_case, :action=>:new, :project_id=>@project%>",
         testCaseEdit: "<%=url_for :controller=>:impasse_test_case, :action=>:edit, :project_id=>@project%>",
         testCaseList: "<%= url_for :controller=>:impasse_test_case, :action=>:list, :project_id=>@project %>",
+        testCaseShow: "<%= url_for :controller=>:impasse_test_case, :action=>:show, :project_id=>@project %>",
         testCaseDestroy: "<%= url_for :controller=>:impasse_test_case, :action=>:destroy, :project_id=>@project %>",
         testCaseCopy: "<%= url_for :controller=>:impasse_test_case, :action=>:copy, :project_id=>@project %>",
         testCaseMove: "<%= url_for :controller=>:impasse_test_case, :action=>:move, :project_id=>@project %>",
@@ -39,13 +49,16 @@
         testCaseEdit:  "<%=l :label_test_case_edit %>",
         noticeSuccessfulUpdate: "<%=l(:notice_successful_update)%>",
         noticeSuccessfulCreate: "<%=l(:notice_successful_create)%>"
-      }
+      },
+      canEdit: <%= (User.current.allowed_to? :manage_test_cases, nil, :global => true) ? "true" : "false" %>
     }
   </script>
 <% end %>
 
 <h2><%= l(:label_impasse)%></h2>
 
+<div class="tab-content">
+  <div class="splitcontentleft">
     <fieldset id="filters" class="collapsible collapsed">
       <legend onclick="toggleFieldset(this);"><%= l(:label_filter_plural) %></legend>
       <div style="display:none;">
@@ -69,13 +82,20 @@
 	 'jQuery("#filters_query").val("");jQuery("#testcase-tree").jstree("refresh", jQuery("#testcase-tree li[rel=test_project]"));',
 	 :class => 'icon icon-reload'%>
     </p>
-<div id="testcase-tree">
-</div>
+    <div id="testcase-tree">
+    </div>
+  </div>
+
+  <div class="splitcontentright" style="position: relative">
+    <div id="test-case-view" style="display: none;">
+    </div>
+  </div>
+</div>  
 
 <% content_for :sidebar do %>
   <h3><%=l(:label_test_plan_plural)%></h3>
   <div class="contextual">
-    <%= link_to l(:label_test_plan_new), {:controller=>:impasse_test_plans, :action=>:new, :project_id=>@project}, :class=>"icon icon-add" %>
+    <%= link_to_if_authorized l(:label_test_plan_new), {:controller=>:impasse_test_plans, :action=>:new, :project_id=>@project}, :class=>"icon icon-add" %>
   </div>
   <% plans, versions = Impasse::TestPlan.find_all_by_version(@project, params[:completed]) %>
     <% versions.each do |version| %>
