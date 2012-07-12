@@ -231,6 +231,7 @@ class ImpasseTestCaseController < ImpasseAbstractController
       words = keywords.split(/\s*,\s*/)
       words.delete_if {|word| word =~ /^\s*$/}.uniq!
 
+      node_keywords = node.node_keywords
       keeps = []
       words.each{|word|
         keyword = project_keywords.detect {|k| k.keyword == word}
@@ -248,7 +249,7 @@ class ImpasseTestCaseController < ImpasseAbstractController
           keeps << new_node_keyword.id
         end
       }
-      node.node_keywords.each{|node_keyword|
+      node_keywords.each{|node_keyword|
         node_keyword.destroy unless keeps.include? node_keyword.id
       }
     end
