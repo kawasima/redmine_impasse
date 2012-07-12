@@ -38,6 +38,8 @@ ja:
   label_filters_query: "含まれる文字列"
   label_filters_keywords: "キーワード"
   label_filters_inactive: "無効なケースも対象にする"
+  label_includes_before: "以前のものを含む"
+  label_includes_after: "以降のものを含む"
 
   field_details: "詳細"
   field_preconditions: "前提条件"
@@ -48,7 +50,8 @@ ja:
   field_actions: "操作"
   field_expected_results: "期待する結果"
   field_bug_tracker: "不具合と関連付けるトラッカ"
-
+  field_expected_date: "テスト予定日"
+ 
   button_create_test_plan: "テスト計画の新規作成"
   field_execution_status: "実行結果"
   permission_view_testcases: "テストの参照"

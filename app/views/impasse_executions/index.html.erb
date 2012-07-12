@@ -38,6 +38,12 @@
        "<%=Redmine::Utils::relative_url_root%>/plugin_assets/redmine_impasse/stylesheets/images/cross.png",
        "<%=Redmine::Utils::relative_url_root%>/plugin_assets/redmine_impasse/stylesheets/images/wall-brick.png"
     ];
+    function reset_filter() {
+        jQuery(".filter :input").filter(":text,select").val("");
+        jQuery(".filter #cb_execution_status_all").click();
+        jQuery(".filter #cb_myself").attr("checked", "checked");
+        jQuery("#testplan-tree").jstree("refresh", jQuery("#testplan-tree li[rel=test_project]"));
+    }
   </script>
 <% end %>
 
@@ -77,11 +83,23 @@
 	      <label for="cb_execution_status_3"><%=l(:label_execution_status_3)%></label>
 	    </td>
 	  </tr>
+	  <tr class="filter">
+	    <th><%= l(:field_expected_date) %></th>
+	    <td>
+	      <%= text_field_tag 'expected_date' %><%= calendar_for('expected_date') %>
+	      <select name="expected_date_op">
+		<option value=""></option>
+		<option value="<="><%=l(:label_includes_before)%></option>
+		<option value=">=" ><%=l(:label_includes_after)%></option>
+	      </select>
+	    </td>
+	  </tr>
 	</table>
       </div>
     </fieldset>
     <p class="buttons hide-when-print">
       <%=link_to l(:button_apply), {:controller=>:impasse_executions, :action=>:index, :project_id=>@project, :test_plan_id=>@test_plan}, :class => 'icon icon-checked'%>
+      <%=link_to_function l(:button_clear), 'reset_filter()', :class => 'icon icon-reload'%>
     </p>
     <div id="testplan-tree"></div>
   </div>

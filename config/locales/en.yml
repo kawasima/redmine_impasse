@@ -38,6 +38,8 @@ en:
   label_filters_query: "Includes words "
   label_filters_keywords: "Keywords"
   label_filters_inactive: "Includes invalid cases"
+  label_includes_before: "includes before"
+  label_includes_after: "includes after"
 
   field_details: "Details"
   field_preconditions: "Preconditions"
@@ -48,6 +50,7 @@ en:
   field_expected_results: "Expected Results"
   field_execution_status: "Execution status"
   field_bug_tracker: "Tracker as bugs"
+  field_expected_date: "Expected date"
 
   button_create_test_plan: "Create a test plan"
   

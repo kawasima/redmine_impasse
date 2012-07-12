@@ -49,6 +49,10 @@ jQuery(document).ready(function ($) {
 			params["execution_status"] = $("#filters :checkbox[name=execution_status]:checked").map(function() {
 			    return $(this).val();
 			}).get();
+			$.each(["expected_date", "expected_date_op"], function(i, key) {
+			    var val = $("#filters :input[name=" + key + "]").val();
+			    if (val) params[key] = val;
+			});
 			return params;
 		    },
 		    complete: function() { $("#testplan-tree").unblock(); }
@@ -175,4 +179,5 @@ jQuery(document).ready(function ($) {
 		.unbind("change");
 	}
     });
+
 });

@@ -79,9 +79,9 @@ FROM (
   LEFT JOIN impasse_test_plan_cases AS tpc
     ON tc.id=tpc.test_case_id
   WHERE tpc.test_plan_id=:test_plan_id
-<% if conditions.include? :path %>
+<%- if conditions.include? :path -%>
     AND parent.path LIKE :path
-<% end %>
+<%- end -%>
 ) AS T
 LEFT JOIN impasse_test_plan_cases AS tpcs
   ON T.id=tpcs.test_case_id AND T.test_plan_id = tpcs.test_plan_id
@@ -89,13 +89,18 @@ LEFT JOIN impasse_executions AS exec
   ON tpcs.id = exec.test_plan_case_id
 LEFT OUTER JOIN users
   ON users.id = exec.tester_id
-WHERE 1=1
-<% if conditions.include? :user_id %>
-  AND (tester_id = :user_id OR T.node_type_id != '3')
-<% end %>
-<% if conditions.include? :execution_status %>
-  AND ((exec.status IN (:execution_status) <% if conditions[:execution_status].include? "0" %>OR exec.status IS NULL<% end %> ) OR T.node_type_id != '3')
-<% end %>
+<%- if [:user_id, :execution_status, :expected_date].any? {|key| conditions.include? key} -%>
+WHERE T.node_type_id != '3' OR (1=1
+  <%- if conditions.include? :user_id -%>
+  AND tester_id = :user_id
+  <%- end -%>
+  <%- if conditions.include? :execution_status -%>
+  AND (exec.status IN (:execution_status) <%- if conditions[:execution_status].include? "0" %>OR exec.status IS NULL<% end %> )
+  <% end %>
+  <%- if conditions.include? :expected_date -%>
+  AND exec.expected_date <%= conditions[:expected_date_op] %> :expected_date
+  <%- end -%>)
+<%- end -%>
 ORDER BY LENGTH(T.path) - LENGTH(REPLACE(T.path,'.','')), T.node_order
 END_OF_SQL
 
@@ -121,7 +126,11 @@ END_OF_SQL
       end
     end
 
-    @nodes = Impasse::Node.find_by_sql([ERB.new(sql).result(binding), conditions])
+    if params.include? :expected_date
+      conditions[:expected_date] = params[:expected_date]
+      conditions[:expected_date_op] = params[:expected_date_op] || '='
+    end
+    @nodes = Impasse::Node.find_by_sql([ERB.new(sql, nil, '-').result(binding), conditions])
 
     jstree_nodes = convert(@nodes, params[:prefix])
 
