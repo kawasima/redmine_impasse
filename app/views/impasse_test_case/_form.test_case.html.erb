@@ -7,11 +7,11 @@
          :class => 'wiki-edit', :rows => 5 %></p>
   <p><%= form.select :importance, [[l(:default_priority_high),1], [l(:default_priority_normal),2], [l(:default_priority_low),3]] %></p>
   <p>
-    <label>keyword</label>
+    <label><%= l(:field_keywords) %></label>
     <input type="text" name="node_keywords" value="<%= @node.keywords.collect{|w| w.keyword}.join(",")%>"/>
   </p>
   <div style="margin:0; padding: 5px 0 8px 0; padding-left: 180px; height: 1%; clear: left;">
-    <label><%=l(:field_test_steps)%></label>
+    <label><%=l(:field_test_steps) %></label>
     <div>
       <div class="contextual">
 	<a href="#" class="icon icon-add add-test-step">add</a>

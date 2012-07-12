@@ -36,11 +36,13 @@ ja:
   label_execution_status_3: "保留"
 
   label_filters_query: "含まれる文字列"
+  label_filters_keywords: "キーワード"
   label_filters_inactive: "無効なケースも対象にする"
 
   field_details: "詳細"
   field_preconditions: "前提条件"
   field_importance: "重要度"
+  field_keywords: "キーワード"
   field_test_steps: "ステップ"
   field_test_case: "テストケース"
   field_actions: "操作"

@@ -227,7 +227,6 @@ class ImpasseTestCaseController < ImpasseAbstractController
 
     def save_keywords(node, keywords = "")
       project_keywords = Impasse::Keyword.find_all_by_project_id(@project)
-      node_keywords = node.node_keywords || []
       words = keywords.split(/\s*,\s*/)
       words.delete_if {|word| word =~ /^\s*$/}.uniq!
 
@@ -240,13 +239,15 @@ class ImpasseTestCaseController < ImpasseAbstractController
             keeps << node_keyword.id
           else
             new_node_keyword = Impasse::NodeKeyword.create(:keyword_id => keyword.id, :node_id => node.id)
+            keeps << new_node_keyword.id
           end
         else
           new_keyword = Impasse::Keyword.create(:keyword => word, :project_id => @project.id)
           new_node_keyword = Impasse::NodeKeyword.create(:keyword_id => new_keyword.id, :node_id => node.id)
+          keeps << new_node_keyword.id
         end
       }
-      node_keywords.each{|node_keyword|
+      node.node_keywords.each{|node_keyword|
         node_keyword.destroy unless keeps.include? node_keyword.id
       }
     end

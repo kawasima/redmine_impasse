@@ -88,8 +88,8 @@ jQuery(document).ready(function ($) {
 	return split( term ).pop();
     }
 
-    function setupKeyword(dialog, availableTags) {
-	dialog.find(":text[name=node_keywords]").autocomplete({
+    function setupKeyword(completeBox, availableTags) {
+	completeBox.autocomplete({
 	    minLength: 0,
 	    source: function( request, response ) {
 		response( $.ui.autocomplete.filter(
@@ -130,7 +130,7 @@ jQuery(document).ready(function ($) {
 		    dialog[node_type].dialog('close');
 		});
 		dialog[node_type].dialog('open');
-		$.getJSON(IMPASSE.url.testKeywords, function(json) { setupKeyword(dialog[node_type], json) });
+		$.getJSON(IMPASSE.url.testKeywords, function(json) { setupKeyword($("input[name=node_keywords]", dialog[node_type]), json) });
 		dialog[node_type].find(".sortable").sortable({
 		    handle: ".ui-sort-handle",
 		    placeholder: 'ui-state-highlight',
@@ -382,7 +382,10 @@ jQuery(document).ready(function ($) {
 		$("#test-case-view").unblock();
 	    }
 	});
-	
+    });
+
+    $.getJSON(IMPASSE.url.testKeywords, function(json) {
+	setupKeyword($(".filter :input#filters_keywords"), json);
     });
 });
 

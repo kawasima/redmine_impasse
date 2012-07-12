@@ -36,11 +36,13 @@ en:
   label_execution_status_3: "Block"
 
   label_filters_query: "Includes words "
+  label_filters_keywords: "Keywords"
   label_filters_inactive: "Includes invalid cases"
 
   field_details: "Details"
   field_preconditions: "Preconditions"
   field_importance: "Importance"
+  field_keywords: "Keywords"
   field_test_steps: "Steps"
   field_actions: "Actions"
   field_expected_results: "Expected Results"

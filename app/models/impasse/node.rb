@@ -54,15 +54,26 @@ module Impasse
         <% if conditions.include? :path %>
           AND parent.path LIKE :path
         <% end %>
-        <% if conditions.include? :filters_query %>
-          AND (parent.name like :filters_query OR parent.node_type_id != 3)
-        <% end %>
+        <%- if conditions.include? :filters_query or conditions.include? :filters_keywords -%>
+        AND (parent.node_type_id != 3 OR (
+          <%- if conditions.include? :filters_query -%>
+             parent.name like :filters_query <%- if conditions.include? :filters_keywords -%>AND <%- end -%>
+          <%- end -%>
+          <%- if conditions.include? :filters_keywords -%>
+            exists (
+            SELECT 1 FROM impasse_node_keywords AS nk
+              JOIN impasse_keywords AS k ON k.id = nk.keyword_id
+            WHERE nk.node_id = parent.id
+              AND k.keyword in (:filters_keywords))
+          <%- end -%>))
+        <%- end -%>
         ORDER BY LENGTH(parent.path) - LENGTH(REPLACE(parent.path,'.','')), node_order
       ) AS node
       LEFT OUTER JOIN impasse_test_cases AS tc
         ON node.id = tc.id
+      WHERE 1=1
       <% unless conditions.include? :filters_inactive %>
-      WHERE tc.active = 1 OR tc.active IS NULL
+        AND tc.active = 1 OR tc.active IS NULL
       <% end %>
       END_OF_SQL
 
@@ -81,11 +92,16 @@ module Impasse
         conditions[:filters_query] = "%#{filters[:query]}%"
       end
 
+      if filters and filters[:keywords]
+        keywords = filters[:keywords].split(/\s*,\s*/).delete_if{|k| k == ""}.uniq
+        conditions[:filters_keywords] = keywords
+      end
+
       if filters and filters[:inactive]
         conditions[:filters_inactive] = true
       end
 
-      find_by_sql([ERB.new(sql).result(binding), conditions])
+      find_by_sql([ERB.new(sql, nil, '-').result(binding), conditions])
     end
 
     def all_decendant_cases

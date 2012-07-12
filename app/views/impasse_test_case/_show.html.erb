@@ -4,6 +4,12 @@
       <th class="subject"><%=l(:field_name)%></th>
       <td><%=h @node.name %></td>
     </tr>
+    <% unless @node.keywords.empty? %>
+    <tr>
+      <th><%=l(:field_keywords)%></th>
+      <td><%=h @node.keywords.map{|k| k.keyword }.join(",") %></td>
+    </tr>
+    <% end %>
   </table>
   
   <% if @test_case.summary? %>

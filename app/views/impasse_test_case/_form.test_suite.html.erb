@@ -5,7 +5,7 @@
          :class => 'wiki-edit' %></p>
   <%= wikitoolbar_for 'test_case_details' %>
   <p>
-    <label>keyword</label>
+    <label><%= l(:field_keywords) %></label>
     <input type="text" name="node_keywords" value="<%= @node.keywords.collect{|w| w.keyword}.join(",")%>"/>
   </p>
 </div>
