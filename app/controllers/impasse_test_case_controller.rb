@@ -196,6 +196,7 @@ class ImpasseTestCaseController < ImpasseAbstractController
       when 'test_case'
         @test_case = Impasse::TestCase.new(params[:test_case])
         @test_case.active = true
+        @test_case.importance = 2
         @node.node_type_id = 3
       else
         @test_case = Impasse::TestSuite.new(params[:test_case])
