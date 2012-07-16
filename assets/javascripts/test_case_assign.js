@@ -88,11 +88,9 @@ jQuery(document).ready(function ($) {
 
     var plugins = ["themes","json_data","ui","cookies","types","hotkeys"];
     if (IMPASSE.canEdit) {
-	plugins = plugins.concat(["contextmenu"]);
+	plugins = plugins.concat(["crrm","contextmenu"]);
     }
     $("#testplan-tree")
-	.bind("before.jstree", function (e, data) {
-	})
 	.bind("loaded.jstree refresh.jstree", function (e, data) {
 	    $("li[rel=test_case],li[rel=test_suite]", this).data("jstree", PLAN_CASE_MENU);
 	    $("li[rel=test_project]", this).data("jstree", {contextmenu:{}});
