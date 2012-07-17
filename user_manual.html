@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Redmine impasse by kawasima</title>
+    <title>User Manual / Redmine impasse</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
@@ -15,7 +15,7 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1>Redmine impasse</h1>
+        <h1>User manual</h1>
         <p>The redmine plugin for test management.</p>
 
         <p class="view"><a href="https://github.com/kawasima/redmine_impasse">View the Project on GitHub <small>kawasima/redmine_impasse</small></a></p>
@@ -25,30 +25,26 @@
           <li><a href="https://github.com/kawasima/redmine_impasse/zipball/master">Download <strong>ZIP File</strong></a></li>
           <li><a href="https://github.com/kawasima/redmine_impasse/tarball/master">Download <strong>TAR Ball</strong></a></li>
           <li><a href="https://github.com/kawasima/redmine_impasse">View On <strong>GitHub</strong></a></li>
-        </ul>        
+        </ul>
       </header>
       <section>
-        <h3>Redmine Impasse</h3>
-
-<p>Impasse is test management tool like Testlink.</p>
-      </section>
-      <section>
-        <h3>Plugin requirements</h3>
-        <ul>
-          <li>Redmine 1.1.x - 2.x</li>
-          <li>MySQL</li>
+        <h3>Manage test cases and suites</h3>
+        <p>When you click on the Tests tab, a tree structure for test cases is shown.
+	        This tree is consist of 3 kinds nodes (project, test suite and test case).</p>
+	    <ul>
+	     	<li><em>Project:</em> is the root of all test suites and cases.</li>
+	        <li><em>Test suite:</em> is a collection of test cases.</li>
+        	<li><em>Test case</em>is prepared for verification with some test steps.</li>
         </ul>
+	    <img src="images/create_test_suite.png"/>
+	    <p>When you right-click on the node of project or test suite, the context menu will be shown.
+	        If you select "Create" and "Test suite", the dialog for test suite will be shown.
+	        If you select "Create" and "Test case", the dialog for test case will be shown.
+        </p>
       </section>
       <section>
-        <h3>Documents</h3>
-        <ul>
-        	<li><a href="administration_guide.html">Administration guide</a></li>
-        	<li><a href="user_manual.html">User manual</a></li>
-        </ul>
-      </section>
-      <section>
-        <h3>License</h3>
-        <p>This plugin is released under the Apache License Version 2.0.</p>
+      	<h3>Manage test plans</h3>
+	    <img src="images/create_test_plan.png"/>      	
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/kawasima">kawasima</a></p>
