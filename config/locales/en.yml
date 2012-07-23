@@ -6,6 +6,7 @@ en:
   label_impasse_plan_new: "Add test plans"
   label_test_plans_list: "test plans list"
   label_test_plan_plural: "Test plans"
+  label_test_suite_name: "Test suite"
   label_tc_assign: "Assign test cases"
   label_user_assign: "Assign users"
   label_execution: "Execution"
