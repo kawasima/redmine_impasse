@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>User Manual / Redmine impasse</title>
+    <title>Administration Guide / Redmine impasse</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
@@ -15,7 +15,7 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1>User manual</h1>
+        <h1>Administration guide</h1>
         <p>The redmine plugin for test management.</p>
 
         <p class="view"><a href="https://github.com/kawasima/redmine_impasse">View the Project on GitHub <small>kawasima/redmine_impasse</small></a></p>
@@ -29,12 +29,25 @@
       </header>
       <section>
         <h3>Install redmine_impasse plugin</h3>
+				<p>
+					<pre><code>
+% cd vendor/plugins  (If you use Redmine 2.x, "cd plugins".)
+% git clone https://github.com/kawasima/redmine_impasse.git
+% cd ../..
+% rake db:migrate_plugins
+					</code></pre>
+				</p>
       </section>
       <section>
-      	<h3>Enable plugin and add permission</h3>
+      	<h3>Enable plugin and grant permission</h3>
+				<p>
+					Select Administration -> Roles and permissions menu and grant permission to the roles.
+				</p>
+				<img src="images/settings_permissions.png"/>
       </section>
       <section>
       	<h3>Project setting</h3>
+				<img src="images/impasse_settings.png"/>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/kawasima">kawasima</a></p>
