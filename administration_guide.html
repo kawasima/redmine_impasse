@@ -29,14 +29,23 @@
       </header>
       <section>
         <h3>Install redmine_impasse plugin</h3>
-				<p>
-					<pre><code>
-% cd vendor/plugins  (If you use Redmine 2.x, "cd plugins".)
-% git clone https://github.com/kawasima/redmine_impasse.git
-% cd ../..
-% rake db:migrate_plugins
-					</code></pre>
-				</p>
+				<p>If you use Redmine 1.x</p>
+				<pre><code>
+cd vendor/plugins
+				</code></pre>
+				<p>or if you use Redmine 2.x, </p>
+				<pre><code>
+cd plugins
+				</code></pre>
+
+				<p>And clone the source from GitHub.</p>
+				<pre><code>
+git clone https://github.com/kawasima/redmine_impasse.git
+				</code></pre>
+				<p>Finally, execute migration.</p>
+				<pre><code>
+rake db:migrate_plugins
+				</code></pre>
       </section>
       <section>
       	<h3>Enable plugin and grant permission</h3>
