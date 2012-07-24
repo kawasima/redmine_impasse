@@ -185,10 +185,10 @@ END_OF_SQL
       if node.firstname or node.lastname
         firstname = node.firstname
         lastname  = node.lastname
-        assign_text << eval('"' + User.name_formatter[:string] + '"')
+        assign_text << User.new(:firstname => node.firstname, :lastname => node.lastname).name
       end
       if node.expected_date
-        assign_text << format_date(node.expected_date)
+        assign_text << format_date(node.expected_date.to_date)
       end
       if assign_text.size > 0
         jstree_node['data']['title'] << " (#{assign_text.join(' ')})"
