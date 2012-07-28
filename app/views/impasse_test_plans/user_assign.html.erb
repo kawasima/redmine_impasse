@@ -22,7 +22,7 @@
       label: {
         buttonDelete: "<%=l(:button_delete)%>"
       },
-      canEdit: <%= (User.current.allowed_to? :manage_test_cases, nil, :global => true) ? "true" : "false" %>
+      canEdit: <%= (User.current.allowed_to? :manage_testcases, nil, :global => true) ? "true" : "false" %>
     };
   </script>
 <% end %>

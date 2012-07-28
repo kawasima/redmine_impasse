@@ -50,7 +50,7 @@
         noticeSuccessfulUpdate: "<%=l(:notice_successful_update)%>",
         noticeSuccessfulCreate: "<%=l(:notice_successful_create)%>"
       },
-      canEdit: <%= (User.current.allowed_to? :manage_test_cases, nil, :global => true) ? "true" : "false" %>
+      canEdit: <%= (User.current.allowed_to? :manage_testcases, nil, :global => true) ? "true" : "false" %>
     }
   </script>
 <% end %>

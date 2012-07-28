@@ -11,9 +11,9 @@
     <%= submit_tag l(:button_update) %>
   <% end %>
 <% else %>
-  <% output = labelled_form_for @test_plan, :as => :test_plan, :url => { :action => :new }  do |f| %>
+  <% output = labelled_form_for @test_plan, :as => :test_plan, :url => { :action => :edit }  do |f| %>
     <%= render :partial => "form", :locals => {:form => f} %>
     <%= submit_tag l(:button_update) %>
   <% end %>
-  <%= output %>
+  <%= output.force_encoding("ASCII-8BIT") %>
 <% end %>

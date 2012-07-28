@@ -27,9 +27,9 @@ class ImpasseTestPlansController < ImpasseAbstractController
   def edit
     @test_plan = Impasse::TestPlan.find(params[:id])
     @test_plan.attributes = params[:test_plan]
-    if request.post? and @test_plan.save
-      flash[:notice] = l(:notice_successful_create)
-      redirect_to :action => :edit, :project_id => @project, :id => @test_plan
+    if (request.post? or request.put?) and @test_plan.save
+      flash[:notice] = l(:notice_successful_update)
+      redirect_to :action => :show, :project_id => @project, :id => @test_plan
     end
     @versions = @project.versions
   end
