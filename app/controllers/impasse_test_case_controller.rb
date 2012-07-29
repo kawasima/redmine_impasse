@@ -37,33 +37,33 @@ class ImpasseTestCaseController < ImpasseAbstractController
       new_node
 
       if request.post? or request.put?
-        ActiveRecord::Base.transaction do
-          begin
+        begin
+          ActiveRecord::Base.transaction do
             @node.save!
             save_keywords(@node, params[:node_keywords])
             @test_case.id = @node.id
             if @node.is_test_case? and params.include? :test_steps
               @test_steps = params[:test_steps].collect{|i, ts| Impasse::TestStep.new(ts) }
-              raise ActiveRecord::RecordInvalid unless @test_steps.all?{|test_step| test_step.valid? }
+              @test_steps.each{|ts| raise ActiveRecord::RecordInvalid.new(ts) unless ts.valid? }
               @test_case.test_steps.replace(@test_steps)
             end
             @test_case.save!
             respond_to do |format|
               format.json { render :json => { :status => 'success', :message => l(:notice_successful_create), :ids => [@test_case.id] } }
             end
-          rescue ActiveRecord::RecordInvalid => e
-            respond_to do |format|
-              errors = []
-              errors.concat(@node.errors.full_messages).concat(@test_case.errors.full_messages)
-              if @test_steps
-                @test_steps.each {|test_step|
-                  test_step.errors.each_full {|msg|
-                    errors << "##{test_step.step_number} #{msg}"
-                  }
+          end
+        rescue ActiveRecord::ActiveRecordError => e
+          respond_to do |format|
+            errors = []
+            errors.concat(@node.errors.full_messages).concat(@test_case.errors.full_messages)
+            if @test_steps
+              @test_steps.each {|test_step|
+                test_step.errors.full_messages.each {|msg|
+                  errors << "##{test_step.step_number} #{msg}"
                 }
-              end
-              format.json { render :json => { :errors => errors }}
+              }
             end
+            format.json { render :json => { :errors => errors }}
           end
         end
       else
@@ -108,8 +108,8 @@ class ImpasseTestCaseController < ImpasseAbstractController
       @test_case.attributes = params[:test_case]
 
       if request.post? or request.put?
-        ActiveRecord::Base.transaction do
-          begin
+        begin
+          ActiveRecord::Base.transaction do
             save_node(@node)
             @test_case.save!
 
@@ -117,25 +117,25 @@ class ImpasseTestCaseController < ImpasseAbstractController
 
             if @node.is_test_case? and params.include? :test_steps
               @test_steps = params[:test_steps].collect{|i, ts| Impasse::TestStep.new(ts) }
-              raise ActiveRecord::RecordInvalid unless @test_steps.all?{|test_step| test_step.valid? }
+              @test_steps.each{|ts| raise ActiveRecord::RecordInvalid.new(ts) unless ts.valid? }
               @test_case.test_steps.replace(@test_steps)
             end
             respond_to do |format|
               format.json { render :json => { :status => 'success', :message => l(:notice_successful_update), :ids => [@test_case.id] } }
             end
-          rescue ActiveRecord::RecordInvalid => e
-            respond_to do |format|
-              errors = []
-              errors.concat(@node.errors.full_messages).concat(@test_case.errors.full_messages)
-              if @test_steps
-                @test_steps.each {|test_step|
-                  test_step.errors.each_full {|msg|
-                    errors << "##{test_step.step_number} #{msg}"
-                  }
+          end
+        rescue ActiveRecord::ActiveRecordError=> e
+          respond_to do |format|
+            errors = []
+            errors.concat(@node.errors.full_messages).concat(@test_case.errors.full_messages)
+            if @test_steps
+              @test_steps.each {|test_step|
+                test_step.errors.full_messages.each {|msg|
+                  errors << "##{test_step.step_number} #{msg}"
                 }
-              end
-              format.json { render :json => { :errors => errors }}
+              }
             end
+            format.json { render :json => { :errors => errors }}
           end
         end
       else
