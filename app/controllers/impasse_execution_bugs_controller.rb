@@ -31,6 +31,7 @@ class ImpasseExecutionBugsController < ImpasseAbstractController
 
     respond_to do |format|
       format.html { render :partial => 'new' }
+      format.js   { render :partial => 'issues/attributes' }
     end
   end
 
