@@ -22,7 +22,6 @@ module ImpassePlugin
         
         if execution_bug and execution_bug.execution and execution_bug.execution.test_plan_case
           test_plan_case = execution_bug.execution.test_plan_case
-p test_plan_case
           snippet << "<tr><th>#{l(:field_test_case)}</th><td>" <<
             link_to(test_plan_case.test_case.node.name, {
                       :controller => :impasse_executions,
