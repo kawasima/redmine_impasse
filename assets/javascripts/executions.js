@@ -100,7 +100,7 @@ jQuery(document).ready(function ($) {
 			    $("#issue-dialog").html(data).dialog({
 				modal:true,
 				minWidth: 800,
-				zIndex: 50,
+				zIndex: 25,
 				title: IMPASSE.label.issueNew
 			    });
 			});
