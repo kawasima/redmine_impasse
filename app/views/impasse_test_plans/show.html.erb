@@ -3,8 +3,8 @@
 <% end %>
 
 <%= impasse_breadcrumb [
-	link_to(l(:label_impasse), {:controller => :impasse_test_case, :action => :index, :project_id => @project}),
-	link_to(l(:label_test_plans_list), {:controller => :impasse_test_plans, :action => :index, :project_id => @project})
+	link_to(l(:label_impasse), {:controller => :impasse_test_case, :action => :index, :project_id => @project }),
+	link_to(l(:label_test_plans_list), {:controller => :impasse_test_plans, :action => :index, :project_id => @project })
 ]%>
 <h2><%=h @test_plan.name %></h2>
 

@@ -20,7 +20,7 @@ Redmine::Plugin.register :redmine_impasse do
   name 'Redmine Impasse plugin'
   author 'kawasima'
   description 'Test management tool integrated Redmine'
-  version '1.1.0'
+  version '1.1.1'
   url 'http://unit8.net/redmine_impasse'
   author_url 'http://unit8.net/'
 

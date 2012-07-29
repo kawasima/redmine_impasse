@@ -22,6 +22,8 @@ class ImpasseTestPlansController < ImpasseAbstractController
 
   def show
     @test_plan = Impasse::TestPlan.find(params[:id])
+    puts "--------------------"
+    p @project
   end
 
   def edit
