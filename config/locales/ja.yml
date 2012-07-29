@@ -49,11 +49,12 @@ ja:
   field_test_case: "テストケース"
   field_actions: "操作"
   field_expected_results: "期待する結果"
+  field_execution_status: "実行結果"
   field_bug_tracker: "不具合と関連付けるトラッカ"
   field_expected_date: "テスト予定日"
  
   button_create_test_plan: "テスト計画の新規作成"
-  field_execution_status: "実行結果"
+
   permission_view_testcases: "テストの参照"
   permission_manage_test_cases: "テストの更新"
 

@@ -47,6 +47,7 @@ en:
   field_importance: "Importance"
   field_keywords: "Keywords"
   field_test_steps: "Steps"
+  field_test_case: "Test case"
   field_actions: "Actions"
   field_expected_results: "Expected Results"
   field_execution_status: "Execution status"
