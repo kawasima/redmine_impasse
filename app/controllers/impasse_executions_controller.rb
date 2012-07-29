@@ -131,6 +131,10 @@ END_OF_SQL
       conditions[:expected_date_op] = params[:expected_date_op] || '='
     end
     @nodes = Impasse::Node.find_by_sql([ERB.new(sql, nil, '-').result(binding), conditions])
+    if @nodes.size > 0 and @nodes[0].node_type_id == 1
+      test_plan = Impasse::TestPlan.find(params[:test_plan_id])
+      @nodes[0].name = test_plan.name
+    end
 
     jstree_nodes = convert(@nodes, params[:prefix])
 
