@@ -1,0 +1,63 @@
+# French strings go here for Rails i18n
+fr:
+  project_module_impasse: "Gestion des tests"
+
+  label_impasse: "Tests"
+  label_impasse_plan_new: "Ajouter un plan de tests"
+  label_test_plans_list: "liste des plans de tests"
+  label_test_plan_plural: "Plans de tests"
+  label_tc_assign: "Assigner des cas de tests"
+  label_user_assign: "Assigner des utilisateurs"
+  label_execution: "Execution"
+  label_statistics_assign: "Statisticques"
+  
+  label_test_plan_new: "Nouveau plan de tests"
+  label_test_case_new: "Nouveau cas de tests"
+  label_test_case_edit: "Editer cas de tests"
+  label_test_suite_new: "Nouveau lot de tests"
+  label_test_suite_edit: "Editer lot de tests"
+
+  label_impasse_stat_total_cases: "total des tests"
+  label_impasse_stat_total_executions: "tests exécutés"
+  label_impasse_stat_total_bugs: "anomalies"
+  label_impasse_stat_open_bugs: "(ouvert)"
+  label_impasse_stat_executions_rate: "progression"
+  label_impasse_stat_bugs_rate: "taux d'anomalies"
+  label_impasse_stat_remain_cases: "Reste"
+  label_impasse_stat_expected_cases: "Estimation"
+  label_impasse_stat_overview: "Vue d'ensemble"
+  label_impasse_stat_members: "Chaque membre"
+  label_impasse_stat_daily: "Résumé quotidien"
+
+  label_assined_to_myself: "seulement ceux qui me sont assignés"
+  label_execution_status_0: "Non réalisé"
+  label_execution_status_1: "OK"
+  label_execution_status_2: "KO"
+  label_execution_status_3: "Non réalisable"
+
+  label_filters_query: "Incluant les mots "
+  label_filters_keywords: "Mots-Clés"
+  label_filters_inactive: "Incluant les tests invalides"
+  label_includes_before: "incluant les précédents"
+  label_includes_after: "incluant les suivants"
+
+  field_details: "Details"
+  field_preconditions: "Pré-conditions"
+  field_importance: "Importance"
+  field_keywords: "Mots-Clés"
+  field_test_steps: "Etapes"
+  field_actions: "Actions"
+  field_expected_results: "Résultats attendus"
+  field_execution_status: "Etat attendu"
+  field_bug_tracker: "Tracker pour les anomalies"
+  field_expected_date: "Date prévu"
+
+  button_create_test_plan: "Créer un plan de tests"
+  
+  permission_view_testcases: "Voir les cas de tests"
+  permission_manage_test_cases: "Gérer les cas de tests"
+
+  error_can_not_manage_test_cases: "Vous n'êtes pas autorisé à gérer les cas de tests."
+
+  text_assign_cases: "Glissez-Déposer le cas de test ici pour l'ajouter au plan de tests."
+  text_assign_users: "Glisser-Déposez sur le cas de test pour assigner l'utilisateur au cas de tests."
