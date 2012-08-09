@@ -11,6 +11,8 @@ module Impasse
     validates_presence_of :name
     validates_length_of :name, :maximum => 100
 
+    acts_as_customizable
+
     def self.find_all_by_version(project, show_closed = false)
       versions = project.shared_versions || []
       versions = versions.uniq.sort

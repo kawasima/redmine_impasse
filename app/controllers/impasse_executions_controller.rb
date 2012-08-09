@@ -5,6 +5,9 @@ class ImpasseExecutionsController < ImpasseAbstractController
 
   REL = {1=>"test_project", 2=>"test_suite", 3=>"test_case"}
 
+  helper :custom_fields
+  include CustomFieldsHelper
+
   menu_item :impasse
   before_filter :find_project_by_project_id, :authorize
 
@@ -23,26 +26,27 @@ class ImpasseExecutionsController < ImpasseAbstractController
     end
 
     status = 'success'
+    errors = []
     for test_case_id in test_case_ids
-      begin
-        @test_plan_case = Impasse::TestPlanCase.find(:first, :conditions=>[
-                                                                "test_plan_id=? AND test_case_id=?",
-                                                                params[:test_plan_case][:test_plan_id],
-                                                                test_case_id])
-        next if @test_plan_case.nil?
-        @execution = Impasse::Execution.find_or_initialize_by_test_plan_case_id(@test_plan_case.id)
-        @execution.attributes = params[:execution]
-        @execution.execution_ts = Time.now.to_datetime
-        unless @execution.save
-          status = 'error'
-        end
-      rescue
-        status = 'error'
+      @test_plan_case = Impasse::TestPlanCase.find(:first, :conditions=>[
+                                                                         "test_plan_id=? AND test_case_id=?",
+                                                                         params[:test_plan_case][:test_plan_id],
+                                                                         test_case_id])
+      next if @test_plan_case.nil?
+      @execution = Impasse::Execution.find_or_initialize_by_test_plan_case_id(@test_plan_case.id)
+      @execution.attributes = params[:execution]
+      @execution.execution_ts = Time.now.to_datetime
+      unless @execution.save
+        errors.concat(@execution.errors.full_messages)
       end
     end
     
     respond_to do |format|
-      format.json { render :json => { :status => status, :message => status ? l(:notice_successful_update) : l(:error_unable_to_connect) } }
+      if errors.empty?
+        format.json { render :json => { :status => 'success', :message => l(:notice_successful_update) } }
+      else
+        format.json { render :json => { :status => 'error', :message => l(:error_failed_to_update), :errors => errors } }
+      end
     end
   end
 

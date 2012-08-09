@@ -8,4 +8,7 @@
     <label><%= l(:field_keywords) %></label>
     <input type="text" name="node_keywords" value="<%= @node.keywords.collect{|w| w.keyword}.join(",")%>"/>
   </p>
+  <% @test_case.custom_field_values.each do |value| %>
+    <p><%= custom_field_tag_with_label :test_case, value %></p>
+  <% end %>
 </div>

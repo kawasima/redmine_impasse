@@ -3,10 +3,10 @@ require_dependency 'projects_helper'
 module ImpasseProjectsHelperPatch
   def self.included(base) # :nodoc:
     base.send(:include, ProjectsHelperMethodsImpasse)
+    base.send(:include, ImpasseSettingsHelper)
 
     base.class_eval do
       #unloadable
-
       alias_method_chain :project_settings_tabs, :impasse
     end
 

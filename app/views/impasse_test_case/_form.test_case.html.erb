@@ -10,6 +10,9 @@
     <label><%= l(:field_keywords) %></label>
     <input type="text" name="node_keywords" value="<%= @node.keywords.collect{|w| w.keyword}.join(",")%>"/>
   </p>
+  <% @test_case.custom_field_values.each do |value| %>
+    <p><%= custom_field_tag_with_label :test_case, value %></p>
+  <% end %>
   <div style="margin:0; padding: 5px 0 8px 0; padding-left: 180px; height: 1%; clear: left;">
     <label><%=l(:field_test_steps) %></label>
     <div>

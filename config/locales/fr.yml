@@ -3,6 +3,10 @@ fr:
   project_module_impasse: "Gestion des tests"
 
   label_impasse: "Tests"
+  label_test_plan_plural: "Plans de tests"
+  label_test_case_plural: "Cas de tests"
+  label_test_suite_plural: "Lot de tests"
+  label_execution_plural: "Execution de tests"
   label_impasse_plan_new: "Ajouter un plan de tests"
   label_test_plans_list: "liste des plans de tests"
   label_test_plan_plural: "Plans de tests"

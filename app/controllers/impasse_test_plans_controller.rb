@@ -4,6 +4,9 @@ class ImpasseTestPlansController < ImpasseAbstractController
   helper :projects
   include ProjectsHelper
 
+  helper :custom_fields
+  include CustomFieldsHelper
+
   menu_item :impasse
   before_filter :find_project_by_project_id, :authorize
 

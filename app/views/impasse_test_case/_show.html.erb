@@ -10,6 +10,14 @@
       <td><%=h @node.keywords.map{|k| k.keyword }.join(",") %></td>
     </tr>
     <% end %>
+    <% @test_case.visible_custom_field_values.each do |custom_value| %>
+      <% if !custom_value.value.blank? %>
+	<tr>
+	  <th><%=h custom_value.custom_field.name %></th>
+	  <td><%=h show_value(custom_value) %></td>
+	</tr>
+      <% end %>
+    <% end %>
   </table>
   
   <% if @test_case.summary? %>

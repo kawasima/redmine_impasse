@@ -3,9 +3,12 @@ en:
   project_module_impasse: "Test Management"
 
   label_impasse: "Tests"
+  label_test_plan_plural: "Test plans"
+  label_test_case_plural: "Test cases"
+  label_test_suite_plural: "Test suites"
+  label_execution_plural: "Test executions"
   label_impasse_plan_new: "Add test plans"
   label_test_plans_list: "test plans list"
-  label_test_plan_plural: "Test plans"
   label_test_suite_name: "Test suite"
   label_tc_assign: "Assign test cases"
   label_user_assign: "Assign users"
@@ -60,6 +63,7 @@ en:
   permission_manage_test_cases: "Manage test cases"
 
   error_can_not_manage_test_cases: "You aren't permitted to manage test cases."
+  error_failed_to_update: "Failed to update."
 
   text_assign_cases: "Drag and drop the test case here, you can add that case into the test plan."
   text_assign_users: "Drag and drop on the test case, you can assign tester to the test case."

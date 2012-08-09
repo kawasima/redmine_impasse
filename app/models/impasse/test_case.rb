@@ -7,6 +7,8 @@ module Impasse
     has_many :test_steps, :dependent=>:destroy
     belongs_to :node, :foreign_key=>"id"
 
+    acts_as_customizable
+
     if Rails::VERSION::MAJOR < 3 or (Rails::VERSION::MAJOR == 3 and Rails::VERSION::MINOR < 1)
       def dup
         clone

@@ -7,5 +7,7 @@ module Impasse
     belongs_to :test_plan_case
     has_many :issues, :through => :execution_bugs
     has_many :execution_bugs
+
+    acts_as_customizable
   end
 end

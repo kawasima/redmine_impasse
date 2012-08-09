@@ -1,30 +1,26 @@
 <%
 @impasse_setting = Impasse::Setting.find_or_create_by_project_id(:project_id => @project.id)
+@custom_fields_by_type = CustomField.find(:all).group_by {|f| f.class.name }
+@impasse_custom_fields = {
+  'Impasse::TestCaseCustomField'  => @project.test_case_custom_fields,
+  'Impasse::TestSuiteCustomField' => @project.test_suite_custom_fields,
+  'Impasse::TestPlanCustomField'  => @project.test_plan_custom_fields,
+  'Impasse::ExecutionCustomField' => @project.execution_custom_fields,
+}
+
 %>
 <% if Rails::VERSION::MAJOR < 3 %>
   <% labelled_tabular_form_for :setting, @impasse_setting,
      :url => {:controller => :impasse_settings, :action => :edit, :project_id => @project }, 
      :lang => current_language do |f| %>
-    <%= error_messages_for 'setting' %>
-    <div class="box tabular">
-      <p><%=f.select :bug_tracker_id, @project.trackers.collect {|t| [t.name, t.id]}, :required => true %></p>
-    </div>
-  
-    <%= submit_tag l(:button_save) %>
+  <%= render :partial => 'impasse_settings/form', :locals => {:f => f } %>
   <% end %>
 <% else %>
   <% output = labelled_form_for @impasse_setting,
       :as => :setting,
       :url => {:controller => :impasse_settings, :action => :edit, :project_id => @project },
       :lang => current_language do |f| %>
-    <%= error_messages_for 'setting' %>
-    <div class="box tabular">
-      <p>
-	<label for="bug_traker_id"><%=l(:field_bug_tracker)%><span class="required"> *</span></label>
-	<%=f.select :bug_tracker_id, @project.trackers.collect {|t| [t.name, t.id]}, :required => true %>
-      </p>
-    </div>
-    <%= submit_tag l(:button_save) %>
+  <%= render :partial => 'impasse_settings/form', :locals => {:f => f } %>
   <% end %>
   <%= output %>
 <% end %>

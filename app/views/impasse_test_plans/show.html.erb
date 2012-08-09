@@ -15,6 +15,13 @@
   <div class="wiki">
     <%= textilizable @test_plan, :notes %>
   </div>
+  <ul>
+    <% @test_plan.visible_custom_field_values.each do |custom_value| %>
+      <% if !custom_value.value.blank? %>
+	<li><%=h custom_value.custom_field.name %>: <%=h show_value(custom_value) %></li>
+      <% end %>
+    <% end %>
+  </ul>
 </div>
 
 <div style="clear: both;"/>

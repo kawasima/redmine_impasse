@@ -72,12 +72,14 @@ jQuery(document).ready(function ($) {
 	    autoOpen: false,
 	    modal:true,
 	    minWidth: 700,
+	    zIndex: 25,
 	    title: IMPASSE.label.testSuiteEdit
 	}),
 	test_case:  $("#testcase-dialog").dialog({
 	    autoOpen: false,
 	    modal:true,
 	    minWidth: 700,
+	    zIndex: 25,
 	    title: IMPASSE.label.testCaseEdit
 	})
     };

@@ -3,6 +3,10 @@ zh:
   project_module_impasse: "测试管理"
 
   label_impasse: "测试管理"
+  label_test_plan_plural: "测试计划"
+  label_test_case_plural: "测试用例"
+  label_test_suite_plural: "测试集"
+  label_execution_plural: "测试执行"
   label_impasse_plan_new: "新建测试计划"
   label_test_plans_list: "测试计划列表"
   label_test_plan_plural: "测试计划"

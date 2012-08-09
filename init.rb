@@ -14,15 +14,47 @@ object_to_prepare.to_prepare do
   unless ProjectsHelper.included_modules.include? ImpasseProjectsHelperPatch
     ProjectsHelper.send(:include, ImpasseProjectsHelperPatch)
   end
+
+  Project.class_eval do
+    has_and_belongs_to_many :test_case_custom_fields,
+    :class_name => 'Impasse::TestCaseCustomField',
+    :order => "#{CustomField.table_name}.position",
+    :join_table => "#{table_name_prefix}custom_fields_projects#{table_name_suffix}",
+    :foreign_key => 'project_id',
+    :association_foreign_key => 'custom_field_id'
+
+    has_and_belongs_to_many :test_suite_custom_fields,
+  :class_name => 'Impasse::TestSuiteCustomField',
+  :order => "#{CustomField.table_name}.position",
+  :join_table => "#{table_name_prefix}custom_fields_projects#{table_name_suffix}",
+  :foreign_key => 'project_id',
+  :association_foreign_key => 'custom_field_id'
+
+  has_and_belongs_to_many :test_plan_custom_fields,
+  :class_name => 'Impasse::TestPlanCustomField',
+  :order => "#{CustomField.table_name}.position",
+  :join_table => "#{table_name_prefix}custom_fields_projects#{table_name_suffix}",
+  :foreign_key => 'project_id',
+  :association_foreign_key => 'custom_field_id'
+
+  has_and_belongs_to_many :execution_custom_fields,
+  :class_name => 'Impasse::ExecutionCustomField',
+  :order => "#{CustomField.table_name}.position",
+  :join_table => "#{table_name_prefix}custom_fields_projects#{table_name_suffix}",
+  :foreign_key => 'project_id',
+  :association_foreign_key => 'custom_field_id'  
+  end
 end
 
 Redmine::Plugin.register :redmine_impasse do
   name 'Redmine Impasse plugin'
   author 'kawasima'
   description 'Test management tool integrated Redmine'
-  version '1.1.1'
+  version '1.2.0'
   url 'http://unit8.net/redmine_impasse'
   author_url 'http://unit8.net/'
+
+  settings :partial => 'redmine_impasse/setting'
 
   project_module :impasse do
     permission :view_testcases, {
@@ -45,4 +77,10 @@ Redmine::Plugin.register :redmine_impasse do
   menu :project_menu, :impasse, { :controller => :impasse_test_case, :action => :index },
   :caption => :label_impasse,
   :param => :project_id
+
+  Redmine::MenuManager.map :impasse_admin_menu do |menu|
+    menu.push :custom_field, {:controller => 'impasse_custom_fields'}, :caption => :label_custom_field_plural,
+    :html => {:class => 'custom_fields'}
+  end
 end
+

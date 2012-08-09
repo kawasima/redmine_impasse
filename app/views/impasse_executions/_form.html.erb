@@ -3,6 +3,7 @@
 <%= f.hidden_field :id %>
 <%= hidden_field 'test_plan_case', 'test_plan_id', :value => @execution.test_plan_case.test_plan_id %>
 <%= hidden_field 'test_plan_case', 'test_case_id', :value => @execution.test_plan_case.test_case_id %>
+<div id="errorExplanation" style="display:none"></div>
 <div class="box tabular">
   <p><%=label_tag :name, l(:field_name) %><%=h test_case.node.name %></p>
   <p><%=label_tag :summary, l(:field_summary) %><%=h test_case.summary%></p>
@@ -43,5 +44,8 @@
     <span id="execution-bugs-list"><%=raw @execution.issues.collect{|issue| link_to("##{issue.id}", {:controller=>'/issues', :action=>:show, :id=>issue }, :class => issue.css_classes) }.join(",") %></span>
   </p>
   <p><%= f.text_area :notes, :label=>:field_notes, :rows=>4 %></p>
+  <% @execution.custom_field_values.each do |value| %>
+    <p><%= custom_field_tag_with_label :execution, value %></p>
+  <% end %>
   <p><%= submit_tag l(:button_save) %><p>
 </div>
