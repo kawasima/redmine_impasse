@@ -8,15 +8,16 @@ module Impasse
       conditions = { :test_plan_id => test_plan_id }
       if test_suite_id
         suite = Node.find(test_suite_id)
-        conditions[:path] = "#{suite.path}_%"
+        conditions[:path] = suite.path
+        conditions[:path_starts_with] = "#{suite.path}_%"
       end
       sql = <<-END_OF_SQL
       SELECT 
-      <% if conditions[:path] %>
+      <%- if conditions[:path] -%>
         head.id AS id, head.name AS name, head.node_type_id AS node_type_id,
-      <% else %>
+      <%- else -%>
         tp.id AS id, tp.name AS name, 1 AS node_type_id,
-      <% end %>
+      <%- end -%>
         count(*) AS total_cases,
         SUM(CASE WHEN exe.status IS NULL OR exe.status=0 THEN 1 ELSE 0 END) AS unexec,
         SUM(CASE WHEN exe.status=1 THEN 1 ELSE 0 END) AS ok,
@@ -31,10 +32,10 @@ module Impasse
         ON tp.id = tpc.test_plan_id
       INNER JOIN impasse_nodes AS n
         ON tc.id = n.id
-      <% if conditions[:path] %>
+      <%- if conditions[:path] -%>
       INNER JOIN impasse_nodes AS head
-        ON head.path = concat(substring_index(n.path, '.', length(:path) - length(replace(:path, '.', '')) + 1), '.')
-      <% end %>
+        ON head.path = SUBSTR(n.path, 1, length(:path) + length(n.id) + 1)
+      <%- end -%>
       LEFT OUTER JOIN impasse_executions AS exe
         ON exe.test_plan_case_id = tpc.id
       LEFT OUTER JOIN (
@@ -48,13 +49,13 @@ module Impasse
       ) AS eb
         ON eb.execution_id = exe.id
       WHERE tp.id = :test_plan_id
-      <% if conditions[:path] %>
-        AND n.path LIKE :path
-      GROUP BY substring_index(n.path, '.', length(:path) - length(replace(:path, '.', '')) + 1)
-      <% end %>
+      <%- if conditions[:path] -%>
+        AND n.path LIKE :path_starts_with
+      GROUP BY SUBSTR(n.path, 1, length(:path) + length(n.id) + 1)
+      <%- end -%>
       END_OF_SQL
 
-      results = find_by_sql([ERB.new(sql).result(binding), conditions])
+      results = find_by_sql([ERB.new(sql, nil, '-').result(binding), conditions])
       tc_summary = nil
 
       results.delete_if{|r|
@@ -101,7 +102,7 @@ LEFT OUTER JOIN users
 
     def self.summary_daily(test_plan_id, test_suite_id=nil)
       sql = <<-END_OF_SQL
-SELECT CASE WHEN execution_ts IS NULL OR exe.status=0 THEN NULL ELSE date_format(execution_ts, '%Y%m%d') END AS execution_date,
+SELECT CASE WHEN execution_ts IS NULL OR exe.status=0 THEN NULL ELSE execution_ts END AS execution_date,
   SUM(CASE exe.status WHEN 1 THEN 1 ELSE 0 END) AS ok,
   SUM(CASE exe.status WHEN 2 THEN 1 ELSE 0 END) AS ng,
   SUM(CASE exe.status WHEN 3 THEN 1 ELSE 0 END) AS block,

@@ -76,8 +76,8 @@ SELECT T.*, users.firstname, users.lastname, exec.expected_date, exec.status
 FROM (
   SELECT distinct parent.*, tpc.test_plan_id
   FROM impasse_nodes AS parent
-  LEFT JOIN impasse_nodes AS child
-    ON INSTR(child.path, parent.path) > 0
+  JOIN impasse_nodes AS child
+    ON parent.path = SUBSTR(child.path, 1, LENGTH(parent.path))
   LEFT JOIN impasse_test_cases AS tc
     ON child.id = tc.id
   LEFT JOIN impasse_test_plan_cases AS tpc

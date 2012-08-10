@@ -17,8 +17,8 @@ WHERE test_plan_id=#{test_plan_id}
   AND test_case_id in (
     SELECT distinct parent.id
     FROM impasse_nodes AS parent
-    LEFT JOIN impasse_nodes AS child
-      ON INSTR(child.path, parent.path) > 0
+    JOIN impasse_nodes AS child
+      ON parent.path = SUBSTR(child.path, 1, LENGTH(parent.path))
     LEFT JOIN impasse_test_cases AS tc
       ON child.id = tc.id
     WHERE parent.path LIKE '#{node.path}%'

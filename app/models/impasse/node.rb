@@ -26,11 +26,11 @@ module Impasse
     end
 
     def active?
-      !(attributes['active'] and attributes['active'].to_i == 0)
+      !attributes['active'] or attributes['active'].to_i == 1 or attributes['active'].is_a? TrueClass or attributes['active'] == 't'
     end
 
     def planned?
-      attributes['planned'].to_i == 1
+      attributes['planned'].to_i == 1 or attributes['planned'].is_a? TrueClass or attributes['planned'] == 't'
     end
 
     def self.find_children(node_id, test_plan_id=nil, filters=nil)
@@ -39,21 +39,21 @@ module Impasse
       FROM (
         SELECT distinct parent.*
           FROM impasse_nodes AS parent
-        LEFT JOIN impasse_nodes AS child
-          ON INSTR(child.path, parent.path) > 0
-        <% if conditions.include? :test_plan_id %>
+        JOIN impasse_nodes AS child
+          ON parent.path = SUBSTR(child.path, 1, LENGTH(parent.path))
+        <%- if conditions.include? :test_plan_id -%>
         LEFT JOIN impasse_test_cases AS tc
           ON tc.id=child.id
         LEFT JOIN impasse_test_plan_cases AS tpts
           ON tc.id=tpts.test_case_id
-        <% end %>
+        <%- end -%>
         WHERE 1=1
-        <% if conditions.include? :test_plan_id %>
+        <%- if conditions.include? :test_plan_id -%>
           AND tpts.test_plan_id=:test_plan_id
-        <% end %>
-        <% if conditions.include? :path %>
+        <%- end -%>
+        <%- if conditions.include? :path -%>
           AND parent.path LIKE :path
-        <% end %>
+        <%- end -%>
         <%- if conditions.include? :filters_query or conditions.include? :filters_keywords -%>
         AND (parent.node_type_id != 3 OR (
           <%- if conditions.include? :filters_query -%>
@@ -72,12 +72,12 @@ module Impasse
       LEFT OUTER JOIN impasse_test_cases AS tc
         ON node.id = tc.id
       WHERE 1=1
-      <% unless conditions.include? :filters_inactive %>
-        AND tc.active = 1 OR tc.active IS NULL
-      <% end %>
+      <%- unless conditions.include? :filters_inactive -%>
+        AND tc.active = :true OR tc.active IS NULL
+      <%- end -%>
       END_OF_SQL
 
-      conditions = {}
+      conditions = { :true => true }
     
       unless test_plan_id.nil?
         conditions[:test_plan_id] = test_plan_id
@@ -108,8 +108,8 @@ module Impasse
       sql = <<-'END_OF_SQL'
       SELECT distinct parent.*
         FROM impasse_nodes AS parent
-      LEFT JOIN impasse_nodes AS child
-        ON INSTR(child.path, parent.path) > 0
+      JOIN impasse_nodes AS child
+        ON parent.path = SUBSTR(child.path, 1, LENGTH(parent.path))
       LEFT JOIN impasse_test_cases AS tc
         ON child.id = tc.id
       WHERE parent.path LIKE :path
@@ -123,8 +123,8 @@ module Impasse
       sql = <<-'END_OF_SQL'
       SELECT distinct parent.*, tc.active, exists (SELECT * FROM impasse_test_plan_cases AS tpc WHERE tpc.test_case_id = parent.id) AS planned
         FROM impasse_nodes AS parent
-      LEFT JOIN impasse_nodes AS child
-        ON INSTR(child.path, parent.path) > 0
+      JOIN impasse_nodes AS child
+        ON parent.path = SUBSTR(child.path, 1, LENGTH(parent.path))
       LEFT JOIN impasse_test_cases AS tc
         ON child.id = tc.id
       WHERE parent.path LIKE :path
