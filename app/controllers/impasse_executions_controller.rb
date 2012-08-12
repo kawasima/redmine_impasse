@@ -72,7 +72,7 @@ class ImpasseExecutionsController < ImpasseAbstractController
 
   def get_list
     sql = <<-'END_OF_SQL'
-SELECT T.*, users.firstname, users.lastname, exec.expected_date, exec.status
+SELECT T.*, E.expected_date, E.status, users.firstname, users.lastname
 FROM (
   SELECT distinct parent.*, tpc.test_plan_id
   FROM impasse_nodes AS parent
@@ -82,29 +82,31 @@ FROM (
     ON child.id = tc.id
   LEFT JOIN impasse_test_plan_cases AS tpc
     ON tc.id=tpc.test_case_id
+  LEFT JOIN impasse_executions AS exec
+    ON tpc.id = exec.test_plan_case_id
   WHERE tpc.test_plan_id=:test_plan_id
 <%- if conditions.include? :path -%>
     AND parent.path LIKE :path
 <%- end -%>
-) AS T
-LEFT JOIN impasse_test_plan_cases AS tpcs
-  ON T.id=tpcs.test_case_id AND T.test_plan_id = tpcs.test_plan_id
-LEFT JOIN impasse_executions AS exec
-  ON tpcs.id = exec.test_plan_case_id
-LEFT OUTER JOIN users
-  ON users.id = exec.tester_id
 <%- if [:user_id, :execution_status, :expected_date].any? {|key| conditions.include? key} -%>
-WHERE T.node_type_id != '3' OR (1=1
   <%- if conditions.include? :user_id -%>
   AND tester_id = :user_id
   <%- end -%>
   <%- if conditions.include? :execution_status -%>
   AND (exec.status IN (:execution_status) <%- if conditions[:execution_status].include? "0" %>OR exec.status IS NULL<% end %> )
-  <% end %>
+  <%- end -%>
   <%- if conditions.include? :expected_date -%>
   AND exec.expected_date <%= conditions[:expected_date_op] %> :expected_date
-  <%- end -%>)
+  <%- end -%>
 <%- end -%>
+) AS T
+LEFT JOIN impasse_test_plan_cases
+  ON T.id = impasse_test_plan_cases.test_case_id
+  AND T.test_plan_id = impasse_test_plan_cases.test_plan_id
+LEFT JOIN impasse_executions AS E
+  ON E.test_plan_case_id = impasse_test_plan_cases.id
+LEFT OUTER JOIN users
+  ON users.id = tester_id
 ORDER BY LENGTH(T.path) - LENGTH(REPLACE(T.path,'.','')), T.node_order
 END_OF_SQL
 
@@ -126,7 +128,7 @@ END_OF_SQL
           conditions[:execution_status] << param.to_s
         }
       else
-        conditiions[:execution_status] << params[:execution_status].to_s
+        conditions[:execution_status] << params[:execution_status].to_s
       end
     end
 

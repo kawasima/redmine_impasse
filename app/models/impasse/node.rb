@@ -55,17 +55,18 @@ module Impasse
           AND parent.path LIKE :path
         <%- end -%>
         <%- if conditions.include? :filters_query or conditions.include? :filters_keywords -%>
-        AND (parent.node_type_id != 3 OR (
+        AND
           <%- if conditions.include? :filters_query -%>
-             parent.name like :filters_query <%- if conditions.include? :filters_keywords -%>AND <%- end -%>
+             child.name like :filters_query
+             <%- if conditions.include? :filters_keywords -%>AND <%- end -%>
           <%- end -%>
           <%- if conditions.include? :filters_keywords -%>
             exists (
             SELECT 1 FROM impasse_node_keywords AS nk
               JOIN impasse_keywords AS k ON k.id = nk.keyword_id
-            WHERE nk.node_id = parent.id
+            WHERE nk.node_id = child.id
               AND k.keyword in (:filters_keywords))
-          <%- end -%>))
+          <%- end -%>
         <%- end -%>
         ORDER BY LENGTH(parent.path) - LENGTH(REPLACE(parent.path,'.','')), node_order
       ) AS node
