@@ -286,6 +286,7 @@ jQuery(document).ready(function ($) {
 		    if(!r.status) {
 			$.jstree.rollback(data.rlbk);
 		    }
+		    data.inst.refresh(data.rslt.parent);
 		},
 		error: function(xhr, status, ex) {
 		    ajax_error_handler(xhr, status, ex);

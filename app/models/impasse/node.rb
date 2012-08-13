@@ -129,7 +129,7 @@ module Impasse
       LEFT JOIN impasse_test_cases AS tc
         ON child.id = tc.id
       WHERE parent.path LIKE :path
-        AND parent.node_type_id=3
+      ORDER BY LENGTH(parent.path) - LENGTH(REPLACE(parent.path,'.','')) DESC
       END_OF_SQL
       conditions = {:path => "#{self.path}%"}
       Node.find_by_sql([ERB.new(sql).result(binding), conditions])

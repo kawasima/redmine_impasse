@@ -149,30 +149,23 @@ class ImpasseTestCaseController < ImpasseAbstractController
   def destroy
     params[:node][:id].each do |id|
       node = Impasse::Node.find(id)
-      any_planned = false
 
+      inactive_cases = []
       ActiveRecord::Base.transaction do
         node.all_decendant_cases_with_plan.each do |child|
           if child.planned?
-            Impasse::TestCase.update_all("active=0", ["id=?", child.id])
-            any_planned = true
+            Impasse::TestCase.update_all({:active => false}, ["id=?", child.id])
+            inactive_cases << child
           else
-            Impasse::TestCase.delete(child.id)
-            child.destroy
-          end
-        end
-
-        unless any_planned
-          case node.node_type_id
-          when 2
-            Impasse::TestSuite.delete(id)
-            node.destroy
-          when 3
-            if Impasse::TestPlanCase.count(:conditions => ["test_case_id=?", id]) > 0
-              Impasse::TestCase.update_all("active=0", ["id=?", child.id])
-            else
-              Impasse::TestCase.delete(id)
-              node.destroy
+            case child.node_type_id
+            when 2
+              if inactive_cases.all? {|ic| ! ic.path.start_with? child.path}
+                Impasse::TestSuite.delete(id)
+                child.destroy
+              end
+            when 3
+              Impasse::TestCase.delete(child.id)
+              child.destroy
             end
           end
         end
