@@ -117,6 +117,7 @@ jQuery(document).ready(function ($) {
 		    }
 		});
 	    });
+	    data.inst.refresh();
 	})
 	.jstree({ 
 	    "plugins" : plugins,
