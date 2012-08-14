@@ -37,7 +37,7 @@ module Impasse
       sql = <<-'END_OF_SQL'
       SELECT node.*, tc.active
       FROM (
-        SELECT distinct parent.*
+        SELECT distinct parent.*, LENGTH(parent.path) - LENGTH(REPLACE(parent.path,'.','')) AS level
           FROM impasse_nodes AS parent
         JOIN impasse_nodes AS child
           ON parent.path = SUBSTR(child.path, 1, LENGTH(parent.path))
@@ -68,7 +68,7 @@ module Impasse
               AND k.keyword in (:filters_keywords))
           <%- end -%>
         <%- end -%>
-        ORDER BY LENGTH(parent.path) - LENGTH(REPLACE(parent.path,'.','')), node_order
+        ORDER BY level, node_order
       ) AS node
       LEFT OUTER JOIN impasse_test_cases AS tc
         ON node.id = tc.id
@@ -122,14 +122,15 @@ module Impasse
 
     def all_decendant_cases_with_plan
       sql = <<-'END_OF_SQL'
-      SELECT distinct parent.*, tc.active, exists (SELECT * FROM impasse_test_plan_cases AS tpc WHERE tpc.test_case_id = parent.id) AS planned
+      SELECT distinct parent.*, LENGTH(parent.path) - LENGTH(REPLACE(parent.path,'.','')) AS level,
+             tc.active, exists (SELECT * FROM impasse_test_plan_cases AS tpc WHERE tpc.test_case_id = parent.id) AS planned
         FROM impasse_nodes AS parent
       JOIN impasse_nodes AS child
         ON parent.path = SUBSTR(child.path, 1, LENGTH(parent.path))
       LEFT JOIN impasse_test_cases AS tc
         ON child.id = tc.id
       WHERE parent.path LIKE :path
-      ORDER BY LENGTH(parent.path) - LENGTH(REPLACE(parent.path,'.','')) DESC
+      ORDER BY level DESC
       END_OF_SQL
       conditions = {:path => "#{self.path}%"}
       Node.find_by_sql([ERB.new(sql).result(binding), conditions])

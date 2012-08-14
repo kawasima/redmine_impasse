@@ -19,10 +19,10 @@ module Impasse
         tp.id AS id, tp.name AS name, 1 AS node_type_id,
       <%- end -%>
         count(*) AS total_cases,
-        SUM(CASE WHEN exe.status IS NULL OR exe.status=0 THEN 1 ELSE 0 END) AS unexec,
-        SUM(CASE WHEN exe.status=1 THEN 1 ELSE 0 END) AS ok,
-        SUM(CASE WHEN exe.status=2 THEN 1 ELSE 0 END) AS ng,
-        SUM(CASE WHEN exe.status=3 THEN 1 ELSE 0 END) AS block,
+        SUM(CASE WHEN exe.status IS NULL OR exe.status='0' THEN 1 ELSE 0 END) AS unexec,
+        SUM(CASE WHEN exe.status='1' THEN 1 ELSE 0 END) AS ok,
+        SUM(CASE WHEN exe.status='2' THEN 1 ELSE 0 END) AS ng,
+        SUM(CASE WHEN exe.status='3' THEN 1 ELSE 0 END) AS block,
         SUM(CASE WHEN eb.bugs IS NULL THEN 0 ELSE eb.bugs END) AS bugs,
         SUM(CASE WHEN eb.closed_bugs IS NULL THEN 0 ELSE eb.closed_bugs END) AS closed_bugs
       FROM impasse_test_cases AS tc
@@ -34,12 +34,12 @@ module Impasse
         ON tc.id = n.id
       <%- if conditions[:path] -%>
       INNER JOIN impasse_nodes AS head
-        ON head.path = SUBSTR(n.path, 1, length(:path) + length(head.id) + 1)
+        ON head.path = SUBSTR(n.path, 1, LENGTH(:path) + LENGTH(CAST(head.id AS CHAR)) + 1)
       <%- end -%>
       LEFT OUTER JOIN impasse_executions AS exe
         ON exe.test_plan_case_id = tpc.id
       LEFT OUTER JOIN (
-        SELECT bug.execution_id, count(*) AS bugs, SUM(CASE WHEN st.is_closed = 1 THEN 1 ELSE 0 END) AS closed_bugs
+        SELECT bug.execution_id, count(*) AS bugs, SUM(CASE WHEN st.is_closed = '1' THEN 1 ELSE 0 END) AS closed_bugs
         FROM impasse_execution_bugs AS bug
         INNER JOIN issues
           ON bug.bug_id = issues.id
@@ -51,7 +51,9 @@ module Impasse
       WHERE tp.id = :test_plan_id
       <%- if conditions[:path] -%>
         AND n.path LIKE :path_starts_with
-      GROUP BY SUBSTR(n.path, 1, length(:path) + length(head.id) + 1)
+      GROUP BY head.id, head.name, head.node_type_id, SUBSTR(n.path, 1, LENGTH(:path) + LENGTH(CAST(head.id AS CHAR)) + 1)
+      <%- else -%>
+      GROUP BY tp.id, tp.name, node_type_id
       <%- end -%>
       END_OF_SQL
 
@@ -83,9 +85,9 @@ FROM (
 SELECT
   exe.tester_id,
   SUM(1) AS assigned,
-  SUM(CASE exe.status WHEN 1 THEN 1 ELSE 0 END) AS ok,
-  SUM(CASE exe.status WHEN 2 THEN 1 ELSE 0 END) AS ng,
-  SUM(CASE exe.status WHEN 3 THEN 1 ELSE 0 END) AS block
+  SUM(CASE exe.status WHEN '1' THEN 1 ELSE 0 END) AS ok,
+  SUM(CASE exe.status WHEN '2' THEN 1 ELSE 0 END) AS ng,
+  SUM(CASE exe.status WHEN '3' THEN 1 ELSE 0 END) AS block
 FROM impasse_test_cases AS tc
 INNER JOIN impasse_test_plan_cases AS tpc
   ON tpc.test_case_id = tc.id
@@ -102,10 +104,10 @@ LEFT OUTER JOIN users
 
     def self.summary_daily(test_plan_id, test_suite_id=nil)
       sql = <<-END_OF_SQL
-SELECT CASE WHEN execution_ts IS NULL OR exe.status=0 THEN NULL ELSE execution_ts END AS execution_date,
-  SUM(CASE exe.status WHEN 1 THEN 1 ELSE 0 END) AS ok,
-  SUM(CASE exe.status WHEN 2 THEN 1 ELSE 0 END) AS ng,
-  SUM(CASE exe.status WHEN 3 THEN 1 ELSE 0 END) AS block,
+SELECT CASE WHEN execution_ts IS NULL OR exe.status='0' THEN NULL ELSE execution_ts END AS execution_date,
+  SUM(CASE exe.status WHEN '1' THEN 1 ELSE 0 END) AS ok,
+  SUM(CASE exe.status WHEN '2' THEN 1 ELSE 0 END) AS ng,
+  SUM(CASE exe.status WHEN '3' THEN 1 ELSE 0 END) AS block,
   SUM(1) AS total
 FROM impasse_test_cases AS tc
 INNER JOIN impasse_test_plan_cases AS tpc
