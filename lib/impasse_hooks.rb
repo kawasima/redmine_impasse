@@ -18,7 +18,8 @@ module ImpassePlugin
         snippet = ''
   
         project = context[:project]
-        execution_bug = Impasse::ExecutionBug.find_by_bug_id(issue.id)
+        execution_bug = Impasse::ExecutionBug.find(:first, :joins => [ { :execution => { :test_plan_case => :test_plan}}  ],
+                                                                         :conditions => {:bug_id, issue.id})
         
         if execution_bug and execution_bug.execution and execution_bug.execution.test_plan_case
           test_plan_case = execution_bug.execution.test_plan_case
@@ -30,7 +31,7 @@ module ImpassePlugin
                       :id => test_plan_case.test_plan.id,
                       :anchor => "testcase-#{test_plan_case.test_case.id}"
                     }) <<
-          "</td></tr>"
+            "</td></tr>"
         end
   
         return snippet

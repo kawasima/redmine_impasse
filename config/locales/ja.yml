@@ -37,12 +37,16 @@ ja:
   label_execution_status_1: "合格"
   label_execution_status_2: "不合格"
   label_execution_status_3: "保留"
+  label_execution_ts: "実行日時"
+  label_executor: "実行者"
+  label_execution_status: "ステータス"
 
   label_filters_query: "含まれる文字列"
   label_filters_keywords: "キーワード"
   label_filters_inactive: "無効なケースも対象にする"
   label_includes_before: "以前のものを含む"
   label_includes_after: "以降のものを含む"
+  label_execution_histories: "履歴"
 
   field_details: "詳細"
   field_preconditions: "前提条件"

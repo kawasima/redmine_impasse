@@ -38,12 +38,16 @@ zh:
   label_execution_status_1: "通过"
   label_execution_status_2: "失败"
   label_execution_status_3: "锁定"
+  label_execution_ts: "执行"
+  label_executor: "执行人"
+  label_execution_status: "执行结果"
 
   label_filters_query: "包括查询关键字："
   label_filters_keywords: "查询关键字"  
   label_filters_inactive: "包括不可用用例"
   label_includes_before: "includes before"
   label_includes_after: "includes after"
+  label_execution_histories: "历史"
 
   field_details: "详细"
   field_preconditions: "前提条件"

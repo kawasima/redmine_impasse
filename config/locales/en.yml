@@ -38,12 +38,16 @@ en:
   label_execution_status_1: "OK"
   label_execution_status_2: "NG"
   label_execution_status_3: "Block"
+  label_execution_ts: "Executed"
+  label_executor: "Executor"
+  label_execution_status: "Status"
 
   label_filters_query: "Includes words "
   label_filters_keywords: "Keywords"
   label_filters_inactive: "Includes invalid cases"
   label_includes_before: "includes before"
   label_includes_after: "includes after"
+  label_execution_histories: "execution log"
 
   field_details: "Details"
   field_preconditions: "Preconditions"

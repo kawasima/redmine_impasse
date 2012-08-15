@@ -109,7 +109,7 @@ jQuery(document).ready(function ($) {
 	$.ajax({
 	    url: IMPASSE.url.executionsPut,
 	    type: 'POST',
-	    data: $this.serialize() + "&format=json",
+	    data: $this.serialize() + "&record=true&format=json",
 	    success: function(data) {
 		show_notification_dialog(data.status, data.message);
 		if (data.errors) {

@@ -43,9 +43,31 @@
     <%=label_tag :issue, l(:default_tracker_bug) %>
     <span id="execution-bugs-list"><%=raw @execution.issues.collect{|issue| link_to("##{issue.id}", {:controller=>'/issues', :action=>:show, :id=>issue }, :class => issue.css_classes) }.join(",") %></span>
   </p>
-  <p><%= f.text_area :notes, :label=>:field_notes, :rows=>4 %></p>
+  <p><%= f.text_area :notes, :label => :field_notes, :rows => 4 %></p>
   <% @execution.custom_field_values.each do |value| %>
     <p><%= custom_field_tag_with_label :execution, value %></p>
   <% end %>
   <p><%= submit_tag l(:button_save) %><p>
+
+  <% unless @execution_histories.empty? %>
+  <fieldset class="collapsible collapsed">
+     <legend onclick="toggleFieldset(this);"><%= l(:label_execution_histories) %></legend>
+     <div style="display:none;">
+       <table class="list">
+	 <tr>
+	   <th><%=l(:label_execution_ts)%></th>
+	   <th><%=l(:label_executor)%></th>
+	   <th><%=l(:label_execution_status)%></th>
+	 </tr>
+	 <% @execution_histories.each do |history| %>
+	 <tr class="entry">
+	   <td class="center"><%= format_time(history.execution_ts) %></td>
+	   <td class="center"><%= history.executor.name %></td>
+	   <td class="center"><%= format_status(history.status) %></td>
+	 </tr>
+	 <% end %>
+       </table>
+     </div>
+  </fieldset>
+  <% end %>
 </div>

@@ -28,16 +28,28 @@ class ImpasseExecutionsController < ImpasseAbstractController
     status = 'success'
     errors = []
     for test_case_id in test_case_ids
-      @test_plan_case = Impasse::TestPlanCase.find(:first, :conditions=>[
-                                                                         "test_plan_id=? AND test_case_id=?",
-                                                                         params[:test_plan_case][:test_plan_id],
-                                                                         test_case_id])
-      next if @test_plan_case.nil?
-      @execution = Impasse::Execution.find_or_initialize_by_test_plan_case_id(@test_plan_case.id)
-      @execution.attributes = params[:execution]
-      @execution.execution_ts = Time.now.to_datetime
-      unless @execution.save
-        errors.concat(@execution.errors.full_messages)
+      test_plan_case = Impasse::TestPlanCase.find(:first, :conditions=>[
+                                                                        "test_plan_id=? AND test_case_id=?",
+                                                                        params[:test_plan_case][:test_plan_id],
+                                                                        test_case_id])
+      next if test_plan_case.nil?
+      execution = Impasse::Execution.find_or_initialize_by_test_plan_case_id(test_plan_case.id)
+      execution.attributes = params[:execution]
+      if params[:record]
+        execution.execution_ts = Time.now.to_datetime
+        execution.executor_id = User.current.id
+      end
+
+      begin
+        ActiveRecord::Base.transaction do
+          execution.save!
+          if params[:record]
+            @execution_history = Impasse::ExecutionHistory.new(execution.attributes)
+            @execution_history.save!
+          end
+        end
+      rescue
+        errors.concat(execution.errors.full_messages)
       end
     end
     
@@ -72,7 +84,7 @@ class ImpasseExecutionsController < ImpasseAbstractController
 
   def get_list
     sql = <<-'END_OF_SQL'
-SELECT T.*, E.expected_date, E.status, users.firstname, users.lastname
+SELECT T.*, LENGTH(T.path) - LENGTH(REPLACE(T.path,'.','')) AS level, E.expected_date, E.status, users.firstname, users.lastname
 FROM (
   SELECT distinct parent.*, tpc.test_plan_id
   FROM impasse_nodes AS parent
@@ -107,7 +119,7 @@ LEFT JOIN impasse_executions AS E
   ON E.test_plan_case_id = impasse_test_plan_cases.id
 LEFT OUTER JOIN users
   ON users.id = tester_id
-ORDER BY LENGTH(T.path) - LENGTH(REPLACE(T.path,'.','')), T.node_order
+ORDER BY level, T.node_order
 END_OF_SQL
 
     conditions = { :test_plan_id => params[:test_plan_id] }
@@ -168,6 +180,9 @@ END_OF_SQL
       @execution = executions.first
     end
     @execution.attributes = params[:execution]
+    @execution_histories = Impasse::ExecutionHistory.find(:all, :joins => [ :executor ],
+                                                          :conditions => ["test_plan_case_id=?", @execution.test_plan_case_id],
+                                                          :order => "execution_ts DESC")
     if request.post? and @execution.save
       respond_to do |format|
         format.json { render :json => {'status'=>true} }

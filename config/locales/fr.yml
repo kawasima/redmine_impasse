@@ -38,12 +38,16 @@ fr:
   label_execution_status_1: "OK"
   label_execution_status_2: "KO"
   label_execution_status_3: "Non réalisable"
+  label_execution_ts: "Exécuté"
+  label_executor: "Exécuteur"
+  label_execution_status: "Etat attendu"
 
   label_filters_query: "Incluant les mots "
   label_filters_keywords: "Mots-Clés"
   label_filters_inactive: "Incluant les tests invalides"
   label_includes_before: "incluant les précédents"
   label_includes_after: "incluant les suivants"
+  label_execution_histories: "enregistrer"
 
   field_details: "Details"
   field_preconditions: "Pré-conditions"
