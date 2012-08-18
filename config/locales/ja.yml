@@ -65,7 +65,10 @@ ja:
   permission_view_testcases: "テストの参照"
   permission_manage_test_cases: "テストの更新"
 
+  notice_delete_test_plans_first: "まず関連したテスト計画を削除してください。"
   error_can_not_manage_test_cases: "権限がないため、その操作は行えません。"
+  error_failed_to_update: "更新できませんでした。"
+
   text_assign_cases: "ここにケースをドラッグ&ドロップするとテスト計画に追加できます"
   text_assign_users: "日付やメンバをケースにドラッグ&ドロップすると、ケースの実行予定日やテスターの割当ができます"
   field_test_step_actions: Actions

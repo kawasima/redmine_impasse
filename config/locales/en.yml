@@ -66,6 +66,7 @@ en:
   permission_view_testcases: "View test cases"
   permission_manage_test_cases: "Manage test cases"
 
+  notice_delete_test_plans_first: "Delete related test plans first."
   error_can_not_manage_test_cases: "You aren't permitted to manage test cases."
   error_failed_to_update: "Failed to update."
 

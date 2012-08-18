@@ -15,6 +15,10 @@ object_to_prepare.to_prepare do
     ProjectsHelper.send(:include, ImpasseProjectsHelperPatch)
   end
 
+  unless VersionsController.included_modules.include? ImpasseVersionsControllerPatch
+    VersionsController.send(:include, ImpasseVersionsControllerPatch)
+  end
+
   Project.class_eval do
     has_and_belongs_to_many :test_case_custom_fields,
     :class_name => 'Impasse::TestCaseCustomField',
