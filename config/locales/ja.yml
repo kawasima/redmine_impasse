@@ -66,6 +66,8 @@ ja:
   permission_manage_test_cases: "テストの更新"
 
   notice_delete_test_plans_first: "まず関連したテスト計画を削除してください。"
+  notice_copy_cases_to_another_project: "コピーしたいテストケースをチェックし、コピー先のプロジェクトを選択してください。"
+  notice_no_projects_to_copy_cases: "コピー先として選択できるプロジェクトがありません。"
   error_can_not_manage_test_cases: "権限がないため、その操作は行えません。"
   error_failed_to_update: "更新できませんでした。"
 

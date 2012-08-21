@@ -1,0 +1,24 @@
+---
+node1:
+  id: 1
+  name: "onlinestore"
+  node_type_id: 1
+  path: .1.
+node2:
+  id: 2
+  name: "test suite1"
+  node_type_id: 2
+  path: .1.2.
+  parent_id: 1
+node3:
+  id: 3
+  name: "test case1"
+  node_type_id: 3
+  path: .1.2.3.
+  parent_id: 2
+node4:
+  id: 4
+  name: "test case2"
+  node_type_id: 3
+  path: .1.2.4.
+  parent_id: 2

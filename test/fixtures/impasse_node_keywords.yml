@@ -1,5 +1,13 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-one:
+node_keyword1:
   id: 1
-two:
+  keyword_id: 1
+  node_id: 2
+node_keyword2:
   id: 2
+  keyword_id: 2
+  node_id: 2
+node_keyword3:
+  id: 3
+  keyword_id: 1
+  node_id: 3

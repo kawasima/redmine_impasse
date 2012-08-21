@@ -17,6 +17,18 @@ module Impasse
       end
     end
 
+    def self.find_with_children(id)
+      node = self.find(id)
+      self.find_by_sql([ <<-END_OF_SQL, "#{node.path}%"])
+        SELECT distinct parent.*, LENGTH(parent.path) - LENGTH(REPLACE(parent.path,'.','')) - 2 AS level
+          FROM impasse_nodes AS parent
+          JOIN impasse_nodes AS child
+            ON parent.path = SUBSTR(child.path, 1, LENGTH(parent.path))
+         WHERE parent.path like ?
+        ORDER BY level, node_order
+      END_OF_SQL
+    end
+
     def is_test_case?
       self.node_type_id == 3
     end
@@ -33,7 +45,7 @@ module Impasse
       attributes['planned'].to_i == 1 or attributes['planned'].is_a? TrueClass or attributes['planned'] == 't'
     end
 
-    def self.find_children(node_id, test_plan_id=nil, filters=nil)
+    def self.find_children(node_id, test_plan_id=nil, filters=nil, limit=300)
       sql = <<-'END_OF_SQL'
       SELECT node.*, tc.active
       FROM (
@@ -53,6 +65,9 @@ module Impasse
         <%- end -%>
         <%- if conditions.include? :path -%>
           AND parent.path LIKE :path
+        <%- end -%>
+        <%- if conditions.include? :level -%>
+          AND LENGTH(parent.path) - LENGTH(REPLACE(parent.path,'.','')) <= :level
         <%- end -%>
         <%- if conditions.include? :filters_query or conditions.include? :filters_keywords -%>
         AND
@@ -86,6 +101,10 @@ module Impasse
 
       unless node_id.to_i == -1
         node = find(node_id)
+        child_counts = self.count(:conditions => [ "path like ?", "#{node.path}_%"])
+        if child_counts > limit
+          conditions[:level] = node.path.count('.') + 1
+        end
         conditions[:path] = "#{node.path}_%"
       end
     

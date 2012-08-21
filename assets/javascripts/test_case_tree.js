@@ -202,9 +202,10 @@ jQuery(document).ready(function ($) {
 
     var plugins = ["themes","json_data","ui","cookies","types","hotkeys"];
     if (IMPASSE.canEdit) {
-	plugins = plugins.concat(["crrm","dnd","contextmenu"]);
+	plugins = plugins.concat(["crrm","dnd","contextmenu", "checkbox"]);
     }
 
+    var prepared_checkbox = false;
     var testcaseTree =$("#testcase-tree")
 	.jstree({ 
 	    plugins: plugins,
@@ -259,9 +260,16 @@ jQuery(document).ready(function ($) {
 			remove: false
 		    }
 		}
+	    },
+	    checkbox: {
+		two_state: false
 	    }
 	})
 	.bind("loaded.jstree refresh.jstree", function (e, data) {
+	    if (!prepared_checkbox) {
+		testcaseTree.jstree('hide_checkboxes');
+		prepared_checkbox = true;
+	    }
 	    $("li[rel=test_project]", this).data("jstree", ROOT_MENU);
 	    $("li[rel=test_suite]", this).data("jstree", FOLDER_MENU);
 	    $("li[rel=test_case]", this).data("jstree", LEAF_MENU);
@@ -386,9 +394,26 @@ jQuery(document).ready(function ($) {
 	    }
 	});
     });
+    $("#test-case-view").floatmenu();
 
     $.getJSON(IMPASSE.url.testKeywords, function(json) {
 	setupKeyword($(".filter :input#filters_keywords"), json);
+    });
+
+    $("#button-copy-cases").bind("click", function(e) {
+	testcaseTree.jstree('show_checkboxes');
+	$("#copy-tests-view").show();
+    });
+    $("#button-copy-exec").bind("click", function(e) {
+	var form = $("#edit_copy_tests");
+	testcaseTree.jstree('get_checked', null, false).each(function() {
+	    $('<input type="hidden" name="node_ids[]"/>').val(this.id.replace(/^node_/, "")).appendTo(form);
+	});
+	form.submit();
+    });
+    $("#button-copy-cancel").bind("click", function(e) {
+	testcaseTree.jstree('hide_checkboxes');
+	$("#copy-tests-view").hide();
     });
 });
 

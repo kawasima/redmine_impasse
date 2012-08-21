@@ -1,7 +1,9 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-one:
+keyword_validation:
   id: 1
-  keyword: MyString
-two:
+  keyword: "Validation"
+  project_id: 2
+keyword_register_database:
   id: 2
-  keyword: MyString
+  keyword: "Register database"
+  project_id: 2

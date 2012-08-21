@@ -1,0 +1,7 @@
+---
+teststep1:
+  id: 1
+  test_case_id: 3
+  step_number: 1
+  actions: "Click the button"
+  expected_results: "Reload page."

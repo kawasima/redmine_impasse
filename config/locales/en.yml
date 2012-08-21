@@ -67,6 +67,8 @@ en:
   permission_manage_test_cases: "Manage test cases"
 
   notice_delete_test_plans_first: "Delete related test plans first."
+  notice_copy_cases_to_another_project: "Check cases you want to copy and select a destination project."
+  notice_no_projects_to_copy_cases: "No projects to select the destination."
   error_can_not_manage_test_cases: "You aren't permitted to manage test cases."
   error_failed_to_update: "Failed to update."
 

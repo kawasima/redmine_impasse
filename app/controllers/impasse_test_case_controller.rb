@@ -10,6 +10,10 @@ class ImpasseTestCaseController < ImpasseAbstractController
   before_filter :find_project, :authorize
 
   def index
+    if User.current.allowed_to?(:move_issues, @project)
+      @allowed_projects = Issue.allowed_target_projects_on_move
+      @allowed_projects.delete_if{|project| @project.id == project.id }
+    end
   end
 
   def list
@@ -184,6 +188,88 @@ class ImpasseTestCaseController < ImpasseAbstractController
     end
   end
 
+  def copy_to_another_project
+    copy_node_ids = []
+    dest_project = Project.find(params[:dest_project_id])
+    params[:node_ids].each do |id|
+      nodes = Impasse::Node.find_with_children(id)
+      for node in nodes
+        copy_node_ids[node.level.to_i] ||= {}
+        copy_node_ids[node.level.to_i][node.id] = node
+      end
+      nodes[0].path.split(".").each_with_index do |pid, index|
+        next if pid.empty? or pid.to_i == nodes[0].id
+        copy_node_ids[index - 1] ||= {}
+        copy_node_ids[index - 1][pid.to_i] = nil
+      end
+    end
+
+    begin
+      keyword_hash = {}
+      parents = {}
+      dest_keywords = Impasse::Keyword.find_all_by_project_id(dest_project.id) || []
+      src_keywords  = Impasse::Keyword.find_all_by_project_id(@project.id) || []
+      
+      for src_keyword in src_keywords
+        dest_keyword = dest_keywords.detect {|keyword| keyword.keyword == src_keyword.keyword}
+        if dest_keyword
+          keyword_hash[dest_keyword.keyword] = dest_keyword.id
+        else
+          keyword = Impasse::Keyword.create!(:keyword => src_keyword.keyword, :project_id => dest_project.id)
+          keyword_hash[keyword.keyword] = keyword.id
+        end
+      end
+
+      copy_node_ids.each_with_index do |nodes, level|
+        nodes.each_pair do |id, node|
+          unless node
+            node = Impasse::Node.find(id)
+          end
+          ActiveRecord::Base.transaction do
+            new_node = node.dup
+            if new_node.node_type_id == 1
+              root = Impasse::Node.find_by_name_and_node_type_id(dest_project.identifier, 1)
+              if root
+                new_node = root
+                # TODO get max node order
+              else
+                new_node.name = dest_project.identifier
+              end
+            else
+              new_node.parent_id = parents[node.parent_id]
+            end
+            new_node.save!
+            parents[node.id] = new_node.id
+
+            case new_node.node_type_id
+            when 2
+              test_suite = Impasse::TestSuite.find(node.id)
+              new_test_suite = test_suite.dup
+              new_test_suite.id = new_node.id
+              new_test_suite.save!
+            when 3
+              test_case = Impasse::TestCase.find(:first, :conditions => { :id => node.id }, :include => :test_steps)
+              new_test_case = test_case.dup
+              new_test_case.id = new_node.id
+              new_test_case.save!
+              test_case.test_steps.each do |ts|
+                attr = ts.attributes
+                attr[:test_case_id] = new_test_case._id
+                Impasse::TestStep.create!(attr)
+              end
+            end
+            node.node_keywords.map{|nk| Impasse::NodeKeyword.create!(:keyword_id => nk.keyword_id, :node_id => new_node.id) }
+          end
+        end
+      end
+      flash[:notice] = l(:notice_successful_create)
+      redirect_to :action => :index, :project_id => dest_project
+    rescue
+      flash[:error] = l(:error_failed_to_update)
+      redirect_to :action => :index, :project_id => @project
+    end
+  end
+
   private
   def new_node
     @node = Impasse::Node.new(params[:node])
@@ -309,8 +395,8 @@ class ImpasseTestCaseController < ImpasseAbstractController
         'attr' => {'id' => "#{prefix}_#{node.id}" , 'rel' => REL[node.node_type_id] },
         'data' => { 'title' => node.name },
         'children'=>[]}
-      if node.node_type_id != 3
-        jstree_node['state'] = 'open'
+      if node.node_type_id == 2
+        jstree_node['state'] = 'closed'
       end
       if node.node_type_id == 3 and !node.active?
         jstree_node['attr']['data-inactive'] = true
@@ -320,6 +406,7 @@ class ImpasseTestCaseController < ImpasseAbstractController
       if node_map.include? node.parent_id
         # non-root node
         node_map[node.parent_id]['children'] << jstree_node
+        node_map[node.parent_id]['state'] = 'open'
       else
         #root node
         jstree_nodes << jstree_node
