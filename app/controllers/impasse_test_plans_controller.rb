@@ -81,21 +81,23 @@ class ImpasseTestPlansController < ImpasseAbstractController
     if params.include? :test_case_ids
       new_cases = 0
       nodes = Impasse::Node.find(:all, :conditions => ["id in (?)", params[:test_case_ids]])
-      for node in nodes
-        test_case_ids = []
-        if node.is_test_suite?
-          test_case_ids.concat node.all_decendant_cases.collect{|n| n.id}
-        else
-          test_case_ids << node.id
-        end
+      ActiveRecord::Base.transaction do
+        for node in nodes
+          test_case_ids = []
+          if node.is_test_suite?
+            test_case_ids.concat node.all_decendant_cases.collect{|n| n.id}
+          else
+            test_case_ids << node.id
+          end
 
-        for test_case_id in test_case_ids
-          test_plan_case =
-            Impasse::TestPlanCase.find_or_create_by_test_case_id_and_test_plan_id(
-                                                                         :test_case_id => test_case_id,
-                                                                         :test_plan_id => params[:test_plan_id],
-                                                                         :node_order => 0)
-          new_cases += 1
+          for test_case_id in test_case_ids
+            test_plan_case =
+              Impasse::TestPlanCase.find_or_create_by_test_case_id_and_test_plan_id(
+                                                                                    :test_case_id => test_case_id,
+                                                                                    :test_plan_id => params[:test_plan_id],
+                                                                                    :node_order => 0)
+            new_cases += 1
+          end
         end
       end
     end

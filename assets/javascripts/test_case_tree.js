@@ -213,7 +213,15 @@ jQuery(document).ready(function ($) {
 		animation: 0
 	    },
 	    contextmenu: {
-		select_node: true
+		select_node: true,
+		items: function(node) {
+		    if (node.attr('rel') == 'test_project')
+			return ROOT_MENU.contextmenu;
+		    else if (node.attr('rel') == 'test_suite')
+			return FOLDER_MENU.contextmenu;
+		    else if (node.attr('rel') == 'test_case')
+			return LEAF_MENU.contextmenu;
+		}
 	    },
 	    json_data: { 
 		ajax: {
@@ -270,9 +278,6 @@ jQuery(document).ready(function ($) {
 		testcaseTree.jstree('hide_checkboxes');
 		prepared_checkbox = true;
 	    }
-	    $("li[rel=test_project]", this).data("jstree", ROOT_MENU);
-	    $("li[rel=test_suite]", this).data("jstree", FOLDER_MENU);
-	    $("li[rel=test_case]", this).data("jstree", LEAF_MENU);
 	})
 	.bind("create.jstree", function (e, data) {
 	    dialog[$(data.rslt.obj).attr("rel")].bind('dialogbeforeclose', function(e) {

@@ -124,6 +124,93 @@ module Impasse
       find_by_sql([ERB.new(sql, nil, '-').result(binding), conditions])
     end
 
+    def self.find_planned(node_id, test_plan_id=nil, filters={}, limit=300)
+      sql = <<-'END_OF_SQL'
+    SELECT T.*, LENGTH(T.path) - LENGTH(REPLACE(T.path,'.','')) AS level, E.expected_date, E.status, users.firstname, users.lastname
+      FROM (
+        SELECT distinct parent.*, tpc.test_plan_id
+          FROM impasse_nodes AS parent
+          JOIN impasse_nodes AS child
+            ON parent.path = SUBSTR(child.path, 1, LENGTH(parent.path))
+     LEFT JOIN impasse_test_cases AS tc
+            ON child.id = tc.id
+     LEFT JOIN impasse_test_plan_cases AS tpc
+            ON tc.id=tpc.test_case_id
+     LEFT JOIN impasse_executions AS exec
+            ON tpc.id = exec.test_plan_case_id
+         WHERE tpc.test_plan_id=:test_plan_id
+     <%- if conditions.include? :level -%>
+           AND LENGTH(parent.path) - LENGTH(REPLACE(parent.path,'.','')) <= :level
+     <%- end -%>
+     <%- if conditions.include? :path -%>
+           AND parent.path LIKE :path
+     <%- end -%>
+     <%- if [:user_id, :execution_status, :expected_date].any? {|key| conditions.include? key} -%>
+       <%- if conditions.include? :user_id -%>
+           AND tester_id = :user_id
+       <%- end -%>
+       <%- if conditions.include? :execution_status -%>
+           AND (exec.status IN (:execution_status) <%- if conditions[:execution_status].include? "0" %>OR exec.status IS NULL<% end %> )
+       <%- end -%>
+       <%- if conditions.include? :expected_date -%>
+           AND exec.expected_date <%= conditions[:expected_date_op] %> :expected_date
+       <%- end -%>
+     <%- end -%>
+      ) AS T
+LEFT JOIN impasse_test_plan_cases
+       ON T.id = impasse_test_plan_cases.test_case_id AND
+          T.test_plan_id = impasse_test_plan_cases.test_plan_id
+LEFT JOIN impasse_executions AS E
+       ON E.test_plan_case_id = impasse_test_plan_cases.id
+LEFT OUTER JOIN users
+       ON users.id = tester_id
+ORDER BY level, T.node_order
+      END_OF_SQL
+
+      conditions = { :test_plan_id => test_plan_id }
+
+      unless node_id.to_i == -1
+        node = self.find(node_id)
+        child_counts = self.count(:conditions => [ "path like ?", "#{node.path}_%"])
+        if child_counts > limit
+          conditions[:level] = node.path.count('.') + 1
+        end
+        conditions[:path] = "#{node.path}_%"
+      else
+        child_counts = Impasse::TestPlanCase.count(:conditions => [ "test_plan_id=?", test_plan_id])
+        if child_counts > limit
+          conditions[:level] = 3
+        end
+      end
+
+      if filters[:myself]
+        conditions[:user_id] = User.current.id
+      end
+
+      if filters[:execution_status]
+        conditions[:execution_status] = []
+        if filters[:execution_status].is_a? Array
+          filters[:execution_status].each {|param|
+            conditions[:execution_status] << param.to_s
+          }
+        else
+          conditions[:execution_status] << filters[:execution_status].to_s
+        end
+      end
+
+      if filters[:expected_date]
+        conditions[:expected_date] = filters[:expected_date]
+        conditions[:expected_date_op] = filters[:expected_date_op] || '='
+      end
+
+      nodes = self.find_by_sql([ERB.new(sql, nil, '-').result(binding), conditions])
+      if nodes.size > 0 and nodes[0].node_type_id == 1
+        test_plan = Impasse::TestPlan.find(test_plan_id)
+        nodes[0].name = test_plan.name
+      end
+      nodes
+    end
+
     def all_decendant_cases
       sql = <<-'END_OF_SQL'
       SELECT distinct parent.*

@@ -34,7 +34,7 @@ module Impasse
         ON tc.id = n.id
       <%- if conditions[:path] -%>
       INNER JOIN impasse_nodes AS head
-        ON head.path = SUBSTR(n.path, 1, LENGTH(:path) + LENGTH(CAST(head.id AS CHAR)) + 1)
+        ON head.path = SUBSTR(n.path, 1, LENGTH(:path || head.id || '.'))
       <%- end -%>
       LEFT OUTER JOIN impasse_executions AS exe
         ON exe.test_plan_case_id = tpc.id
@@ -51,7 +51,7 @@ module Impasse
       WHERE tp.id = :test_plan_id
       <%- if conditions[:path] -%>
         AND n.path LIKE :path_starts_with
-      GROUP BY head.id, head.name, head.node_type_id, SUBSTR(n.path, 1, LENGTH(:path) + LENGTH(CAST(head.id AS CHAR)) + 1)
+      GROUP BY head.id, head.name, head.node_type_id, SUBSTR(n.path, 1, LENGTH(:path || head.id || '.'))
       <%- else -%>
       GROUP BY tp.id, tp.name, node_type_id
       <%- end -%>

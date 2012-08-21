@@ -15,14 +15,10 @@ module Impasse
 DELETE FROM impasse_test_plan_cases
 WHERE test_plan_id=#{test_plan_id}
   AND test_case_id in (
-    SELECT distinct parent.id
-    FROM impasse_nodes AS parent
-    JOIN impasse_nodes AS child
-      ON parent.path = SUBSTR(child.path, 1, LENGTH(parent.path))
-    LEFT JOIN impasse_test_cases AS tc
-      ON child.id = tc.id
-    WHERE parent.path LIKE '#{node.path}%'
-      AND parent.node_type_id=3
+    SELECT id
+    FROM impasse_nodes
+    WHERE path LIKE '#{node.path}%'
+      AND node_type_id=3
   )
       END_OF_SQL
       

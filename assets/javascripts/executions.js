@@ -44,14 +44,14 @@ jQuery(document).ready(function ($) {
 			    id : n.attr ? n.attr("id").replace("exec_","") : -1
 			};
 			if ($("#filters #cb_myself").is(":checked")) {
-			    params["myself"] = true;
+			    params["filters[myself]"] = true;
 			}
-			params["execution_status"] = $("#filters :checkbox[name=execution_status]:checked").map(function() {
+			params["filters[execution_status]"] = $("#filters :checkbox[name=execution_status]:checked").map(function() {
 			    return $(this).val();
 			}).get();
 			$.each(["expected_date", "expected_date_op"], function(i, key) {
 			    var val = $("#filters :input[name=" + key + "]").val();
-			    if (val) params[key] = val;
+			    if (val) params["filters[" + key + "]"] = val;
 			});
 			return params;
 		    },

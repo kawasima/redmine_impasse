@@ -2,12 +2,10 @@ jQuery.noConflict();
 
 jQuery(document).ready(function ($) {
     var PLAN_CASE_MENU = {
-	contextmenu: {
-	    remove: {
-		label: IMPASSE.label.buttonDelete,
-		icon:  IMPASSE.url.iconDelete,
-		action: function(node) { this.remove(node) }
-	    }
+	remove: {
+	    label: IMPASSE.label.buttonDelete,
+	    icon:  IMPASSE.url.iconDelete,
+	    action: function(node) { this.remove(node) }
 	}
     };
 
@@ -95,8 +93,6 @@ jQuery(document).ready(function ($) {
 	    $("li[rel=test_case],li[rel=test_suite]", this).data("jstree", PLAN_CASE_MENU);
 	    $("li[rel=test_project]", this).data("jstree", {contextmenu:{}});
 	})
-	.bind("contextmenu.jstree", function(e,data) {
-	})
 	.bind("remove.jstree", function (e, data) {
 	    data.rslt.obj.each(function () {
 		$.ajax({
@@ -131,6 +127,12 @@ jQuery(document).ready(function ($) {
 			    node_id : n.attr ? n.attr("id").replace("plan_","") : -1
 			}; 
 		    }
+		}
+	    },
+	    contextmenu: {
+		items: function (node) {
+		    if (node.attr("rel") == 'test_case' || node.attr("rel") == 'test_suite')
+			return PLAN_CASE_MENU;
 		}
 	    },
 	    types: {
