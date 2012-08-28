@@ -83,6 +83,20 @@ jQuery(document).ready(function ($) {
 	    title: IMPASSE.label.testCaseEdit
 	})
     };
+    function show_test_case(node_id) {
+	$.ajax({
+	    url: IMPASSE.url.testCaseShow,
+	    data: { "node[id]": node_id },
+	    success: function(html) {
+		$("#test-case-view").html(html).show();
+	    },
+	    error: ajax_error_handler,
+	    complete: function() {
+		$("#test-case-view").unblock();
+	    }
+	});
+    }
+
     function split( val ) {
 	return val.split( /,\s*/ );
     }
@@ -269,6 +283,27 @@ jQuery(document).ready(function ($) {
 		    }
 		}
 	    },
+	    dnd: {
+		drag_finish: function(data) {
+		    var $this = this;
+		    var draggable = $(data.o).hasClass("jstree-draggable") ? $(data.o) : $(data.o).parents(".jstree-draggable");
+		    var request = {
+			"issue_id": draggable.attr("id").replace("issue-", ""),
+			"test_case_id": data.r.attr("id").replace("node_", "")
+		    };
+		    $.ajax({
+			type: 'POST',
+			url: IMPASSE.url.requirementIssuesAddTestCase,
+			data: request,
+			success: function(r) {
+			    show_notification_dialog(r.status, r.message);
+			},
+			error: function(xhr, status, ex) {
+			    ajax_error_handler(xhr, status, ex);
+			}
+		    });
+		}
+	    },
 	    checkbox: {
 		two_state: false
 	    }
@@ -387,22 +422,62 @@ jQuery(document).ready(function ($) {
 	$("#test-case-view").block(impasse_loading_options());
 	var $node = $(this);
 	var node_id = $(this).attr("id").replace("node_", "");
-	$.ajax({
-	    url: IMPASSE.url.testCaseShow,
-	    data: { "node[id]": node_id },
-	    success: function(html) {
-		$("#test-case-view").html(html).show();
-	    },
-	    error: ajax_error_handler,
-	    complete: function() {
-		$("#test-case-view").unblock();
-	    }
-	});
+	show_test_case(node_id);
     });
-    $("#test-case-view").floatmenu();
+
+    $(".splitcontentright .floating").floatmenu();
 
     $.getJSON(IMPASSE.url.testKeywords, function(json) {
 	setupKeyword($(".filter :input#filters_keywords"), json);
+    });
+
+    if (location.hash && location.hash.lastIndexOf("#testcase-", 0) == 0) {
+	var testcase_id = location.hash.replace(/^#testcase-/, "");
+	show_test_case(testcase_id);
+    }
+
+    $("#button-requirement-issues").bind("click", function(e) {
+	$.ajax({
+	    url: IMPASSE.url.requirementIssues,
+	    data: { },
+	    success: function(html) {
+		$("#requirements-view").html(html).show();
+	    },
+	    error: ajax_error_handler
+	});
+    });
+
+    $("#button-close-requirements").live("click", function(e) {
+	$("#requirements-view").hide();
+	e.preventDefault();
+    });
+
+    $("#values_fixed_version_id").live("change", function(e) {
+	var version_id = $(this).val();
+	$.ajax({
+	    url: IMPASSE.url.requirementIssues,
+	    data: { "fields": ['fixed_version_id'], "values[fixed_version_id]": [version_id], "operators[fixed_version_id]": version_id ? "=" : "!*"},
+	    success: function(html) {
+		$("#requirements-view").html(html).show();
+	    },
+	    error: ajax_error_handler
+	});
+    });
+
+    $("#testcase-dialog a.remove_requirement").live("click", function(e) {
+	var row = $(this).parents("tr");
+	var requirementIssues = $(this).parents("div.requirement-issues");
+	$.ajax({
+	    type: 'post',
+	    url: $(this).attr("href"),
+	    success: function(html) {
+		row.remove();
+		if (requirementIssues.find("table tr").size() <= 1)
+		    requirementIssues.remove();
+	    },
+	    error: ajax_error_handler
+	});
+	e.preventDefault();
     });
 
     $("#button-copy-cases").bind("click", function(e) {

@@ -34,19 +34,44 @@
 
   <% if @test_case.test_steps.size > 0 %>    
     <p><strong><%=l(:field_test_steps)%></strong></p>
-    <table>
+    <table class="list">
       <tr>
 	<th>#</th>
 	<th><%=l(:field_actions)%></th>
 	<th><%=l(:field_expected_results)%></th>
       </tr>
       <% @test_case.test_steps.each do |test_step| %>
-	<tr>
-	  <td><%= test_step.step_number %></td>
+	<tr class="<%= cycle 'odd', 'even'%>">
+	  <td class="id"><%= test_step.step_number %></td>
 	  <td><%=h test_step.actions %></td>
 	  <td><%=h test_step.expected_results %></td>
 	</tr>
       <% end %>
+    </table>
+  <% end %>
+
+  <% if @test_case.requirement_issues.size > 0 %>
+    <p><strong><%=l(:label_requirement_plural) %></strong></p>
+    <table class="list issues">
+      <tr>
+	<th>#</th>
+	<th><%=l(:field_tracker)%></th>
+	<th><%=l(:field_subject)%></th>
+      </tr>
+      <tbody>
+	<% for requirement in @test_case.requirement_issues %>
+	  <% issue = requirement.issue %>
+	  <tr id="issue-<%= h(issue.id) %>" class="jstree-draggable <%= cycle('odd', 'even') %> <%= issue.css_classes %>">
+	    <td class="id">
+              <%= link_to h(issue.id), :controller => 'issues', :action => 'show', :id => issue %>
+	    </td>
+	    <td class="tracker"><%=h issue.tracker %></td>
+	    <td class="subject">
+              <%= link_to h(truncate(issue.subject, :length => 60)), :controller => 'issues', :action => 'show', :id => issue %> (<%=h issue.status %>)
+	    </td>
+	  </tr>
+	<% end %>
+      </tbody>      
     </table>
   <% end %>
 </div>

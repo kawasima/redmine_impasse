@@ -14,6 +14,10 @@ class ImpasseTestPlansController < ImpasseAbstractController
     @test_plans_by_version, @versions = Impasse::TestPlan.find_all_by_version(@project, params[:completed])
   end
 
+  def show
+    @test_plan = Impasse::TestPlan.find(:first, :conditions => { :id => params[:id]}, :include => :version)
+  end
+
   def new
     @test_plan = Impasse::TestPlan.new(params[:test_plan])
     if request.post? and @test_plan.save
@@ -21,10 +25,6 @@ class ImpasseTestPlansController < ImpasseAbstractController
       redirect_to :action => :tc_assign, :project_id => @project, :id => @test_plan
     end
     @versions = @project.versions
-  end
-
-  def show
-    @test_plan = Impasse::TestPlan.find(params[:id])
   end
 
   def edit

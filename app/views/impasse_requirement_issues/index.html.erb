@@ -1,0 +1,35 @@
+<%= error_messages_for 'query' %>
+<% if @query.valid? %>
+  <% if @issues.empty? %>
+    <p class="nodata"><%= l(:label_no_data) %></p>
+  <% else %>
+    <div class="contextual">
+      <a href="#" id="button-close-requirements"><%= image_tag 'close.png' %></a>
+    </div>
+    <div>
+      <label for="values_fixed_version_id"><%=l(:label_version)%></label>
+      <%= select_tag 'values_fixed_version_id', options_for_select(@project.versions.map{|v| [v.name, v.id] } << [l(:label_none), ''], params[:values][:fixed_version_id]) %>
+    </div>
+    <table class="list issues">
+      <thead><tr>
+	  <th>#</th>
+	  <th><%=l(:field_tracker)%></th>
+	  <th><%=l(:field_subject)%></th>
+	</tr></thead>
+      <tbody>
+	<% for issue in @issues %>
+	  <tr id="issue-<%= h(issue.id) %>" class="jstree-draggable <%= cycle('odd', 'even') %> <%= issue.css_classes %>">
+	    <td class="id">
+              <%= h(issue.id) %>
+	    </td>
+	    <td class="tracker"><%=h issue.tracker %></td>
+	    <td class="subject">
+              <%= h(truncate(issue.subject, :length => 60)) %> (<%=h issue.status %>)
+	    </td>
+	  </tr>
+	<% end %>
+      </tbody>
+    </table>
+    <p class="pagination"><%= pagination_links_full @issue_pages, @issue_count %></p>
+  <% end %>
+<% end %>

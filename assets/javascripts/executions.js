@@ -21,16 +21,8 @@ jQuery(document).ready(function ($) {
 	});
     }
 
-    function bind_node_event (e, data) {
-	$(this).find("li[rel=test_case]").click(function(e) {
-	    var $node = $(this);
-	    $("#executions-view").block(impasse_loading_options());
-	    show_test_case($(this).attr("id").replace("exec_", ""));
-	});
-    }
 
     var $tree = $("#testplan-tree")
-	.bind("loaded.jstree refresh.jstree", bind_node_event)
 	.jstree({ 
 	    "plugins" : [
 		"themes","json_data","ui","crrm","search","types","hotkeys"
@@ -82,6 +74,12 @@ jQuery(document).ready(function ($) {
 		}
 	    }
 	});
+
+    $('li[rel=test_case]', $tree).live('click', function() {
+	var $node = $(this);
+	$("#executions-view").block(impasse_loading_options());
+	show_test_case($(this).attr("id").replace("exec_", ""));
+    });
 
     $("p.buttons a.icon.icon-checked").click(function(e) {
 	$("#testplan-tree").block(impasse_loading_options());

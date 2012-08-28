@@ -31,6 +31,9 @@
         testCaseCopy: "<%= url_for :controller=>:impasse_test_case, :action=>:copy, :project_id=>@project %>",
         testCaseMove: "<%= url_for :controller=>:impasse_test_case, :action=>:move, :project_id=>@project %>",
         testKeywords: "<%= url_for :controller=>:impasse_test_case, :action=>:keywords, :project_id=>@project %>",
+        requirementIssues: "<%= url_for :controller=>:impasse_requirement_issues, :action=>:index, :project_id=>@project %>",
+        requirementIssuesAddTestCase: "<%= url_for :controller=>:impasse_requirement_issues, :action=>:add_test_case, :project_id=>@project %>",
+        requirementIssuesRemoveTestCase: "<%= url_for :controller=>:impasse_requirement_issues, :action=>:remove_test_case, :project_id=>@project %>",
         iconEdit: "<%=image_path 'edit.png'%>",
         iconCopy: "<%=image_path 'copy.png'%>",
         iconDelete: "<%=image_path 'delete.png'%>",
@@ -57,6 +60,7 @@
 <% include_calendar_headers_tags %>
 
 <div class="contextual">
+  <a id="button-requirement-issues" href="#" class="icon icon-copy"><%=l(:label_requirement_plural)%></a>
   <a id="button-copy-cases" href="#" class="icon icon-copy"><%=l(:button_copy)%></a>
 </div>
 <h2><%= l(:label_impasse)%></h2>
@@ -122,7 +126,9 @@
 	<p class="nodata"><%=l(:notice_no_projects_to_copy_cases)%></p>
       <% end %>
     </div>
-    <div id="test-case-view" style="width: 100%;">
+    <div class="floating">
+      <div id="requirements-view" style="width: 100%;"></div>
+      <div id="test-case-view" style="width: 100%;"></div>
     </div>
   </div>
 </div>

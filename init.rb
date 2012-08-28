@@ -28,25 +28,25 @@ object_to_prepare.to_prepare do
     :association_foreign_key => 'custom_field_id'
 
     has_and_belongs_to_many :test_suite_custom_fields,
-  :class_name => 'Impasse::TestSuiteCustomField',
-  :order => "#{CustomField.table_name}.position",
-  :join_table => "#{table_name_prefix}custom_fields_projects#{table_name_suffix}",
-  :foreign_key => 'project_id',
-  :association_foreign_key => 'custom_field_id'
+    :class_name => 'Impasse::TestSuiteCustomField',
+    :order => "#{CustomField.table_name}.position",
+    :join_table => "#{table_name_prefix}custom_fields_projects#{table_name_suffix}",
+    :foreign_key => 'project_id',
+    :association_foreign_key => 'custom_field_id'
 
-  has_and_belongs_to_many :test_plan_custom_fields,
-  :class_name => 'Impasse::TestPlanCustomField',
-  :order => "#{CustomField.table_name}.position",
-  :join_table => "#{table_name_prefix}custom_fields_projects#{table_name_suffix}",
-  :foreign_key => 'project_id',
-  :association_foreign_key => 'custom_field_id'
+    has_and_belongs_to_many :test_plan_custom_fields,
+    :class_name => 'Impasse::TestPlanCustomField',
+    :order => "#{CustomField.table_name}.position",
+    :join_table => "#{table_name_prefix}custom_fields_projects#{table_name_suffix}",
+    :foreign_key => 'project_id',
+    :association_foreign_key => 'custom_field_id'
 
-  has_and_belongs_to_many :execution_custom_fields,
-  :class_name => 'Impasse::ExecutionCustomField',
-  :order => "#{CustomField.table_name}.position",
-  :join_table => "#{table_name_prefix}custom_fields_projects#{table_name_suffix}",
-  :foreign_key => 'project_id',
-  :association_foreign_key => 'custom_field_id'  
+    has_and_belongs_to_many :execution_custom_fields,
+    :class_name => 'Impasse::ExecutionCustomField',
+    :order => "#{CustomField.table_name}.position",
+    :join_table => "#{table_name_prefix}custom_fields_projects#{table_name_suffix}",
+    :foreign_key => 'project_id',
+    :association_foreign_key => 'custom_field_id'  
   end
 end
 
@@ -64,13 +64,15 @@ Redmine::Plugin.register :redmine_impasse do
     permission :view_testcases, {
       'impasse_test_case' => [:index, :show, :list, :keywords],
       'impasse_test_plans' => [:index, :show, :list, :tc_assign, :user_assign, :statistics, :autocomplete],
-      'impasse_executions' => [:index, :get_list]
+      'impasse_executions' => [:index, :get_list],
+      'impasse_requirement_issues' => [:index]
     }
     permission :manage_testcases, {
       'impasse_test_case' => [:new, :edit, :destroy, :copy, :move, :copy_to_another_project],
       'impasse_test_plans' => [:new, :edit, :destroy, :add_test_case, :remove_test_case],
       'impasse_executions' => [:new, :edit, :destroy, :put],
-      'impasse_execution_bugs' => [:new, :edit, :destroy]
+      'impasse_execution_bugs' => [:new, :edit, :destroy],
+      'impasse_requirement_issues' => [:add_test_case, :remove_test_case]
     }, :require => :member
 
     permission :setting_testcases, {

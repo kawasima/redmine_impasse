@@ -7,6 +7,7 @@ en:
   label_test_case_plural: "Test cases"
   label_test_suite_plural: "Test suites"
   label_execution_plural: "Test executions"
+  label_requirement_plural: "Requirements"
   label_impasse_plan_new: "Add test plans"
   label_test_plans_list: "test plans list"
   label_test_suite_name: "Test suite"
@@ -20,6 +21,10 @@ en:
   label_test_case_edit: "Edit test case"
   label_test_suite_new: "New test suite"
   label_test_suite_edit: "Edit test suite"
+
+  label_num_of_needed_cases: "Needed"
+  label_num_of_actual_cases: "Actual"
+  label_coverage: "Coverage"
 
   label_impasse_stat_total_cases: "total cases" 
   label_impasse_stat_total_executions: "executed cases"
@@ -60,6 +65,7 @@ en:
   field_execution_status: "Execution status"
   field_bug_tracker: "Tracker as bugs"
   field_expected_date: "Expected date"
+  field_num_of_cases: "Number of test cases needed"
 
   button_create_test_plan: "Create a test plan"
   

@@ -10,6 +10,7 @@ module Impasse
         suite = Node.find(test_suite_id)
         conditions[:path] = suite.path
         conditions[:path_starts_with] = "#{suite.path}_%"
+        conditions[:level] = suite.path.count('.') + 1
       end
       sql = <<-END_OF_SQL
       SELECT 
@@ -51,6 +52,7 @@ module Impasse
       WHERE tp.id = :test_plan_id
       <%- if conditions[:path] -%>
         AND n.path LIKE :path_starts_with
+        AND LENGTH(head.path) - LENGTH(REPLACE(head.path, '.', '')) = :level
       GROUP BY head.id, head.name, head.node_type_id, SUBSTR(n.path, 1, LENGTH(:path || head.id || '.'))
       <%- else -%>
       GROUP BY tp.id, tp.name, node_type_id
