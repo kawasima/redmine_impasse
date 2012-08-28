@@ -1,0 +1,16 @@
+<%= impasse_breadcrumb [
+    link_to(l(:label_impasse), { :controller => :impasse_test_case, :action => :index, :project_id => @project}),
+    link_to(l(:label_test_plans_list), { :controller => :impasse_test_plans, :action => :index, :project_id => @project})
+]%>
+<% if Rails::VERSION::MAJOR < 3 %>
+  <% labelled_tabular_form_for :test_plan, @test_plan, {} do |f| %>
+    <%= render :partial => "form", :locals => {:form => f} %>
+    <%= submit_tag l(:button_create) %>
+  <% end %>
+<% else %>
+  <% output = labelled_form_for @test_plan, :as => :test_plan, :url => { :action => :copy }  do |f| %>
+    <%= render :partial => "form", :locals => {:form => f} %>
+    <%= submit_tag l(:button_create) %>
+  <% end %>
+  <%= output %>
+<% end %>

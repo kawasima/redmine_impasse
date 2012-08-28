@@ -45,6 +45,25 @@ class ImpasseTestPlansController < ImpasseAbstractController
     end
   end
 
+  def copy
+    @test_plan = Impasse::TestPlan.find(params[:id])
+    @test_plan.attributes = params[:test_plan]
+    if request.post? or request.put?
+      ActiveRecord::Base.transaction do
+        new_test_plan = @test_plan.dup
+        new_test_plan.save!
+
+        test_plan_cases = Impasse::TestPlanCase.find_all_by_test_plan_id(params[:id])
+        for test_plan_case in test_plan_cases
+          Impasse::TestPlanCase.create(:test_plan_id => new_test_plan.id, :test_case_id => test_plan_case.test_case_id)
+        end
+        flash[:notice] = l(:notice_successful_update)
+        redirect_to :action => :show, :project_id => @project, :id => new_test_plan
+      end
+    end
+    @versions = @project.versions
+  end
+
   def tc_assign
     params[:tab] = 'tc_assign'
     @versions = @project.versions

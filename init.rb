@@ -69,7 +69,7 @@ Redmine::Plugin.register :redmine_impasse do
     }
     permission :manage_testcases, {
       'impasse_test_case' => [:new, :edit, :destroy, :copy, :move, :copy_to_another_project],
-      'impasse_test_plans' => [:new, :edit, :destroy, :add_test_case, :remove_test_case],
+      'impasse_test_plans' => [:new, :edit, :destroy,:copy, :add_test_case, :remove_test_case],
       'impasse_executions' => [:new, :edit, :destroy, :put],
       'impasse_execution_bugs' => [:new, :edit, :destroy],
       'impasse_requirement_issues' => [:add_test_case, :remove_test_case]

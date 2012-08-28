@@ -52,5 +52,11 @@ END_OF_SQL
       end
       [test_plans_by_version, versions]
     end
+
+    if Rails::VERSION::MAJOR < 3 or (Rails::VERSION::MAJOR == 3 and Rails::VERSION::MINOR < 1)
+      def dup
+        clone
+      end
+    end
   end
 end
