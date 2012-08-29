@@ -44,7 +44,7 @@
 	</tbody>
       </table>
     </div>
-    <% if @test_case.requirement_issues.size > 0 %>
+    <% if @setting.can_manage_requirements? and @test_case.requirement_issues.size > 0 %>
       <div class="requirement-issues">
 	<label><%= l(:label_requirement_plural) %></label>
 	<table>

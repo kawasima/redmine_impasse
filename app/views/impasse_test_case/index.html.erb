@@ -60,7 +60,9 @@
 <% include_calendar_headers_tags %>
 
 <div class="contextual">
-  <a id="button-requirement-issues" href="#" class="icon icon-copy"><%=l(:label_requirement_plural)%></a>
+  <% if @setting.can_manage_requirements? %>
+    <a id="button-requirement-issues" href="#" class="icon icon-copy"><%=l(:label_requirement_plural)%></a>
+  <% end %>
   <a id="button-copy-cases" href="#" class="icon icon-copy"><%=l(:button_copy)%></a>
 </div>
 <h2><%= l(:label_impasse)%></h2>

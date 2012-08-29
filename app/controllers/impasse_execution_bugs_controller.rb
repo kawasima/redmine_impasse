@@ -43,47 +43,21 @@ class ImpasseExecutionBugsController < ImpasseAbstractController
 
       flash[:notice] = l(:notice_successful_create)
       respond_to do |format|
-        format.json  { render :json => { :status => true, :issue_id => @issue.id } }
+        format.json  { render :json => { :status => 'success', :issue_id => @issue.id } }
       end
     else
       respond_to do |format|
-        format.json { render :json => { :errors => @issue.errors.full_messages } }
+        format.json { render :json => { :status => 'error', :errors => @issue.errors.full_messages } }
       end
     end
   end
 
-
-  def edit
-    update_issue_from_params
-
-    @journal = @issue.current_journal
+  def upload_attachments
+    issue = Issue.find(params[:issue_id])
+    attachments = Attachment.attach_files(issue, params[:attachments])
 
     respond_to do |format|
-      format.html { }
-      format.xml  { }
-    end
-  end
-
-  def update
-    update_issue_from_params
-
-    if @issue.save_issue_with_child_records(params, @time_entry)
-      render_attachment_warning_if_needed(@issue)
-      flash[:notice] = l(:notice_successful_update) unless @issue.current_journal.new_record?
-
-      respond_to do |format|
-        format.html { redirect_back_or_default({:action => 'show', :id => @issue}) }
-        format.api  { head :ok }
-      end
-    else
-      render_attachment_warning_if_needed(@issue)
-      flash[:notice] = l(:notice_successful_update) unless @issue.current_journal.new_record?
-      @journal = @issue.current_journal
-
-      respond_to do |format|
-        format.html { render :action => 'edit' }
-        format.api  { render_validation_errors(@issue) }
-      end
+      format.html { render :text => 'ok' }
     end
   end
 
@@ -109,6 +83,7 @@ class ImpasseExecutionBugsController < ImpasseAbstractController
     @issue.author = User.current
     @priorities = IssuePriority.all
     @allowed_statuses = @issue.new_statuses_allowed_to(User.current, true)
+    @available_watchers = (@issue.project.users.sort + @issue.watcher_users).uniq
   end
 
   def check_for_default_issue_status

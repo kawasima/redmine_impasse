@@ -64,6 +64,7 @@ en:
   field_expected_results: "Expected Results"
   field_execution_status: "Execution status"
   field_bug_tracker: "Tracker as bugs"
+  field_requirement_tracker: "Tracker as requirements"
   field_expected_date: "Expected date"
   field_num_of_cases: "Number of test cases needed"
 

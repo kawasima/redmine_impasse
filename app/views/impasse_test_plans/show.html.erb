@@ -23,7 +23,7 @@
     <% end %>
   </ul>
 
-  <% if @test_plan.related_requirements.size > 0 %>
+  <% if @setting.can_manage_requirements? and @test_plan.related_requirements.size > 0 %>
     <p><strong><%=l(:label_requirement_plural)%></strong></p>
     <table class="list">
       <thead>

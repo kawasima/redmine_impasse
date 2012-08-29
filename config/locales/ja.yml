@@ -63,6 +63,7 @@ ja:
   field_expected_results: "期待する結果"
   field_execution_status: "実行結果"
   field_bug_tracker: "不具合と関連付けるトラッカ"
+  field_requirement_tracker: "要求仕様と関連付けるトラッカ"
   field_expected_date: "テスト予定日"
   field_num_of_cases: "必要なテストケース数"
  

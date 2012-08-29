@@ -133,12 +133,11 @@ jQuery(document).ready(function ($) {
 	return false;
     });
 
-    $("#issue-dialog form").live("submit", function(e) {
-	var $this = $(this);
+    $("#issue-dialog #button-create-issue").live("click", function(e) {
 	$.ajax({
 	    url: IMPASSE.url.executionBugsCreate,
 	    type: 'POST',
-	    data: $this.serialize()
+	    data: $("#issue-form").serialize()
 		+ "&execution_bug[execution_id]="+ $("#executions-view :hidden#execution_id").val()
 		+"&format=json",
 	    success: function(data) {
@@ -151,6 +150,9 @@ jQuery(document).ready(function ($) {
 		    });
 		    $("#issue-dialog #errorExplanation").html(list);
 		    return;
+		} else {
+		    $("#issue-dialog form#attachments-form :hidden[name=issue_id]").val(data.issue_id);
+		    $("#issue-dialog form#attachments-form").submit();
 		}
 		var bugs = $("#execution-bugs-list");
 		 

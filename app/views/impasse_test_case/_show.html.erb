@@ -50,7 +50,7 @@
     </table>
   <% end %>
 
-  <% if @test_case.requirement_issues.size > 0 %>
+  <% if @setting.can_manage_requirements? and @test_case.requirement_issues.size > 0 %>
     <p><strong><%=l(:label_requirement_plural) %></strong></p>
     <table class="list issues">
       <tr>

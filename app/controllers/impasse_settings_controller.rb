@@ -8,6 +8,9 @@ class ImpasseSettingsController < ImpasseAbstractController
 
   def edit
     @setting = Impasse::Setting.find_or_create_by_project_id(:project_id => @project.id)
+    unless params[:setting][:requirement_tracker]
+      params[:setting][:requirement_tracker] = []
+    end
     @setting.attributes = params[:setting]
     if request.put? or request.post?
       ActiveRecord::Base.transaction do

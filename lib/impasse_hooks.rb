@@ -58,13 +58,17 @@ module ImpassePlugin
       begin
         snippet = ''
         issue = context[:issue]
-        
         return '' unless issue.project.module_enabled?('impasse')
 
-        @requirement_issue = Impasse::RequirementIssue.find_by_issue_id(issue.id)
-        snippet << '<p>' <<
-          "<label>#{l(:field_num_of_cases)}</label>" <<
-          text_field('requirement_issue', 'num_of_cases', :size => 3) << '</p>'
+        project = context[:project]
+        
+        setting = Impasse::Setting.find_by_project_id(project.id)
+        if setting.requirement_tracker and setting.requirement_tracker.include? issue.tracker_id.to_s
+          @requirement_issue = Impasse::RequirementIssue.find_by_issue_id(issue.id)
+          snippet << '<p>' <<
+            "<label>#{l(:field_num_of_cases)}</label>" <<
+            text_field('requirement_issue', 'num_of_cases', :size => 3) << '</p>'
+        end
 
         return snippet
       rescue => e
