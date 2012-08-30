@@ -1,12 +1,20 @@
 # Simplified Chinese strings go here for Rails i18n
+# Author： Steven.W
+# Based on file: ja.yml
+
 zh:
   project_module_impasse: "测试管理"
 
   label_impasse: "测试管理"
+  label_test_plan_plural: "测试计划"
+  label_test_case_plural: "测试用例"
+  label_test_suite_plural: "测试集"
+  label_execution_plural: "测试执行"
+  label_requirement_plural: "需求"
   label_impasse_plan_new: "新建测试计划"
   label_test_plans_list: "测试计划列表"
-  label_test_plan_plural: "测试计划"
-  label_tc_assign: "分配测试用例"
+  label_test_suite_name: "测试集"
+  label_tc_assign: "分配测试用例"  
   label_user_assign: "分配用户"
   label_execution: "执行"
   label_statistics_assign: "统计"
@@ -17,6 +25,10 @@ zh:
   label_test_suite_new: "新建测试集"
   label_test_suite_edit: "编辑测试集"
 
+  label_num_of_needed_cases: "所需用例"
+  label_num_of_actual_cases: "实际用例"
+  label_coverage: "覆盖率（实际用例数/所需用例数）"
+  
   label_impasse_stat_total_cases: "总计用例数" 
   label_impasse_stat_total_executions: "已执行用例数"
   label_impasse_stat_total_bugs: "缺陷"
@@ -34,31 +46,43 @@ zh:
   label_execution_status_1: "通过"
   label_execution_status_2: "失败"
   label_execution_status_3: "锁定"
+  label_execution_ts: "已执行用例数"
+  label_executor: "执行人"
+  label_execution_status: "执行状态"
 
   label_filters_query: "包括查询关键字："
   label_filters_keywords: "查询关键字"  
   label_filters_inactive: "包括不可用用例"
-  label_includes_before: "includes before"
-  label_includes_after: "includes after"
+  label_includes_before: "包含之前"
+  label_includes_after: "包含之后"
+  label_execution_histories: "执行历史日志"
 
   field_details: "详细"
   field_preconditions: "前提条件"
   field_importance: "重要性"
   field_keywords: "关键字"
   field_test_steps: "步骤"
+  field_test_case: "测试用例"
   field_actions: "操作"
   field_expected_results: "期望结果"
   field_execution_status: "执行结果"
   field_bug_tracker: "跟踪类型设定为Bug"
+  field_requirement_tracker: "跟踪类型设定为需求"
   field_expected_date: "期望日期"
+  field_num_of_cases: "所需的测试用例数"
   
   button_create_test_plan: "创建测试计划"
   
   permission_view_testcases: "查看测试用例"
   permission_manage_test_cases: "管理测试用例"
 
+  notice_delete_test_plans_first: "请先删除相关的测试计划。"
+  notice_copy_cases_to_another_project: "检查您想要复制的测试用例，并选择一个目标项目。"
+  notice_no_projects_to_copy_cases: "您未选择对应的目标项目。"
   error_can_not_manage_test_cases: "您无权限管理测试用例。"
+  error_failed_to_update: "无法更新。"
 
   text_assign_cases: "您可以在此拖拉测试用例将其加入到测试计划。"
   text_assign_users: "您可以在此拖拉测试用例将其分配给测试执行人员。"
-
+  field_test_step_actions: 步骤
+  field_test_step_expected_results: 期望结果
