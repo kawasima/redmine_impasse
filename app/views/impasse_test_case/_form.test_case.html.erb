@@ -24,7 +24,7 @@
       <div class="contextual">
 	<a href="#" class="icon icon-add add-test-step"><%=l(:button_add)%></a>
       </div>
-      <table class="list">
+      <table class="list test-steps">
 	<thead>
 	  <tr class="entry">
 	    <th>#</th>
@@ -51,8 +51,8 @@
     <% if @setting.can_manage_requirements? and @test_case.requirement_issues.size > 0 %>
       <div class="requirement-issues">
 	<label><%= l(:label_requirement_plural) %></label>
-	<table>
-	  <tr class="list issues">
+	<table class="list">
+	  <tr>
 	    <th>#</th>
 	    <th><%=l(:field_tracker)%></th>
 	    <th><%=l(:field_subject)%></th>

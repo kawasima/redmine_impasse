@@ -6,7 +6,7 @@
 	<li>
 	  <a href="#" class="screenshot-thumbnail"><img src="<%= url_for(:controller => 'impasse_screenshots', :action => 'show', :attachment_id => attachment, :size => "s", :format => 'png') %>" width="100" height="100"/></a>
 	  <% if defined? mode and mode == :edit %>
-	    <a href="#" id="thumbnail-<%=attachment.id%>" class="screenshot-delete"><img src="<%= image_path "close.png" %>" style="position: absolute; right: 0px; top: 0px;"/></a>
+	    <a href="#" id="thumbnail-<%=attachment.id%>" class="screenshot-delete"><img src="<%= image_path "delete.png" %>" style="position: absolute; right: 0px; top: 0px;"/></a>
 	  <% end %>
 	</li>
       <% end %>

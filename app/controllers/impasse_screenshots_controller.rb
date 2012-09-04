@@ -13,6 +13,12 @@ class ImpasseScreenshotsController < ImpasseAbstractController
 
   def show
     @attachment = Attachment.find(params[:attachment_id])
+    unless @attachment.readable?
+      render_404; return
+    end
+    unless @attachment.visible?
+      deny_access; return
+    end
     diskfile = @attachment.diskfile
     if params[:size] and params[:size] == 's'
       thumb = thumbnail_file(@attachment)

@@ -405,7 +405,7 @@ jQuery(document).ready(function ($) {
 
     $("#testcase-dialog .add-test-step").live("click", function() {
 	var id = 0;
-	var test_steps = $("#testcase-dialog table.list");
+	var test_steps = $("#testcase-dialog table.test-steps");
 	test_steps.find("td.ui-sort-handle").each(function() {
 	    if (id < Number($(this).text()))
 		id = Number($(this).text());
@@ -514,7 +514,7 @@ jQuery(document).ready(function ($) {
 
     $("#testcase-dialog .add-screenshot").live("click", function(e) {
 	if (!pasteboard.copyAndPaste.isSupported() || !pasteboard.dragAndDrop.isSupported()) {
-	    alert("This browser doesn't support this feature.");
+	    alert("This browser doesn't support this feature.\nPlease use Firefox or Google chrome.");
 	    return;
 	}
 	var screenshotOverlay = $('<div id="pasteboard"/>').appendTo("body");
@@ -528,7 +528,7 @@ jQuery(document).ready(function ($) {
 	    $(image).addClass("new-screenshot");
 	    var anchor = $('<a href="#" class="screenshot-thumbnail"/>').append(image);
 	    var screenshotDelete = $('<a href="#" class="screenshot-delete"/>')
-		.append($('<img src="'+ IMPASSE.url.iconClose +'"/>'));
+		.append($('<img src="'+ IMPASSE.url.iconDelete +'"/>'));
 	    $("#testcase-dialog .screenshots ul.overview").append($("<li/>").css({
 		float: 'left', width: '100px', height: '100px'
 	    }).append(anchor).append(screenshotDelete));
@@ -538,7 +538,7 @@ jQuery(document).ready(function ($) {
     });
 
     $("#testcase-dialog .screenshot-delete").live("click", function(e) {
-	if (!confirm("Are you sure?"))
+	if (!confirm(IMPASSE.label.textAreYouSure))
 	    return false;
 	var $this = $(this);
 	if ($this.siblings("a:first").children("img").hasClass("new-screenshot")) {

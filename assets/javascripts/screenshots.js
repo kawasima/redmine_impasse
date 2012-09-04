@@ -119,6 +119,7 @@
             iSteps = Math.max(1, Math.ceil(oPages.length / options.display) - iLeftover);
 	    oContent.css(bAxis ? 'width' : 'height', (iPageSize * oPages.length));
 	    setButtons();
+	    if (iCurrent >= iSteps) oSelf.move(-1);
 	}
 	return initialize();
     };
@@ -437,6 +438,8 @@ var pasteboard = {};
 	};
 	this.hide = function(callback) {
 	    removeEvents();
+	    if ($imageEditor == null)
+		return;
 	    $imageEditor.fadeOut(500, function() {
 		$imageEditor.remove();
 		if (callback) callback();
@@ -457,7 +460,6 @@ var pasteboard = {};
 	    } else {
 		callback.call();
 	    }
-	    //pasteboard.fileHandler.uploadFile(cropArea, callback);
 	};
 	this.uploadImageCallback = function(callback) {
 	    uploadImageCallbackFunc = callback;
@@ -496,6 +498,8 @@ var pasteboard = {};
 		$("#pasteboard .pasteboard-close").one("click", function() {
 		    pasteboard.dragAndDrop.hide();
 		    pasteboard.copyAndPaste.hide();		    
+		    $(pasteboard.imageEditor).unbind(".stateevents");
+		    pasteboard.imageEditor.hide();
 		    pasteboard.overlay.remove();
 		    openDialog.dialog("open");
 		});

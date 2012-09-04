@@ -1,5 +1,5 @@
 <% content_for :header_tags do %>
-  <%= stylesheet_link_tag 'jquery-ui', 'jquery.noty.css', 'noty_theme_twitter.css', 'impasse', :plugin => 'redmine_impasse' %>
+  <%= stylesheet_link_tag 'jquery-ui', 'jquery.noty.css', 'noty_theme_twitter.css', 'jquery.Jcrop.min.css', 'impasse', :plugin => 'redmine_impasse' %>
   <% heads_for_wiki_formatter %>
   <%= javascript_include_tag(
       'jquery', 'jquery-ui', 'jquery.cookie.js', 'jquery.color.js', 'jquery.Jcrop.js',
@@ -25,7 +25,6 @@
         iconEdit: "<%=image_path 'edit.png'%>",
         iconCopy: "<%=image_path 'copy.png'%>",
         iconDelete: "<%=image_path 'delete.png'%>",
-        iconClose: "<%=image_path 'close.png'%>",
         iconAdd: "<%=image_path 'add.png'%>",
         iconTestSuite: "<%=Redmine::Utils::relative_url_root%>/plugin_assets/redmine_impasse/stylesheets/images/documents-stack.png",
         iconTestCase:  "<%=Redmine::Utils::relative_url_root%>/plugin_assets/redmine_impasse/stylesheets/images/document-attribute-t.png",
@@ -37,8 +36,9 @@
         buttonCopy: "<%=l(:button_copy)%>",
         buttonDelete: "<%=l(:button_delete)%>",
         buttonCreate: "<%=l(:button_create)%>",
-        testSuiteEdit: "<%=l :label_test_suite_edit %>",
-        testCaseEdit:  "<%=l :label_test_case_edit %>",
+        testSuiteEdit: "<%=l(:label_test_suite_edit) %>",
+        testCaseEdit:  "<%=l(:label_test_case_edit) %>",
+        textAreYouSure: "<%=l(:text_are_you_sure)%>",
         noticeSuccessfulUpdate: "<%=l(:notice_successful_update)%>",
         noticeSuccessfulCreate: "<%=l(:notice_successful_create)%>"
       },
@@ -49,10 +49,12 @@
 <% include_calendar_headers_tags %>
 
 <div class="contextual">
-  <% if @setting.can_manage_requirements? %>
+  <% if @setting.can_manage_requirements? and User.current.allowed_to?(:manage_testcases, nil, :global => true) %>
     <a id="button-requirement-issues" href="#" class="icon icon-copy"><%=l(:label_requirement_plural)%></a>
   <% end %>
-  <a id="button-copy-cases" href="#" class="icon icon-copy"><%=l(:button_copy)%></a>
+  <% if User.current.allowed_to?(:manage_testcases, nil, :global => true) %>
+    <a id="button-copy-cases" href="#" class="icon icon-copy"><%=l(:button_copy)%></a>
+  <% end %>
 </div>
 <h2><%= l(:label_impasse)%></h2>
 
