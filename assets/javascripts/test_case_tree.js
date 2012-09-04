@@ -173,7 +173,7 @@ jQuery(document).ready(function ($) {
 
 		$(".screenshots", dialog[node_type]).tinycarousel();
 
-		dialog[node_type].find(":button.ui-button-submit").click(function(e) {
+		dialog[node_type].find(":button.ui-button-submit").one("click", function(e) {
 		    var ajaxOptions = {
 			type: 'POST',
 			url:AJAX_URL[edit_type],
