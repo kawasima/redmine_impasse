@@ -209,11 +209,11 @@ jQuery(document).ready(function ($) {
 			tc["node[id]"] = node.attr("id").replace("node_","");
 		    tc["node_type"] = node_type;
 		    tc["node[parent_id]"] = $(data.rslt.parent).attr("id").replace("node_", "");
-		    tc["node[node_order"] = data.rslt.obj.parent().children().index(data.rslt.obj);
+		    tc["node[node_order]"] = data.rslt.obj.parent().children().index(data.rslt.obj);
 		    if (window.FormData) {
 			var formData = new FormData();
-			$(".new-screenshot", dialog[node_type]).each(function() {
-			    formData.append("attachments[][file]", dataURLtoBlob(this.src) ,'screenshot.png');
+			$(".new-screenshot", dialog[node_type]).each(function(i) {
+			    formData.append("attachments["+i+"][file]", dataURLtoBlob(this.src) ,'screenshot.png');
 			});
 			for (var key in tc) { formData.append(key, tc[key]) }
 

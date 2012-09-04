@@ -16,7 +16,9 @@ module ImpasseScreenshotsHelper
   end
 
   def thumbnail_file(attachment)
-      thumbnail_file = File.join(File.dirname(attachment.diskfile), "impasse_thumbnail",
-                                 File.basename(attachment.diskfile, ".*") + "_s" + File.extname(attachment.diskfile))
+    thumbnail_dir = File.join(File.dirname(attachment.diskfile), "impasse_thumbnail")
+    Dir.mkdir thumbnail_dir unless File.exist? thumbnail_dir 
+    thumbnail_file = File.join(thumbnail_dir,
+                               File.basename(attachment.diskfile, ".*") + "_s" + File.extname(attachment.diskfile))
   end
 end
