@@ -10,22 +10,32 @@
   <% if !test_case.preconditions.nil? and test_case.preconditions.length > 0 %>
   <p><%=label_tag :preconditions, l(:field_preconditions)%><%=h test_case.preconditions%></p>
   <% end %>
+  <% if test_case.attachments.size > 0 %>
+  <div style="margin:0; padding: 5px 0 8px 0; padding-left: 180px; height: 1%; clear: left;">
+    <label><%=l(:label_screenshots)%></label>
+    <%= render :partial => "impasse_screenshots/list", :locals => { :attachments => test_case.attachments } %>
+  </div>
+  <% end %>
   <% if test_case.test_steps.size > 0 %>
   <div style="margin:0; padding: 5px 0 8px 0; padding-left: 180px; height: 1%; clear: left;">
     <label><%=l(:field_test_steps)%></label>
-    <table>
-      <tr>
-	<th>#</th>
-	<th><%=l(:field_actions)%></th>
-	<th><%=l(:field_expected_results)%></th>
-      </tr>
-      <% test_case.test_steps.each{|test_step| %>
-      <tr>
-	<td><%= test_step.step_number %></td>
-	<td><%=h test_step.actions %></td>
-	<td><%=h test_step.expected_results %></td>
-      </tr>
-      <% } %>
+    <table class="list">
+      <thead>
+	<tr>
+	  <th>#</th>
+	  <th><%=l(:field_actions)%></th>
+	  <th><%=l(:field_expected_results)%></th>
+	</tr>
+      </thead>
+      <tbody>
+	<% test_case.test_steps.each do |test_step| %>
+	<tr>
+	  <td><%= test_step.step_number %></td>
+	  <td><%=h test_step.actions %></td>
+	  <td><%=h test_step.expected_results %></td>
+	</tr>
+	<% end %>
+      </tbody>
     </table>
   </div>
   <% end %>

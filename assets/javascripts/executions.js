@@ -9,12 +9,14 @@ jQuery(document).ready(function ($) {
 		"test_plan_case[test_case_id]": node_id
 	    },
 	    success: function(html) {
-		$("#executions-view").empty().append($(html));
+		$("#executions-view").html($(html));
 		$("span.label", $("#executions-view"))
 		    .css({cursor:'pointer'})
 		    .click(function(e) {
 			$(this).prev().attr("checked", "checked");
 		    });
+		$("#executions-view .screenshots").tinycarousel();
+
 	    },
 	    error: ajax_error_handler,
 	    complete: function() { $("#executions-view").unblock(); }

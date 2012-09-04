@@ -5,6 +5,7 @@ class ImpasseTestCaseController < ImpasseAbstractController
   
   helper :custom_fields
   include CustomFieldsHelper
+  include ImpasseScreenshotsHelper
 
   menu_item :impasse
   before_filter :find_project, :authorize
@@ -123,7 +124,6 @@ class ImpasseTestCaseController < ImpasseAbstractController
         ActiveRecord::Base.transaction do
           save_node(@node)
           @test_case.save!
-
           save_keywords(@node, params[:node_keywords])
 
           if @node.is_test_case? and params.include? :test_steps
@@ -131,6 +131,12 @@ class ImpasseTestCaseController < ImpasseAbstractController
             @test_steps.each{|ts| raise ActiveRecord::RecordInvalid.new(ts) unless ts.valid? }
             @test_case.test_steps.replace(@test_steps)
           end
+
+          if params[:attachments]
+            attachments = Attachment.attach_files(@test_case, params[:attachments])
+            create_thumbnail(attachments) if Object.const_defined?(:Magick)
+          end
+
           respond_to do |format|
             format.json { render :json => { :status => 'success', :message => l(:notice_successful_update), :ids => [@test_case.id] } }
           end
@@ -418,4 +424,5 @@ class ImpasseTestCaseController < ImpasseAbstractController
     end
     jstree_nodes
   end
+
 end

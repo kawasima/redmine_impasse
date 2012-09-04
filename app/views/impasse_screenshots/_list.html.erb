@@ -1,0 +1,16 @@
+<div class="screenshots">
+  <a href="#" class="disable buttons prev">&#9664;</a>
+  <div class="viewport">
+    <ul class="overview">
+      <% attachments.each do |attachment| %>
+	<li>
+	  <a href="#" class="screenshot-thumbnail"><img src="<%= url_for(:controller => 'impasse_screenshots', :action => 'show', :attachment_id => attachment, :size => "s", :format => 'png') %>" width="100" height="100"/></a>
+	  <% if defined? mode and mode == :edit %>
+	    <a href="#" id="thumbnail-<%=attachment.id%>" class="screenshot-delete"><img src="<%= image_path "close.png" %>" style="position: absolute; right: 0px; top: 0px;"/></a>
+	  <% end %>
+	</li>
+      <% end %>
+    </ul>
+  </div>
+  <a href="#" class="buttons next">&#9654;</a>
+</div>

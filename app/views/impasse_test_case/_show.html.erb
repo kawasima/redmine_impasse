@@ -32,6 +32,12 @@
   <%= textilizable @test_case, :preconditions %>
   <% end %>
 
+  <% if @test_case.attachments.size > 0 %>
+  <p><strong>Screenshots</strong></p>
+  <%= render :partial => "impasse_screenshots/list", :locals => { :attachments => @test_case.attachments } %>
+  <% end %>
+  <div class="clear"/>
+
   <% if @test_case.test_steps.size > 0 %>    
     <p><strong><%=l(:field_test_steps)%></strong></p>
     <table class="list">

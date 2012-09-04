@@ -1,23 +1,10 @@
 <% content_for :header_tags do %>
-  <%= stylesheet_link_tag 'jquery-ui', 'jquery.noty.css', 'noty_theme_twitter.css', :plugin => 'redmine_impasse' %>
-  <style>
-    #test-case-view .details{
-      background: #ffd;
-      padding: 6px;
-      margin-bottom: 6px;
-      border: 1px solid #d7d7d7;
-    }
-    #testcase-tree {
-      overflow-x: auto;
-    }
-    .ui-state-highlight { height: 1.5em; line-height: 1.2em; }
-    li[rel="test_case"][data-inactive="true"] a { color: #999; text-decoration: line-through; }
-  </style>
+  <%= stylesheet_link_tag 'jquery-ui', 'jquery.noty.css', 'noty_theme_twitter.css', 'impasse', :plugin => 'redmine_impasse' %>
   <% heads_for_wiki_formatter %>
   <%= javascript_include_tag(
-      'jquery', 'jquery-ui', 'jquery.cookie.js',
+      'jquery', 'jquery-ui', 'jquery.cookie.js', 'jquery.color.js', 'jquery.Jcrop.js',
       'jquery.hotkeys.js', 'jquery.jstree.js', 'jquery.blockUI.js', 'jquery.noty.js',
-      'impasse_util', 'test_case_tree',
+      'impasse_util', 'test_case_tree', 'screenshots',
       :plugin => 'redmine_impasse') %>
   <script type="text/javascript">
     jQuery.jstree._themes = '<%=Redmine::Utils::relative_url_root%>/plugin_assets/redmine_impasse/stylesheets/themes/';
@@ -34,9 +21,11 @@
         requirementIssues: "<%= url_for :controller=>:impasse_requirement_issues, :action=>:index, :project_id=>@project %>",
         requirementIssuesAddTestCase: "<%= url_for :controller=>:impasse_requirement_issues, :action=>:add_test_case, :project_id=>@project %>",
         requirementIssuesRemoveTestCase: "<%= url_for :controller=>:impasse_requirement_issues, :action=>:remove_test_case, :project_id=>@project %>",
+        screenshotsDestroy: "<%= url_for :controller=>:impasse_screenshots, :action=>:destroy, :project_id=>@project %>",
         iconEdit: "<%=image_path 'edit.png'%>",
         iconCopy: "<%=image_path 'copy.png'%>",
         iconDelete: "<%=image_path 'delete.png'%>",
+        iconClose: "<%=image_path 'close.png'%>",
         iconAdd: "<%=image_path 'add.png'%>",
         iconTestSuite: "<%=Redmine::Utils::relative_url_root%>/plugin_assets/redmine_impasse/stylesheets/images/documents-stack.png",
         iconTestCase:  "<%=Redmine::Utils::relative_url_root%>/plugin_assets/redmine_impasse/stylesheets/images/document-attribute-t.png",
@@ -128,7 +117,7 @@
 	<p class="nodata"><%=l(:notice_no_projects_to_copy_cases)%></p>
       <% end %>
     </div>
-    <div class="floating">
+    <div class="floating" style="width : 100%;">
       <div id="requirements-view" style="width: 100%;"></div>
       <div id="test-case-view" style="width: 100%;"></div>
     </div>

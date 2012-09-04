@@ -15,6 +15,7 @@ en:
   label_user_assign: "Assign users"
   label_execution: "Execution"
   label_statistics_assign: "Statistics"
+  label_screenshots: "Screenshots"
 
   label_test_plan_new: "New test plan"
   label_test_case_new: "New test case"

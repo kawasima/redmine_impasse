@@ -14,12 +14,16 @@
     <p><%= custom_field_tag_with_label :test_case, value %></p>
   <% end %>
   <div style="margin:0; padding: 5px 0 8px 0; padding-left: 180px; height: 1%; clear: left;">
+    <label>Screenshot</label>
+    <div class="contextual">
+      <a href="#" class="icon icon-add add-screenshot"><%=l(:button_add)%></a>
+    </div>
+    <%= render :partial => "impasse_screenshots/list", :locals => { :attachments => @test_case.attachments, :mode => :edit } %>
+    <div class="clear"/>
     <label><%=l(:field_test_steps) %></label>
-    <div>
       <div class="contextual">
-	<a href="#" class="icon icon-add add-test-step">add</a>
+	<a href="#" class="icon icon-add add-test-step"><%=l(:button_add)%></a>
       </div>
-      <div style="clear: both;"/>
       <table class="list">
 	<thead>
 	  <tr class="entry">
@@ -43,7 +47,7 @@
 	  <% end %>
 	</tbody>
       </table>
-    </div>
+
     <% if @setting.can_manage_requirements? and @test_case.requirement_issues.size > 0 %>
       <div class="requirement-issues">
 	<label><%= l(:label_requirement_plural) %></label>

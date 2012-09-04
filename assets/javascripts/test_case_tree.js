@@ -89,6 +89,7 @@ jQuery(document).ready(function ($) {
 	    data: { "node[id]": node_id },
 	    success: function(html) {
 		$("#test-case-view").html(html).show();
+		$("#test-case-view .screenshots").tinycarousel();
 	    },
 	    error: ajax_error_handler,
 	    complete: function() {
@@ -141,7 +142,7 @@ jQuery(document).ready(function ($) {
 	    url: AJAX_URL[edit_type],
 	    data: request,
 	    success: function(html) {
-		dialog[node_type].empty().append(html);
+		dialog[node_type].html(html);
 		dialog[node_type].find(".ui-button-cancel").click(function(e) {
 		    dialog[node_type].dialog('close');
 		});
@@ -170,20 +171,12 @@ jQuery(document).ready(function ($) {
 		    $(this).parents("tr:last").remove();
 		});
 
+		$(".screenshots", dialog[node_type]).tinycarousel();
+
 		dialog[node_type].find(":button.ui-button-submit").click(function(e) {
-		    var tc = {format:"json"};
-		    dialog[node_type].find(":input:hidden,:text,textarea,:checkbox:checked,radiobutton:checked,select").each(function() {
-			tc[$(this).attr("name")] = $(this).val();
-		    });
-		    if (edit_type == 'edit')
-			tc["node[id]"] = node.attr("id").replace("node_","");
-		    tc["node_type"] = node_type;
-		    tc["node[parent_id]"] = $(data.rslt.parent).attr("id").replace("node_", "");
-		    tc["node[node_order"] = data.rslt.obj.parent().children().index(data.rslt.obj);
-		    $.ajax({
+		    var ajaxOptions = {
 			type: 'POST',
 			url:AJAX_URL[edit_type],
-			data: tc,
 			success: function(r, status, xhr) {
 			    if (r.errors) {
 				var ul = $("<ul/>");
@@ -207,14 +200,37 @@ jQuery(document).ready(function ($) {
 			    show_notification_dialog(r.status, r.message);
 			},
 			error: ajax_error_handler
+		    };
+		    var tc = {"format": "json"};
+		    dialog[node_type].find(":input:hidden,:text,textarea,:checkbox:checked,radiobutton:checked,select").each(function() {
+			tc[$(this).attr("name")] =  $(this).val();
 		    });
+		    if (edit_type == 'edit')
+			tc["node[id]"] = node.attr("id").replace("node_","");
+		    tc["node_type"] = node_type;
+		    tc["node[parent_id]"] = $(data.rslt.parent).attr("id").replace("node_", "");
+		    tc["node[node_order"] = data.rslt.obj.parent().children().index(data.rslt.obj);
+		    if (window.FormData) {
+			var formData = new FormData();
+			$(".new-screenshot", dialog[node_type]).each(function() {
+			    formData.append("attachments[][file]", dataURLtoBlob(this.src) ,'screenshot.png');
+			});
+			for (var key in tc) { formData.append(key, tc[key]) }
+
+			ajaxOptions["data"] = formData;
+			ajaxOptions["contentType"] = false;
+			ajaxOptions["processData"] = false;
+		    } else {
+			ajaxOptions["data"] = tc;
+		    }
+		    $.ajax(ajaxOptions);
 		});
 	    },
 	    error: ajax_error_handler
 	});
     };
 
-    var plugins = ["themes","json_data","ui","cookies","types","hotkeys"];
+    var plugins = ["themes","json_data","ui","cookies","types", "hotkey"];
     if (IMPASSE.canEdit) {
 	plugins = plugins.concat(["crrm","dnd","contextmenu", "checkbox"]);
     }
@@ -494,6 +510,52 @@ jQuery(document).ready(function ($) {
     $("#button-copy-cancel").bind("click", function(e) {
 	testcaseTree.jstree('hide_checkboxes');
 	$("#copy-tests-view").hide();
+    });
+
+    $("#testcase-dialog .add-screenshot").live("click", function(e) {
+	if (!pasteboard.copyAndPaste.isSupported() || !pasteboard.dragAndDrop.isSupported()) {
+	    alert("This browser doesn't support this feature.");
+	    return;
+	}
+	var screenshotOverlay = $('<div id="pasteboard"/>').appendTo("body");
+	$('<div class="splash">Copy & Paste or Drag & Drop</div>')
+	    .appendTo(screenshotOverlay);
+	$('<button class="pasteboard-close" input type="button">Close</button>')
+	    .appendTo(screenshotOverlay);
+	pasteboard.overlay = screenshotOverlay;
+	pasteboard.imageEditor.uploadImageCallback(function(image) {
+	    image.width = 100; image.height = 100;
+	    $(image).addClass("new-screenshot");
+	    var anchor = $('<a href="#" class="screenshot-thumbnail"/>').append(image);
+	    var screenshotDelete = $('<a href="#" class="screenshot-delete"/>')
+		.append($('<img src="'+ IMPASSE.url.iconClose +'"/>'));
+	    $("#testcase-dialog .screenshots ul.overview").append($("<li/>").css({
+		float: 'left', width: '100px', height: '100px'
+	    }).append(anchor).append(screenshotDelete));
+	    $("#testcase-dialog .screenshots").data("tcl").refresh();
+	});
+	pasteboard.appFlow.start();
+    });
+
+    $("#testcase-dialog .screenshot-delete").live("click", function(e) {
+	if (!confirm("Are you sure?"))
+	    return false;
+	var $this = $(this);
+	if ($this.siblings("a:first").children("img").hasClass("new-screenshot")) {
+	    $this.parents("li").remove();
+	    $("#testcase-dialog .screenshots").data("tcl").refresh();
+	} else {
+	    $.ajax({
+		type: 'post',
+		url: IMPASSE.url.screenshotsDestroy,
+		data: { attachment_id: $this.attr("id").replace(/^thumbnail-/, '') },
+		success: function() {
+		    $this.parents("li").remove();
+		    $("#testcase-dialog .screenshots").data("tcl").refresh();
+		}
+	    });
+	}
+	return false;
     });
 });
 
