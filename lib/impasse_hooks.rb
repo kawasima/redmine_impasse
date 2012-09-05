@@ -116,8 +116,8 @@ module ImpassePlugin
 
     private
     def show_execution_bugs(issue, project)
-      execution_bug = Impasse::ExecutionBug.find(:first, :joins => [ { :execution => { :test_plan_case => :test_plan}}  ],
-                                                 :conditions => {:bug_id, issue.id})
+      execution_bug = Impasse::ExecutionBug.find(:first, :joins => [{ :execution => { :test_plan_case => :test_plan}}],
+                                                 :conditions => { :bug_id => issue.id })
         
       if execution_bug and execution_bug.execution and execution_bug.execution.test_plan_case
         test_plan_case = execution_bug.execution.test_plan_case
