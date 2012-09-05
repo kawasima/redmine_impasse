@@ -16,7 +16,7 @@ class ImpasseTestPlansController < ImpasseAbstractController
 
   def show
     @test_plan = Impasse::TestPlan.find(:first, :conditions => { :id => params[:id]}, :include => :version)
-    @setting = Impasse::Setting.find_by_project_id(@project.id)
+    @setting = Impasse::Setting.find_by_project_id(@project) || Impasse::Setting.create(:project_id => @project.id)
   end
 
   def new

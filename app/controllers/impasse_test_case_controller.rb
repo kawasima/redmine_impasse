@@ -15,7 +15,7 @@ class ImpasseTestCaseController < ImpasseAbstractController
       @allowed_projects = Issue.allowed_target_projects_on_move
       @allowed_projects.delete_if{|project| @project.id == project.id }
     end
-    @setting = Impasse::Setting.find_by_project_id(@project)
+    @setting = Impasse::Setting.find_by_project_id(@project) || Impasse::Setting.create(:project_id => @project.id)
   end
 
   def list
@@ -36,7 +36,7 @@ class ImpasseTestCaseController < ImpasseAbstractController
   
   def show
     @node, @test_case = get_node(params[:node])
-    @setting = Impasse::Setting.find_by_project_id(@project)
+    @setting = Impasse::Setting.find_by_project_id(@project) || Impasse::Setting.create(:project_id => @project.id)
 
     respond_to do |format|
       format.html { render :partial => 'show' }
@@ -45,7 +45,7 @@ class ImpasseTestCaseController < ImpasseAbstractController
 
   def new
     new_node
-    @setting = Impasse::Setting.find_by_project_id(@project)
+    @setting = Impasse::Setting.find_by_project_id(@project) || Impasse::Setting.create(:project_id => @project.id)
 
     if request.post? or request.put?
       begin
@@ -117,7 +117,7 @@ class ImpasseTestCaseController < ImpasseAbstractController
   def edit
     @node, @test_case = get_node(params[:node])
     @test_case.attributes = params[:test_case]
-    @setting = Impasse::Setting.find_by_project_id(@project)
+    @setting = Impasse::Setting.find_by_project_id(@project) || Impasse::Setting.create(:project_id => @project.id)
 
     if request.post? or request.put?
       begin
