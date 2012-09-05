@@ -63,11 +63,23 @@ module ImpassePlugin
         project = context[:project]
         
         setting = Impasse::Setting.find_by_project_id(project.id)
-        if setting.requirement_tracker and setting.requirement_tracker.include? issue.tracker_id.to_s
+
+        if setting.requirement_tracker
+          style = (setting.requirement_tracker.include? issue.tracker_id.to_s) ? '' : 'style="display: none;"'
+          req_tracker_ids = "[#{setting.requirement_tracker.select{|e| e != "" }.join(',')}]"
           @requirement_issue = Impasse::RequirementIssue.find_by_issue_id(issue.id)
-          snippet << '<p>' <<
+          snippet << "<p #{style}>" <<
             "<label>#{l(:field_num_of_cases)}</label>" <<
-            text_field('requirement_issue', 'num_of_cases', :size => 3) << '</p>'
+            text_field('requirement_issue', 'num_of_cases', :size => 3) << '</p>' << %{
+              <script>
+                new Form.Element.EventObserver('issue_tracker_id', function(element, value) {
+                if ($A(#{req_tracker_ids}).indexOf(Number(value)) >= 0)
+                  $('requirement_issue_num_of_cases').up().show();
+                else
+                  $('requirement_issue_num_of_cases').up().hide();
+                });
+              </script>
+            }
         end
 
         return snippet
@@ -78,12 +90,26 @@ module ImpassePlugin
 
     end
 
+    def controller_issues_new_after_save(context={ })
+      params = context[:params]
+      issue = context[:issue]
+
+      setting = Impasse::Setting.find_by_project_id(issue.project.id)
+      if setting.requirement_tracker and setting.requirement_tracker.include? issue.tracker_id.to_s
+        num_of_cases = params[:requirement_issue] && params[:requirement_issue][:num_of_cases].to_i || 0
+        requirement = Impasse::RequirementIssue.new(:issue_id => issue.id)
+        requirement.num_of_cases = num_of_cases
+        requirement.save!
+      end
+    end
+    
     def controller_issues_edit_after_save(context={ })
       params = context[:params]
       issue = context[:issue]
+
       if params[:requirement_issue]
         requirement = Impasse::RequirementIssue.find_by_issue_id(issue.id)
-        requirement.num_of_cases = Integer(params[:requirement_issue][:num_of_cases])
+        requirement.num_of_cases = params[:requirement_issue][:num_of_cases].to_i
         requirement.save!
       end
     end
