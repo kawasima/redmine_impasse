@@ -1,69 +1,72 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
+    <meta content="text/html;charset=UTF-8" http-equiv="Content-Type">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Administration Guide / Redmine impasse</title>
-
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>    <![endif]-->
   </head>
   <body>
     <div class="wrapper">
       <header>
         <h1>Administration guide</h1>
         <p>The redmine plugin for test management.</p>
-
-        <p class="view"><a href="https://github.com/kawasima/redmine_impasse">View the Project on GitHub <small>kawasima/redmine_impasse</small></a></p>
-
-
+        <p class="view"><a href="https://github.com/kawasima/redmine_impasse">View
+            the Project on GitHub <small>kawasima/redmine_impasse</small></a></p>
         <ul>
-          <li><a href="https://github.com/kawasima/redmine_impasse/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/kawasima/redmine_impasse/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/kawasima/redmine_impasse/zipball/master">Download
+              <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/kawasima/redmine_impasse/tarball/master">Download
+              <strong>TAR Ball</strong></a></li>
           <li><a href="https://github.com/kawasima/redmine_impasse">View On <strong>GitHub</strong></a></li>
         </ul>
       </header>
       <section>
         <h3>Install redmine_impasse plugin</h3>
-				<p>If you use Redmine 1.x</p>
-				<pre><code>
-cd vendor/plugins
-				</code></pre>
-				<p>or if you use Redmine 2.x, </p>
-				<pre><code>
-cd plugins
-				</code></pre>
-
-				<p>And clone the source from GitHub.</p>
-				<pre><code>
-git clone https://github.com/kawasima/redmine_impasse.git
-				</code></pre>
-				<p>Finally, execute migration.</p>
-				<pre><code>
-rake db:migrate_plugins
-				</code></pre>
+        <p>If you use Redmine 1.x</p>
+        <pre><code>cd vendor/plugins		</code></pre>
+        <p>or if you use Redmine 2.x, </p>
+        <pre><code>cd plugins		</code></pre>
+        <p>And clone the source from GitHub.</p>
+        <pre><code>git clone https://github.com/kawasima/redmine_impasse.git	</code></pre>
+        <p>Finally, execute migration.</p>
+        <pre><code>rake db:migrate_plugins
+</code></pre> </section>
+      <section>
+        <h3>Enable plugin and grant permission</h3>
+        <p> Select Administration -&gt; Roles and permissions menu and grant
+          permission to the roles. </p>
+        <img src="images/settings_permissions.png"> </section>
+      <section>
+        <h3>Project setting</h3>
+        <img src="images/impasse_settings.png"><br>
+        In project settings tab, you can choose a issue tracker regarded as bug.<br>
+        <br>
+        <img alt="" src="images/setting_requirements.png"><br>
+        If you want to use the requirements traceability, choose issue trackers
+        regarded as requirement.<br>
       </section>
       <section>
-      	<h3>Enable plugin and grant permission</h3>
-				<p>
-					Select Administration -> Roles and permissions menu and grant permission to the roles.
-				</p>
-				<img src="images/settings_permissions.png"/>
-      </section>
-      <section>
-      	<h3>Project setting</h3>
-				<img src="images/impasse_settings.png"/>
+        <h3>Define custom fields</h3>
+        Like issues, you can define custom fields to test cases, test suites,
+        test plans and test executions.<br>
+        <br>
+        In plugin administration menu, click the "Configure" link.<br>
+        <img alt="" src="images/plugin_settings.png"><br>
+        <img alt="" src="images/custom_field_menu.png"><br>
+        <br>
+        <img alt="" src="images/custom_field_list.png"><br>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/kawasima">kawasima</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+        <p><small>Hosted on GitHub Pages — Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>
     <script src="javascripts/scale.fix.js"></script>
-    
   </body>
 </html>
