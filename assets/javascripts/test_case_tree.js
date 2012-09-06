@@ -438,6 +438,7 @@ jQuery(document).ready(function ($) {
 	$("#test-case-view").block(impasse_loading_options());
 	var $node = $(this);
 	var node_id = $(this).attr("id").replace("node_", "");
+	location.replace("#testcase-" + node_id);
 	show_test_case(node_id);
     });
 

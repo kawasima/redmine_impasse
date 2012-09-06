@@ -6,18 +6,18 @@
 <div id="errorExplanation" style="display:none"></div>
 <div class="box tabular">
   <p><%=label_tag :name, l(:field_name) %><%=h test_case.node.name %></p>
-  <p><%=label_tag :summary, l(:field_summary) %><%=h test_case.summary%></p>
+  <div class="tabular-row"><%=label_tag :summary, l(:field_summary) %><%=textilizable test_case, :summary %></div>
   <% if !test_case.preconditions.nil? and test_case.preconditions.length > 0 %>
-  <p><%=label_tag :preconditions, l(:field_preconditions)%><%=h test_case.preconditions%></p>
+  <div class="tabular-row"><%=label_tag :preconditions, l(:field_preconditions)%><%=textilizable test_case, :preconditions%></div>
   <% end %>
   <% if test_case.attachments.size > 0 %>
-  <div style="margin:0; padding: 5px 0 8px 0; padding-left: 180px; height: 1%; clear: left;">
+  <div class="tabular-row">
     <label><%=l(:label_screenshots)%></label>
     <%= render :partial => "impasse_screenshots/list", :locals => { :attachments => test_case.attachments } %>
   </div>
   <% end %>
   <% if test_case.test_steps.size > 0 %>
-  <div style="margin:0; padding: 5px 0 8px 0; padding-left: 180px; height: 1%; clear: left;">
+  <div class="tabular-row">
     <label><%=l(:field_test_steps)%></label>
     <table class="list">
       <thead>
@@ -40,7 +40,7 @@
   </div>
   <% end %>
 
-  <div style="margin:0; padding: 5px 0 8px 0; padding-left: 180px; height: 1%; clear: left;">
+  <div class="tabular-row">
     <label><%=l :field_execution_status %></label>
     <div>
       <%= f.radio_button :status, "0" %><span class="label"><%=l(:label_execution_status_0) %></span>

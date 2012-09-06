@@ -33,7 +33,7 @@
   <% end %>
 
   <% if @test_case.attachments.size > 0 %>
-  <p><strong>Screenshots</strong></p>
+  <p><strong><%=l(:label_screenshots)%></strong></p>
   <%= render :partial => "impasse_screenshots/list", :locals => { :attachments => @test_case.attachments } %>
   <% end %>
   <div class="clear"/>

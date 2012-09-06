@@ -19,6 +19,14 @@ li[rel="test_case"][data-inactive="true"] a {
     text-decoration: line-through;
 }
 
+.tabular .tabular-row {
+    margin:0;
+    padding: 5px 0 8px 0;
+    padding-left: 180px;
+    height: 1%;
+    clear: left;
+}
+
 .drop-area {
 }
 
