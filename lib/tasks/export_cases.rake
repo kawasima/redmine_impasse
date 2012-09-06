@@ -1,19 +1,20 @@
 require 'optparse'
 
-if defined? JRUBY_VERSION
-  require 'java'
-
-  gem "activerecord-jdbc-adapter"
-  gem 'axebomber'
-
-  java_import "net.unit8.axebomber.manager.impl.FileSystemBookManager"
-  include Axebomber
-end
 
 namespace :redmine do
   namespace :impasse do
     desc "Export Redmine Impasse test cases."
     task :export => :environment do |t|
+      if defined? JRUBY_VERSION
+        require 'java'
+        
+        gem "activerecord-jdbc-adapter"
+        require 'axebomber'
+
+        java_import "net.unit8.axebomber.manager.impl.FileSystemBookManager"
+        include Axebomber
+      end
+
       raise "You must set RAILS_ENV" unless ENV["RAILS_ENV"]
       raise "You must run in jruby" unless defined? JRUBY_VERSION
       
