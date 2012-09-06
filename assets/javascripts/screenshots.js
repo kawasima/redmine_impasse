@@ -498,6 +498,7 @@ var pasteboard = {};
 		$("#pasteboard .pasteboard-close").one("click", function() {
 		    pasteboard.dragAndDrop.hide();
 		    pasteboard.copyAndPaste.hide();		    
+		    $(pasteboard).unbind(".stateevents");
 		    $(pasteboard.imageEditor).unbind(".stateevents");
 		    pasteboard.imageEditor.hide();
 		    pasteboard.overlay.remove();
