@@ -27,6 +27,17 @@ li[rel="test_case"][data-inactive="true"] a {
     clear: left;
 }
 
+.tabular .tabular-row .wiki {
+    margin:0;
+    padding: 0;
+}
+
+.tabular .tabular-row .wiki p {
+    margin:0;
+    padding: 0;
+    clear: none;
+}
+
 .drop-area {
 }
 

@@ -6,9 +6,13 @@
 <div id="errorExplanation" style="display:none"></div>
 <div class="box tabular">
   <p><%=label_tag :name, l(:field_name) %><%=h test_case.node.name %></p>
-  <div class="tabular-row"><%=label_tag :summary, l(:field_summary) %><%=textilizable test_case, :summary %></div>
+  <div class="tabular-row"><%=label_tag :summary, l(:field_summary) %>
+    <div class="wiki"><%=textilizable test_case, :summary %></div>
+  </div>
   <% if !test_case.preconditions.nil? and test_case.preconditions.length > 0 %>
-  <div class="tabular-row"><%=label_tag :preconditions, l(:field_preconditions)%><%=textilizable test_case, :preconditions%></div>
+  <div class="tabular-row"><%=label_tag :preconditions, l(:field_preconditions)%>
+    <div class="wiki"><%=textilizable test_case, :preconditions%></div>
+  </div>
   <% end %>
   <% if test_case.attachments.size > 0 %>
   <div class="tabular-row">
