@@ -6,6 +6,15 @@ module Impasse
 
     def self.summary_default(test_plan_id, test_suite_id=nil)
       conditions = { :test_plan_id => test_plan_id }
+      concatinated_path = case configurations[Rails.env]['adapter']
+                          when /mysql/
+                            "CONCAT(:path, head.id, '.')"
+                          when /sqlserver/
+                            ":path + head.id + '.'" # Not tested
+                          else
+                            ":path || head.id || '.'"
+                          end
+                            
       if test_suite_id
         suite = Node.find(test_suite_id)
         conditions[:path] = suite.path
@@ -35,7 +44,7 @@ module Impasse
         ON tc.id = n.id
       <%- if conditions[:path] -%>
       INNER JOIN impasse_nodes AS head
-        ON head.path = SUBSTR(n.path, 1, LENGTH(:path || head.id || '.'))
+        ON head.path = SUBSTR(n.path, 1, LENGTH(<%=concatinated_path%>))
       <%- end -%>
       LEFT OUTER JOIN impasse_executions AS exe
         ON exe.test_plan_case_id = tpc.id
@@ -53,7 +62,7 @@ module Impasse
       <%- if conditions[:path] -%>
         AND n.path LIKE :path_starts_with
         AND LENGTH(head.path) - LENGTH(REPLACE(head.path, '.', '')) = :level
-      GROUP BY head.id, head.name, head.node_type_id, SUBSTR(n.path, 1, LENGTH(:path || head.id || '.'))
+      GROUP BY head.id, head.name, head.node_type_id, SUBSTR(n.path, 1, LENGTH(<%=concatinated_path%>))
       <%- else -%>
       GROUP BY tp.id, tp.name, node_type_id
       <%- end -%>
