@@ -18,7 +18,7 @@ module ImpassePlugin
         project = context[:project]
         snippet = ''
   
-        setting = Impasse::Setting.find_by_project_id(project.id)
+        setting = Impasse::Setting.find_by_project_id(project.id) || Impasse::Setting.create(:project_id => project.id)
 
         if setting.bug_tracker_id == issue.tracker_id
           snippet << show_execution_bugs(issue, project)
@@ -43,7 +43,7 @@ module ImpassePlugin
         project = context[:project]
         snippet = ''
   
-        setting = Impasse::Setting.find_by_project_id(project.id)
+        setting = Impasse::Setting.find_by_project_id(project.id) || Impasse::Setting.create(:project_id => project.id)
         if setting.requirement_tracker and setting.requirement_tracker.include? issue.tracker_id.to_s
           snippet << show_requirement_cases(issue, project)
         end
@@ -62,7 +62,7 @@ module ImpassePlugin
 
         project = context[:project]
         
-        setting = Impasse::Setting.find_by_project_id(project.id)
+        setting = Impasse::Setting.find_by_project_id(project.id) || Impasse::Setting.create(:project_id => project.id)
 
         if setting.requirement_tracker
           style = (setting.requirement_tracker.include? issue.tracker_id.to_s) ? '' : 'style="display: none;"'
@@ -94,7 +94,7 @@ module ImpassePlugin
       params = context[:params]
       issue = context[:issue]
 
-      setting = Impasse::Setting.find_by_project_id(issue.project.id)
+      setting = Impasse::Setting.find_by_project_id(issue.project.id) || Impasse::Setting.create(:project_id => issue.project.id)
       if setting.requirement_tracker and setting.requirement_tracker.include? issue.tracker_id.to_s
         num_of_cases = params[:requirement_issue] && params[:requirement_issue][:num_of_cases].to_i || 0
         requirement = Impasse::RequirementIssue.new(:issue_id => issue.id)

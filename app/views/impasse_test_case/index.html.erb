@@ -112,8 +112,8 @@
           <%= output %>
         <% end %>
 	<p>
-	  <%= button_tag l(:button_copy), :id => 'button-copy-exec' %>
-	  <%= button_tag l(:button_cancel), :id => 'button-copy-cancel' %>	  
+	  <button id="button-copy-exec" type="button"><%= l(:button_copy)%></button>
+	  <button id="button-copy-cancel" type="button"><%= l(:button_cancel)%></button>
 	</p>
       <% else %>
 	<p class="nodata"><%=l(:notice_no_projects_to_copy_cases)%></p>
