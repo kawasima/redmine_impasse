@@ -21,14 +21,14 @@
 <div>
   <p style="height: 4em;"/>
   <h3><%=l(:field_category)%></h3>
-  <%=link_to_remote l(:label_impasse_stat_overview), :update => 'statistics-view',
-     :url => { :action => :statistics, :project_id => @project, :id => @test_plan} %><br/>
+  <%=link_to l(:label_impasse_stat_overview),
+     { :action => :statistics, :project_id => @project, :id => @test_plan}, :class => "statistics-link" %><br/>
 
-  <%=link_to_remote l(:label_impasse_stat_members), :update => 'statistics-view',
-     :url => { :action => :statistics, :type => 'members', :project_id => @project, :id => @test_plan} %><br/>
+  <%=link_to l(:label_impasse_stat_members),
+     { :action => :statistics, :type => 'members', :project_id => @project, :id => @test_plan}, :class => "statistics-link"  %><br/>
 
-  <%=link_to_remote l(:label_impasse_stat_daily), :update=>'statistics-view',
-     :url => { :action => :statistics, :type => 'daily', :project_id => @project, :id => @test_plan} %><br/>
+  <%=link_to l(:label_impasse_stat_daily),
+     { :action => :statistics, :type => 'daily', :project_id => @project, :id => @test_plan}, :class => "statistics-link"  %><br/>
 </div>
 <% end %>
 
@@ -36,3 +36,11 @@
 <%= render :partial=>"impasse_test_plans/statistics/#{params[:type]}"%>
 </div>
 
+<script>
+jQuery(document).ready(function($) {
+  $(".statistics-link").click(function(e) {
+    $("#statistics-view").load($(this).attr("href"));
+    return false;
+  });
+});
+</script>

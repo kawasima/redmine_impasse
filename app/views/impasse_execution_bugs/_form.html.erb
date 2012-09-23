@@ -1,17 +1,26 @@
 <%= call_hook(:view_issues_form_details_top, { :issue => @issue, :form => f }) %>
 
 <div id="issue_descr_fields" <%= 'style="display:none"' unless @issue.new_record? || @issue.errors.any? %>>
-<p><%= f.select :tracker_id, @project.trackers.collect {|t| [t.name, t.id]}, :required => true %></p>
-<%= observe_field :issue_tracker_id, :url => { :action => :new, :project_id => @project, :id => @issue },
-                                     :update => :attributes,
-                                     :with => "Form.serialize('issue-form')" %>
+<% if Rails::VERSION::MAJOR < 3 %>
+  <p><%= f.select :tracker_id, @project.trackers.collect {|t| [t.name, t.id]}, :required => true %></p>
+  <%= observe_field :issue_tracker_id, :url => { :action => :new, :project_id => @project, :id => @issue },
+      :update => :attributes,
+      :with => "Form.serialize('issue-form')" %>
+<% else %>
+<p><%= f.select :tracker_id, @issue.project.trackers.collect {|t| [t.name, t.id]}, {:required => true},
+                :onchange => "updateIssueFrom('#{escape_javascript project_issue_form_path(@project, :id => @issue, :format => 'js')}')" %></p>
+<% end %>
 
 <p><%= f.text_field :subject, :size => 80, :required => true %></p>
 
 <% if User.current.allowed_to?(:manage_subtasks, @project) %>
 <p id="parent_issue"><%= f.text_field :parent_issue_id, :size => 10 %></p>
 <div id="parent_issue_candidates" class="autocomplete"></div>
-<%= javascript_tag "observeParentIssueField('#{auto_complete_issues_path(:id => @issue, :project_id => @project) }')" %>
+  <% if Redmine::VERSION::MAJOR < 2 or Redmine::VERSION::MINOR < 1 %>
+    <%= javascript_tag "observeParentIssueField('#{auto_complete_issues_path(:id => @issue, :project_id => @project) }')" %>
+  <% else %>
+    <%= javascript_tag "observeAutocompleteField('issue_parent_issue_id', '#{escape_javascript auto_complete_issues_path(:project_id => @issue.project)}')" %>
+  <% end %>
 <% end %>
 
 <p><%= f.text_area :description,

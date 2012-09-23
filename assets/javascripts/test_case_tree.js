@@ -201,7 +201,7 @@ jQuery(document).ready(function ($) {
 			},
 			error: ajax_error_handler
 		    };
-		    var tc = {"format": "json"};
+		    var tc = {};
 		    dialog[node_type].find(":input:hidden,:text,textarea,:checkbox:checked,radiobutton:checked,select").each(function() {
 			tc[$(this).attr("name")] =  $(this).val();
 		    });
@@ -337,7 +337,7 @@ jQuery(document).ready(function ($) {
 	    openDialog(data, 'new');
 	})
 	.bind("remove.jstree", function (e, data) {
-	    var request = {format: "json", "node[id]": []};
+	    var request = {"node[id]": []};
 	    data.rslt.obj.each(function() {
 		request["node[id]"].push(this.id.replace("node_", ""));
 	    });
@@ -362,7 +362,7 @@ jQuery(document).ready(function ($) {
 	})
 	.bind("move_node.jstree", function (e, data) {
 	    var url = (data.rslt.cy) ? IMPASSE.url.testCaseCopy : IMPASSE.url.testCaseMove;
-	    var request = { format: "json" };
+	    var request = {};
 	    data.rslt.o.each(function (i, node) {
 		request["nodes["+i+"][id]"]         = $(node).attr("id").replace("node_","");
 		request["nodes["+i+"][parent_id]"]  = data.rslt.cr === -1 ? 1 : data.rslt.np.attr("id").replace("node_","");

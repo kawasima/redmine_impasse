@@ -71,8 +71,7 @@ jQuery(document).ready(function ($) {
 		    $.post(
 			IMPASSE.url.testPlansAdd,
 			{ test_case_ids: $.map(data.o, function(n, i) { return $this._get_node(n).attr("id").replace("tc_", "") }),
-			  test_plan_id: test_plan_id,
-			  format: "json"
+			  test_plan_id: test_plan_id
 			},
 			function(r) {
 			    if(r.status == 'success') {
@@ -100,7 +99,6 @@ jQuery(document).ready(function ($) {
 		    type: 'POST',
 		    url: IMPASSE.url.testPlansRemove,
 		    data : {
-			format: "json",
 			test_plan_id: test_plan_id,
 			test_case_id: this.id.replace("plan_","")
 		    }, 

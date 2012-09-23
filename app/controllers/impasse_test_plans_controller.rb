@@ -93,7 +93,7 @@ class ImpasseTestPlansController < ImpasseAbstractController
       else
         format.html
       end
-      format.json { render :json => @statistics }
+      format.json_impasse { render :json => @statistics }
     end
   end
 

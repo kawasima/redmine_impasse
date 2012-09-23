@@ -11,7 +11,6 @@ jQuery(document).ready(function ($) {
                     type: 'POST',
                     url: IMPASSE.url.executionsDelete,
                     data: {
-			format: "json",
 			"test_plan_case[test_plan_id]": test_plan_id,
 			"test_plan_case[test_case_id]": node.attr("id").replace("plan_", "")
 		    },
@@ -38,7 +37,6 @@ jQuery(document).ready(function ($) {
 		    type: 'POST',
 		    url: IMPASSE.url.testPlansRemove,
 		    data : {
-			format: "json",
 			test_plan_id: test_plan_id,
 			test_case_id: this.id.replace("plan_","")
 		    }, 
@@ -112,7 +110,6 @@ jQuery(document).ready(function ($) {
 		    var $this = this;
 		    var draggable = $(data.o).hasClass("jstree-draggable") ? $(data.o) : $(data.o).parents(".jstree-draggable");
 		    var request = {
-			format: "json",
 			"test_plan_case[test_plan_id]": test_plan_id,
 			"test_plan_case[test_case_id]": data.r.attr("id").replace("plan_", "")
 		    };

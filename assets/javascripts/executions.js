@@ -109,7 +109,7 @@ jQuery(document).ready(function ($) {
 	$.ajax({
 	    url: IMPASSE.url.executionsPut,
 	    type: 'POST',
-	    data: $this.serialize() + "&record=true&format=json",
+	    data: $this.serialize() + "&record=true",
 	    success: function(data) {
 		show_notification_dialog(data.status, data.message);
 		if (data.errors) {
@@ -140,8 +140,7 @@ jQuery(document).ready(function ($) {
 	    url: IMPASSE.url.executionBugsCreate,
 	    type: 'POST',
 	    data: $("#issue-form").serialize()
-		+ "&execution_bug[execution_id]="+ $("#executions-view :hidden#execution_id").val()
-		+"&format=json",
+		+ "&execution_bug[execution_id]="+ $("#executions-view :hidden#execution_id").val(),
 	    success: function(data) {
 		if (data.errors) {
 		    if ($("#issue-dialog .errorExplanation").size() == 0)

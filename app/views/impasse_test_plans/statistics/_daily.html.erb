@@ -1,3 +1,4 @@
+
 <p class="contextual">
 </p>
 <div id="test-chart">
@@ -5,9 +6,9 @@
 <script>
 var ypadding = 1;
 jQuery.ajax({
-    url: '<%=url_for :controller=>:impasse_test_plans, :action=>:statistics, :project_id=>@project, :id=>@test_plan%>',
+    url: '<%=url_for :controller=>:impasse_test_plans, :action=>:statistics, :project_id=>@project, :id=>@test_plan %>',
     type: 'get',
-    data: { type: "daily", format: "json" },
+    data: { type: "daily", format: "json_impasse" },
     success: function(data) {
         var minDate, maxDate, maxCount = 0;
         jQuery.each(data, function(i, series) {
