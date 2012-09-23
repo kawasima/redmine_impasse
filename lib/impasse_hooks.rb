@@ -108,7 +108,7 @@ module ImpassePlugin
       issue = context[:issue]
 
       if params[:requirement_issue]
-        requirement = Impasse::RequirementIssue.find_by_issue_id(issue.id)
+        requirement = Impasse::RequirementIssue.find_by_issue_id(issue.id) || Impasse::RequirementIssue.new(:issue_id => issue.id)
         requirement.num_of_cases = params[:requirement_issue][:num_of_cases].to_i
         requirement.save!
       end
