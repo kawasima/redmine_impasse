@@ -53,12 +53,10 @@ class ImpasseExecutionsController < ImpasseAbstractController
       end
     end
     
-    respond_to do |format|
-      if errors.empty?
-        format.json { render :json => { :status => 'success', :message => l(:notice_successful_update) } }
-      else
-        format.json { render :json => { :status => 'error', :message => l(:error_failed_to_update), :errors => errors } }
-      end
+    if errors.empty?
+      render :json => { :status => 'success', :message => l(:notice_successful_update) }
+    else
+      render :json => { :status => 'error', :message => l(:error_failed_to_update), :errors => errors }
     end
   end
 
@@ -77,18 +75,14 @@ class ImpasseExecutionsController < ImpasseAbstractController
       satus &= execution.save
     end
 
-    respond_to do |format|
-      format.json { render :json => { :status => status } }
-    end
+    render :json => { :status => status }
   end
 
   def get_list
     nodes = Impasse::Node.find_planned(params[:id], params[:test_plan_id], params[:filters] || {})
     jstree_nodes = convert(nodes, params[:prefix])
 
-    respond_to do |format|
-      format.json { render :json => jstree_nodes }
-    end
+    render :json => jstree_nodes
   end
 
   def edit
@@ -114,12 +108,9 @@ END_OF_SQL
                                                           :conditions => ["test_plan_case_id=?", @execution.test_plan_case_id],
                                                           :order => "execution_ts DESC")
     if request.post? and @execution.save
-      respond_to do |format|
-        format.json { render :json => {'status'=>true} }
-      end
-    end
-    respond_to do |format|
-      format.html { render :partial=>'edit' }
+      render :json => {'status'=>true}
+    else
+      render :partial=>'edit'
     end
   end
 

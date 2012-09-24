@@ -34,9 +34,7 @@ class ImpasseRequirementIssuesController < ImpasseAbstractController
                               :limit => @limit)
       @issue_count_by_group = @query.issue_count_by_group
 
-      respond_to do |format|
-        format.html { render :index, :layout => !request.xhr? }
-      end
+      render :index, :layout => !request.xhr?
     end
   rescue ActiveRecord::RecordNotFound
     render_404

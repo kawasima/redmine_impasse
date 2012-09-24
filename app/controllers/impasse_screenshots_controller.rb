@@ -30,8 +30,6 @@ class ImpasseScreenshotsController < ImpasseAbstractController
   def destroy
     @attachment = Attachment.find(params[:attachment_id])
     @attachment.destroy
-    respond_to do |format|
-      format.json { render :json => { :status => 'success' } }
-    end
+    render :json => { :status => 'success' }
   end
 end

@@ -122,16 +122,12 @@ class ImpasseTestPlansController < ImpasseAbstractController
       end
     end
 
-    respond_to do |format|
-      format.json { render :json => { :status => 'success', :message => l(:notice_successful_create) } }
-    end
+    render :json => { :status => 'success', :message => l(:notice_successful_create) }
   end
 
   def remove_test_case
     Impasse::TestPlanCase.delete_cascade!(params[:test_plan_id], params[:test_case_id])
-    respond_to do |format|
-      format.json { render :json => { :status => 'success', :message => l(:notice_successful_delete) } }
-    end
+    render :json => { :status => 'success', :message => l(:notice_successful_delete) }
   end
 
   def autocomplete

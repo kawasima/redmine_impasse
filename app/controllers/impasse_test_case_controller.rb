@@ -29,18 +29,14 @@ class ImpasseTestCaseController < ImpasseAbstractController
     end
     jstree_nodes = convert(@nodes, params[:prefix])
     
-    respond_to do |format|
-      format.json { render :json => jstree_nodes }
-    end
+    render :json => jstree_nodes
   end
   
   def show
     @node, @test_case = get_node(params[:node])
     @setting = Impasse::Setting.find_by_project_id(@project) || Impasse::Setting.create(:project_id => @project.id)
 
-    respond_to do |format|
-      format.html { render :partial => 'show' }
-    end
+    render :partial => 'show'
   end
 
   def new
@@ -59,23 +55,19 @@ class ImpasseTestCaseController < ImpasseAbstractController
             @test_case.test_steps.replace(@test_steps)
           end
           @test_case.save!
-          respond_to do |format|
-            format.json { render :json => { :status => 'success', :message => l(:notice_successful_create), :ids => [@test_case.id] } }
-          end
+          render :json => { :status => 'success', :message => l(:notice_successful_create), :ids => [@test_case.id] }
         end
       rescue ActiveRecord::ActiveRecordError => e
-        respond_to do |format|
-          errors = []
-          errors.concat(@node.errors.full_messages).concat(@test_case.errors.full_messages)
-          if @test_steps
-            @test_steps.each {|test_step|
-              test_step.errors.full_messages.each {|msg|
-                errors << "##{test_step.step_number} #{msg}"
-              }
+        errors = []
+        errors.concat(@node.errors.full_messages).concat(@test_case.errors.full_messages)
+        if @test_steps
+          @test_steps.each {|test_step|
+            test_step.errors.full_messages.each {|msg|
+              errors << "##{test_step.step_number} #{msg}"
             }
-          end
-          format.json { render :json => { :errors => errors }}
+          }
         end
+        render :json => { :errors => errors }
       end
     else
       render :partial => "new"
@@ -94,9 +86,7 @@ class ImpasseTestCaseController < ImpasseAbstractController
       end
     end
 
-    respond_to do |format|
-      format.json { render :json => nodes }
-    end
+    render :json => nodes
   end
 
   def move
@@ -109,9 +99,7 @@ class ImpasseTestCaseController < ImpasseAbstractController
       end
     end
 
-    respond_to do |format|
-      format.json { render :json => nodes }
-    end
+    render :json => nodes
   end
 
   def edit
@@ -137,23 +125,19 @@ class ImpasseTestCaseController < ImpasseAbstractController
             create_thumbnail(attachments) if Object.const_defined?(:Magick)
           end
 
-          respond_to do |format|
-            format.json { render :json => { :status => 'success', :message => l(:notice_successful_update), :ids => [@test_case.id] } }
-          end
+          render :json => { :status => 'success', :message => l(:notice_successful_update), :ids => [@test_case.id] }
         end
       rescue ActiveRecord::ActiveRecordError=> e
-        respond_to do |format|
-          errors = []
-          errors.concat(@node.errors.full_messages).concat(@test_case.errors.full_messages)
-          if @test_steps
-            @test_steps.each {|test_step|
-              test_step.errors.full_messages.each {|msg|
-                errors << "##{test_step.step_number} #{msg}"
-              }
+        errors = []
+        errors.concat(@node.errors.full_messages).concat(@test_case.errors.full_messages)
+        if @test_steps
+          @test_steps.each {|test_step|
+            test_step.errors.full_messages.each {|msg|
+              errors << "##{test_step.step_number} #{msg}"
             }
-          end
-          format.json { render :json => { :errors => errors }}
+          }
         end
+        render :json => { :errors => errors }
       end
     else
       render :partial => 'edit'
@@ -186,16 +170,12 @@ class ImpasseTestCaseController < ImpasseAbstractController
       end
     end
 
-    respond_to do |format|
-      format.json { render :json => {:status => true} }
-    end
+    render :json => {:status => true}
   end
 
   def keywords
     keywords = Impasse::Keyword.find_all_by_project_id(@project).map{|r| r.keyword}
-    respond_to do |format|
-      format.json { render :json => keywords }
-    end
+    render :json => keywords
   end
 
   def copy_to_another_project
