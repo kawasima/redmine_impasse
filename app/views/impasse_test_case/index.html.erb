@@ -103,7 +103,7 @@
 	    </p>
 	  <% end %>
 	<% else %>
-          <% output = labelled_tabular_form_for @project, :as => :copy_tests, :url => { :action => :copy_to_another_project } do |f| %>
+          <% output = labelled_form_for @project, :as => :copy_tests, :url => { :action => :copy_to_another_project } do |f| %>
 	    <p>
 	      <label for="dest_project_id"><%= l(:field_project) %></label>
 	      <%= select_tag('dest_project_id', project_tree_options_for_select(@allowed_projects, :selected => @target_project)) %>
