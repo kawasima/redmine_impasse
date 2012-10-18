@@ -99,7 +99,7 @@ jQuery(document).ready(function ($) {
 			    $.unblockUI();
 			    $("#issue-dialog").html(data).dialog({
 				modal:true,
-				minWidth: 800,
+				minWidth: 900,
 				zIndex: 25,
 				title: IMPASSE.label.issueNew
 			    });
