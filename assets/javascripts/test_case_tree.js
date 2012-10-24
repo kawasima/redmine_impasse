@@ -129,6 +129,65 @@ jQuery(document).ready(function ($) {
 	    }
 	});
     }
+    var updateTestCase = function(data, edit_type) {
+	var node = $(data.rslt.obj);
+	var node_type = node.attr("rel");
+	return function(e) {
+	var ajaxOptions = {
+	    type: 'POST',
+	    url:AJAX_URL[edit_type],
+	    success: function(r, status, xhr) {
+		if (r.errors) {
+		    var ul = $("<ul/>");
+		    $.each(r.errors, function(i, error) {
+			ul.append($("<li/>").html(error));
+		    });
+		    $("#errorExplanation", dialog[node_type])
+			.html(ul)
+			.show();
+		    var top = $("#errorExplanation", dialog[node_type]).position().top;
+		    $(window).scrollTop(top);
+		    return;
+		}
+		$.each(r.ids, function(i, id) {
+		    dialog[node_type].unbind("dialogbeforeclose");
+		    node.attr("id", "node_" + id);
+		    node.data("jstree", (node_type=='test_case')?LEAF_MENU:FOLDER_MENU);
+		    $.jstree._reference(node).set_text(node, tc["node[name]"]);
+		});
+		dialog[node_type].dialog('close');
+		show_notification_dialog(r.status, r.message);
+	    },
+	    error: ajax_error_handler,
+	    complete: function() {
+		dialog[node_type].find(":button.ui-button-submit").one("click", updateTestCase(data, edit_type));
+	    }
+	};
+	var tc = {};
+	dialog[node_type].find(":input:hidden,:text,textarea,:checkbox:checked,radiobutton:checked,select").each(function() {
+	    tc[$(this).attr("name")] =  $(this).val();
+	});
+	if (edit_type == 'edit')
+	    tc["node[id]"] = node.attr("id").replace("node_","");
+	tc["node_type"] = node_type;
+	tc["node[parent_id]"] = $(data.rslt.parent).attr("id").replace("node_", "");
+	tc["node[node_order]"] = data.rslt.obj.parent().children().index(data.rslt.obj);
+	if (window.FormData) {
+	    var formData = new FormData();
+	    $(".new-screenshot", dialog[node_type]).each(function(i) {
+		formData.append("attachments["+i+"][file]", dataURLtoBlob(this.src) ,'screenshot.png');
+	    });
+	    for (var key in tc) { formData.append(key, tc[key]) }
+	    
+	    ajaxOptions["data"] = formData;
+	    ajaxOptions["contentType"] = false;
+	    ajaxOptions["processData"] = false;
+	} else {
+	    ajaxOptions["data"] = tc;
+	}
+	$.ajax(ajaxOptions);
+	}
+    };
 
     var openDialog = function(data, edit_type) {
 	var node = $(data.rslt.obj);
@@ -173,58 +232,7 @@ jQuery(document).ready(function ($) {
 
 		$(".screenshots", dialog[node_type]).tinycarousel();
 
-		dialog[node_type].find(":button.ui-button-submit").one("click", function(e) {
-		    var ajaxOptions = {
-			type: 'POST',
-			url:AJAX_URL[edit_type],
-			success: function(r, status, xhr) {
-			    if (r.errors) {
-				var ul = $("<ul/>");
-				$.each(r.errors, function(i, error) {
-				    ul.append($("<li/>").html(error));
-				});
-				$("#errorExplanation", dialog[node_type])
-				    .html(ul)
-				    .show();
-				var top = $("#errorExplanation", dialog[node_type]).position().top;
-				$(window).scrollTop(top);
-				return;
-			    }
-			    $.each(r.ids, function(i, id) {
-				dialog[node_type].unbind("dialogbeforeclose");
-				node.attr("id", "node_" + id);
-				node.data("jstree", (node_type=='test_case')?LEAF_MENU:FOLDER_MENU);
-				$.jstree._reference(node).set_text(node, tc["node[name]"]);
-			    });
-			    dialog[node_type].dialog('close');
-			    show_notification_dialog(r.status, r.message);
-			},
-			error: ajax_error_handler
-		    };
-		    var tc = {};
-		    dialog[node_type].find(":input:hidden,:text,textarea,:checkbox:checked,radiobutton:checked,select").each(function() {
-			tc[$(this).attr("name")] =  $(this).val();
-		    });
-		    if (edit_type == 'edit')
-			tc["node[id]"] = node.attr("id").replace("node_","");
-		    tc["node_type"] = node_type;
-		    tc["node[parent_id]"] = $(data.rslt.parent).attr("id").replace("node_", "");
-		    tc["node[node_order]"] = data.rslt.obj.parent().children().index(data.rslt.obj);
-		    if (window.FormData) {
-			var formData = new FormData();
-			$(".new-screenshot", dialog[node_type]).each(function(i) {
-			    formData.append("attachments["+i+"][file]", dataURLtoBlob(this.src) ,'screenshot.png');
-			});
-			for (var key in tc) { formData.append(key, tc[key]) }
-
-			ajaxOptions["data"] = formData;
-			ajaxOptions["contentType"] = false;
-			ajaxOptions["processData"] = false;
-		    } else {
-			ajaxOptions["data"] = tc;
-		    }
-		    $.ajax(ajaxOptions);
-		});
+		dialog[node_type].find(":button.ui-button-submit").one("click", updateTestCase(data, edit_type));
 	    },
 	    error: ajax_error_handler
 	});
