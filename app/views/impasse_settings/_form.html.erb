@@ -5,18 +5,20 @@
 </div>
 <% unless @custom_fields_by_type.empty? %>
   <fieldset class="box" id="impasse_custom_fields"><legend><%=l(:label_custom_field_plural)%></legend>
-    <% impasse_custom_fields_tabs.each do |tab| %>
-      <% if @custom_fields_by_type[tab[:name]] %>
-	<h3><%= l(tab[:label])%></h3>
-	<div>
-	<% @custom_fields_by_type[tab[:name]].each do |custom_field| %>
-	  <label class="floating">
-	    <%= check_box_tag 'custom_field_ids[]', custom_field.id, (@impasse_custom_fields[tab[:name]].include? custom_field) %>
-	    <%=h custom_field.name %>
-	  </label>
-	<% end %>
-	  <br class="clear"/>
-	</div>
+    <% unless @impasse_custom_fields_tabs.empty? %>
+      <% impasse_custom_fields_tabs.each do |tab| %>
+        <% if @custom_fields_by_type[tab[:name]] %>
+	  <h3><%= l(tab[:label])%></h3>
+	  <div>
+	  <% @custom_fields_by_type[tab[:name]].each do |custom_field| %>
+	    <label class="floating">
+	      <%= check_box_tag 'custom_field_ids[]', custom_field.id, (@impasse_custom_fields[tab[:name]].include? custom_field) %>
+	      <%=h custom_field.name %>
+	    </label>
+	  <% end %>
+	    <br class="clear"/>
+	  </div>
+        <% end %>
       <% end %>
     <% end %>
   </fieldset>
