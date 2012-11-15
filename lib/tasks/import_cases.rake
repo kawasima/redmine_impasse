@@ -42,25 +42,43 @@ namespace :redmine do
       node_to = labelColumns["Details"] - 1
       
       parent_ids = [ @root.id ]
+      node_orders_by_parent = { @root.id => 0 }
       step_number = 1
       test_case = nil
 
       ActiveRecord::Base.transaction do
       sheet.rows.each do |row|
-        name, level = scan_node_name(row, node_from, node_to)
-        node = Impasse::Node.new(:name => name, :node_type_id => row.cell("Node type id").to_i)
-        case node.node_type_id
+        node_type = row.cell("Node type id").to_i
+        if node_type > 1
+          name, level = scan_node_name(row, node_from, node_to)
+          parent_id = parent_ids[level - 1]
+          node_orders_by_parent[parent_id] ||= 0
+          node = Impasse::Node.find(:first, :conditions => {
+            :name => name,
+            :node_type_id => node_type,
+            :parent_id => parent_id}) || Impasse::Node.new(:name => name,
+  	    :node_type_id => node_type,
+            :parent_id => parent_id,
+            :node_order => node_orders_by_parent[parent_id])
+          node_orders_by_parent[parent_id] += 1
+
+          if node.new_record?
+            node.save!
+          else
+            parent_ids = parent_ids[0, level]
+            parent_ids[level] = node.id
+            next
+          end
+        end
+
+        case node_type
         when 2
-          parent_ids = parent_ids[0, level + 1]
-          node.parent_id = parent_ids.last
-          node.save!
+          parent_ids = parent_ids[0, level]
           parent_ids[level] = node.id
           test_suite = Impasse::TestSuite.new(:details => row.cell("Details").to_s)
           test_suite.id = node.id
           test_suite.save!
         when 3
-          node.parent_id = parent_ids[level - 1]
-          node.save!
           test_case = Impasse::TestCase.new(:preconditions => row.cell("Preconditions").to_s,
                                             :summary => row.cell("Summary").to_s)
           test_case.id = node.id
