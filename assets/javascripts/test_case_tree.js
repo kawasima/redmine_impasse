@@ -87,10 +87,15 @@ jQuery(document).ready(function ($) {
 	$.ajax({
 	    url: IMPASSE.url.testCaseShow,
 	    data: { "node[id]": node_id },
-	    success: function(html) {
-		$("#test-case-view").html(html).show();
-		$("#test-case-view .screenshots").tinycarousel();
-	    },
+		success: function(html) {
+			var winHeight = $(window).height();
+			var $testCaseView = $("#test-case-view");
+			$testCaseView.css({height:'', overflow:''}).html(html).show();
+			$(".screenshots", $testCaseView).tinycarousel();
+			if ($testCaseView.height() > winHeight) {
+				$testCaseView.height(winHeight - 1).css('overflow', 'scroll');
+			}
+		},
 	    error: ajax_error_handler,
 	    complete: function() {
 		$("#test-case-view").unblock();
