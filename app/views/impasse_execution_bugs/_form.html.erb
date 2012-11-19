@@ -33,3 +33,14 @@
 <div id="attributes" class="attributes">
         <%= render :partial => 'issues/attributes' %>
 </div>
+<p id="watchers_form"><label><%= l(:label_issue_watchers) %></label>
+      <span id="watchers_inputs">
+        <%= watchers_checkboxes(@issue, @available_watchers) %>
+      </span>
+      <span class="search_for_watchers">
+      <%= link_to l(:label_search_for_watchers),
+                  {:controller => 'watchers', :action => 'new', :project_id => @issue.project},
+                  :remote => true,
+                  :method => 'get' %>
+      </span>
+</p>
