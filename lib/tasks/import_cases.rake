@@ -64,6 +64,7 @@ namespace :redmine do
 
           if node.new_record?
             node.save!
+            node.save_keywords!(row.cell("Keywords").to_s)
           else
             parent_ids = parent_ids[0, level]
             parent_ids[level] = node.id
@@ -75,14 +76,20 @@ namespace :redmine do
         when 2
           parent_ids = parent_ids[0, level]
           parent_ids[level] = node.id
-          test_suite = Impasse::TestSuite.new(:details => row.cell("Details").to_s)
-          test_suite.id = node.id
+          test_suite = Impasse::TestSuite.find_by_id(node.id) || Impasse::TestSuite.new
+          test_suite.attributes = { :details => row.cell("Details").to_s }
+          test_suite.id = node.id if test_suite.new_record?
           test_suite.save!
         when 3
-          test_case = Impasse::TestCase.new(:preconditions => row.cell("Preconditions").to_s,
-                                            :summary => row.cell("Summary").to_s)
-          test_case.id = node.id
+          test_case = Impasse::TestCase.find_by_id(node.id) || Impasse::TestCase.new
+          test_case.attributes = {
+            :preconditions => row.cell("Preconditions").to_s,
+            :summary => row.cell("Summary").to_s,
+          }
+          test_case.id = node.id if test_case.new_record?
           test_case.save!
+
+          test_case.test_steps.delete_all
           if row.cell("Actions").to_s != "" or row.cell("Expected results").to_s != ""
             step_number = 1
             test_step = Impasse::TestStep.create(:actions => row.cell("Actions").to_s,
