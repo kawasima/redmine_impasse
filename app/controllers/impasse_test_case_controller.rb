@@ -47,7 +47,7 @@ class ImpasseTestCaseController < ImpasseAbstractController
       begin
         ActiveRecord::Base.transaction do
           @node.save!
-          save_keywords(@node, params[:node_keywords])
+          @node.save_keywords!(params[:node_keywords])
           @test_case.id = @node.id
           if @node.is_test_case? and params.include? :test_steps
             @test_steps = params[:test_steps].collect{|i, ts| Impasse::TestStep.new(ts) }
@@ -111,8 +111,8 @@ class ImpasseTestCaseController < ImpasseAbstractController
       begin
         ActiveRecord::Base.transaction do
           save_node(@node)
+          @node.save_keywords!(params[:node_keywords])
           @test_case.save!
-          save_keywords(@node, params[:node_keywords])
 
           if @node.is_test_case? and params.include? :test_steps
             @test_steps = params[:test_steps].collect{|i, ts| Impasse::TestStep.new(ts) }
@@ -296,34 +296,6 @@ class ImpasseTestCaseController < ImpasseAbstractController
 
     # If node has children, must update the node path of child nodes.
     node.update_child_nodes_path(old_node.path)
-  end
-
-  def save_keywords(node, keywords = "")
-    project_keywords = Impasse::Keyword.find_all_by_project_id(@project)
-    words = keywords.split(/\s*,\s*/)
-    words.delete_if {|word| word =~ /^\s*$/}.uniq!
-
-    node_keywords = node.node_keywords
-    keeps = []
-    words.each{|word|
-      keyword = project_keywords.detect {|k| k.keyword == word}
-      if keyword
-        node_keyword = node_keywords.detect {|nk| nk.keyword_id == keyword.id}
-        if node_keyword
-          keeps << node_keyword.id
-        else
-          new_node_keyword = Impasse::NodeKeyword.create(:keyword_id => keyword.id, :node_id => node.id)
-          keeps << new_node_keyword.id
-        end
-      else
-        new_keyword = Impasse::Keyword.create(:keyword => word, :project_id => @project.id)
-        new_node_keyword = Impasse::NodeKeyword.create(:keyword_id => new_keyword.id, :node_id => node.id)
-        keeps << new_node_keyword.id
-      end
-    }
-    node_keywords.each{|node_keyword|
-      node_keyword.destroy unless keeps.include? node_keyword.id
-    }
   end
 
   def get_root_name(test_plan_id)
