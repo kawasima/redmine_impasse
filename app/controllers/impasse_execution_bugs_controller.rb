@@ -27,7 +27,11 @@ class ImpasseExecutionBugsController < ImpasseAbstractController
 
   def new
     setting = Impasse::Setting.find_or_create_by_project_id(@project)
-    @issue.tracker_id = setting.bug_tracker_id unless setting.bug_tracker_id.nil?
+    unless setting.bug_tracker_id.nil?
+      unless @project.trackers.find_by_id(setting.bug_tracker_id).nil?
+        @issue.tracker_id = setting.bug_tracker_id
+      end
+    end
 
     respond_to do |format|
       format.html { render :partial => 'new' }
