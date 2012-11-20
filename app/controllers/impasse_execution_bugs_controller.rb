@@ -40,7 +40,7 @@ class ImpasseExecutionBugsController < ImpasseAbstractController
     if @issue.save
       execution_bug = Impasse::ExecutionBug.new(:execution_id => params[:execution_bug][:execution_id], :bug_id => @issue.id)
       execution_bug.save!
-
+      
       flash[:notice] = l(:notice_successful_create)
       respond_to do |format|
         format.json  { render :json => { :status => 'success', :issue_id => @issue.id } }
@@ -78,6 +78,11 @@ class ImpasseExecutionBugsController < ImpasseAbstractController
 
     if params[:issue].is_a?(Hash)
       @issue.safe_attributes = params[:issue]
+      if Redmine::VERSION::MAJOR == 1 and Redmine::VERSION::MINOR < 4
+        if User.current.allowed_to?(:add_issue_watchers, @project) && @issue.new_record?
+          @issue.watcher_user_ids = params[:issue]['watcher_user_ids']
+        end
+      end
     end
     @issue.start_date ||= Date.today
     @issue.author = User.current
