@@ -1,3 +1,4 @@
+<% self.class.send(:include, ImpasseSettingsHelper) -%>
 <%= error_messages_for 'setting' %>
 <div class="box tabular">
   <p><%=f.select :bug_tracker_id, @project.trackers.collect {|t| [t.name, t.id]}, :required => true %></p>
