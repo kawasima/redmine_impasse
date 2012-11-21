@@ -244,7 +244,7 @@ class ImpasseTestCaseController < ImpasseAbstractController
               new_test_case.save!
               test_case.test_steps.each do |ts|
                 attr = ts.attributes
-                attr[:test_case_id] = new_test_case._id
+                attr[:test_case_id] = new_test_case.id
                 Impasse::TestStep.create!(attr)
               end
             end
@@ -254,7 +254,8 @@ class ImpasseTestCaseController < ImpasseAbstractController
       end
       flash[:notice] = l(:notice_successful_create)
       redirect_to :action => :index, :project_id => dest_project
-    rescue
+    rescue => ex
+      logger.error(ex.message + "\n" + ex.backtrace.join("\n"))
       flash[:error] = l(:error_failed_to_update)
       redirect_to :action => :index, :project_id => @project
     end
