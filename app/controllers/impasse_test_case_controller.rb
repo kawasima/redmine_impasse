@@ -34,6 +34,7 @@ class ImpasseTestCaseController < ImpasseAbstractController
   
   def show
     @node, @test_case = get_node(params[:node])
+    @node_type_name = REL[@node.node_type_id]
     @setting = Impasse::Setting.find_by_project_id(@project) || Impasse::Setting.create(:project_id => @project.id)
 
     render :partial => 'show'

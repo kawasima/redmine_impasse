@@ -414,6 +414,12 @@ jQuery(document).ready(function ($) {
 		    ajax_error_handler(xhr, status, ex);
 		}
 	    });
+	})
+	.bind("select_node.jstree", function(e, data) {
+	    $("#test-case-view").block(impasse_loading_options());
+	    var node_id = data.rslt.obj.attr("id").replace("node_", "");
+	    location.replace("#testcase-" + node_id);
+	    show_test_case(node_id);
 	});
 
     $("#testcase-dialog .add-test-step").live("click", function() {
@@ -445,14 +451,6 @@ jQuery(document).ready(function ($) {
 	test_steps.append(test_step);
 
 	return false;
-    });
-
-    $("li[rel=test_case]", testcaseTree).live("click", function() {
-	$("#test-case-view").block(impasse_loading_options());
-	var $node = $(this);
-	var node_id = $(this).attr("id").replace("node_", "");
-	location.replace("#testcase-" + node_id);
-	show_test_case(node_id);
     });
 
     $(".splitcontentright .floating").floatmenu();

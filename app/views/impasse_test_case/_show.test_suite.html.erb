@@ -1,0 +1,6 @@
+  <% if @test_case.details? %>
+  <p><strong><%=l(:field_details)%></strong></p>
+  <div class="wiki">
+  <%= textilizable @test_case, :details %>
+  </div>
+  <% end %>
