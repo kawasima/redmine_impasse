@@ -1,4 +1,6 @@
 = impasse
 
-Impasse is test management tool like Testlink.
+Impasse is a test management tool like Testlink.
 
+* {Administration guide}[http://kawasima.github.com/redmine_impasse/administration_guide.html]
+* {User manual}[http://kawasima.github.com/redmine_impasse/user_manual.html]
