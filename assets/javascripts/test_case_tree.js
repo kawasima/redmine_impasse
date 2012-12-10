@@ -25,7 +25,11 @@ jQuery(document).ready(function ($) {
 	    remove: {
 		label: IMPASSE.label.buttonDelete,
 		icon:  IMPASSE.url.iconDelete,
-		action: function(node) { this.remove(node); }
+		action: function(node) {
+		    if (confirm(IMPASSE.label.textAreYouSure)) {
+			this.remove(node);
+		    }
+		}
 	    }
 	}
     };
