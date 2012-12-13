@@ -6,6 +6,13 @@
       'jquery.hotkeys.js', 'jquery.jstree.js', 'jquery.blockUI.js', 'jquery.noty.js',
       'impasse_util', 'test_case_tree', 'screenshots',
       :plugin => 'redmine_impasse') %>
+<style type="text/css">
+  .td_tr_plans {
+    border: 1px solid grey;
+    font-size: 9pt;
+    text-align: center;
+  }
+</style>
   <script type="text/javascript">
     jQuery.jstree._themes = '<%=Redmine::Utils::relative_url_root%>/plugin_assets/redmine_impasse/stylesheets/themes/';
     var IMPASSE = {
@@ -134,9 +141,18 @@
   <% plans, versions = Impasse::TestPlan.find_all_by_version(@project, params[:completed]) %>
     <% versions.each do |version| %>
   <h4><%=h version.name%></h4>
+  <table style="border-collapse: collapse; width: 100%;">
+    <tr><td class="td_tr_plans"></td><td class="td_tr_plans">Total</td><td class="td_tr_plans">OK</td><td class="td_tr_plans">Fail</td><td class="td_tr_plans">NoRun</td></tr>
       <% plans[version].each do |test_plan| %>
-  <%= link_to test_plan.name, :controller=>:impasse_test_plans, :action=>:show, :project_id=>@project, :id=>test_plan%><br/>
-      <% end %>
+    <tr>
+  <% total, ok, fail, undone = Impasse::TestPlan.get_statistics_for_plan(version.name,test_plan.name)  %>
+  <td class="td_tr_plans" style="text-align:left;"><%= link_to test_plan.name, :controller=>:impasse_test_plans, :action=>:show, :project_id=>@project, :id=>test_plan%></td><td class="td_tr_plans"><strong><%= total%></strong></td><td class="td_tr_plans"><%= ok%></td><td class="td_tr_plans"><%= fail%></td><td class="td_tr_plans"><%= undone%></td>
+    </tr>  
+    <% end %>
+    <% total, ok, fail, undone = Impasse::TestPlan.get_statistics(version.name)  %>
+    <tr><td class="td_tr_plans" style="text-align:left;"><strong>Total</strong></td><td class="td_tr_plans"><strong><%= total%></strong></td><td class="td_tr_plans"><strong><%= ok%></strong></td><td class="td_tr_plans"><strong><%= fail%></strong></td><td class="td_tr_plans"><strong><%= undone%></strong></td></tr>
+    </table>
+  <hr style="margin-top:10px;margin-bottom:10px;"/>
   <% end %>
   <% if Rails::VERSION::MAJOR < 3 %>
     <% form_tag({}, :method => :get) do %>
