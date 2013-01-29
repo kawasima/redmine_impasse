@@ -112,3 +112,13 @@ li[rel="test_case"][data-inactive="true"] a {
     top: 0;
     right: 0;
 }
+
+/*Added to address issue 172*/
+div.floating { 
+    top: 100px !important; 
+} 
+
+/*Added to address issue 172*/
+executions-view { 
+    top: 0 !important; 
+}
