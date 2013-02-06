@@ -9,7 +9,7 @@
 <style type="text/css">
   .td_tr_plans {
     border: 1px solid silver;
-    font-size: 9pt;
+    font-size: 8pt;
     text-align: center;
   }
 </style>
@@ -99,33 +99,6 @@
   </div>
 
   <div class="splitcontentright" style="position: relative">
-    <div id="copy-tests-view" class="box" style="display: none;">
-      <% if @allowed_projects.present? %>
-	<p><%=l(:notice_copy_cases_to_another_project)%></p>
-	<% if Rails::VERSION::MAJOR < 3 %>
-          <% labelled_tabular_form_for :copy_tests, @project, { :action => :copy_to_another_project } do |f| %>
-	    <p>
-	      <label for="dest_project_id"><%= l(:field_project) %></label>
-	      <%= select_tag('dest_project_id', project_tree_options_for_select(@allowed_projects, :selected => @target_project)) %>
-	    </p>
-	  <% end %>
-	<% else %>
-          <% output = labelled_tabular_form_for @project, :as => :copy_tests, :url => { :action => :copy_to_another_project } do |f| %>
-	    <p>
-	      <label for="dest_project_id"><%= l(:field_project) %></label>
-	      <%= select_tag('dest_project_id', project_tree_options_for_select(@allowed_projects, :selected => @target_project)) %>
-	    </p>
-	  <% end %>
-          <%= output %>
-        <% end %>
-	<p>
-	  <button id="button-copy-exec" type="button"><%= l(:button_copy)%></button>
-	  <button id="button-copy-cancel" type="button"><%= l(:button_cancel)%></button>
-	</p>
-      <% else %>
-	<p class="nodata"><%=l(:notice_no_projects_to_copy_cases)%></p>
-      <% end %>
-    </div>
     <div class="floating" style="width : 100%;">
       <div id="requirements-view" style="width: 100%;"></div>
       <div id="test-case-view" style="width: 100%;"></div>
@@ -140,17 +113,17 @@
   </div>
   <% plans, versions = Impasse::TestPlan.find_all_by_version(@project, params[:completed]) %>
     <% versions.each do |version| %>
-  <h4><%=h version.name%></h4>
+  <h4><%=h version.name%> - <%= link_to "Pokrytí", :controller=>:impasse_test_plans, :action=>:coverage, :project_id=>@project, :id=>version.id%></h4>
   <table style="border-collapse: collapse; width: 100%;">
-    <tr><td class="td_tr_plans"></td><td class="td_tr_plans">Total</td><td class="td_tr_plans">OK</td><td class="td_tr_plans">Fail</td><td class="td_tr_plans">NoRun</td></tr>
+    <tr><td class="td_tr_plans"></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/book-brown.png" alt="Total" /></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/tick.png" alt="OK" /></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/cross.png" alt="Failed" /></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/wall-brick.png" alt="In process" /></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/document-attribute-t.png" alt="No run" /></td></tr>
       <% plans[version].each do |test_plan| %>
     <tr>
-  <% total, ok, fail, undone = Impasse::TestPlan.get_statistics_for_plan(version.name,test_plan.name)  %>
-  <td class="td_tr_plans" style="text-align:left;"><%= link_to test_plan.name, :controller=>:impasse_test_plans, :action=>:show, :project_id=>@project, :id=>test_plan%></td><td class="td_tr_plans"><strong><%= total%></strong></td><td class="td_tr_plans"><%= ok%></td><td class="td_tr_plans"><%= fail%></td><td class="td_tr_plans"><%= undone%></td>
+  <% total, ok, fail, proc, undone = Impasse::TestPlan.get_statistics_for_plan(version.name,test_plan.name)  %>
+  <td class="td_tr_plans" style="text-align:left;"><%= link_to test_plan.name, :controller=>:impasse_test_plans, :action=>:show, :project_id=>@project, :id=>test_plan%></td><td class="td_tr_plans"><strong><%= total%></strong></td><td class="td_tr_plans"><%= ok%></td><td class="td_tr_plans"><%= fail%></td><td class="td_tr_plans"><%= proc%></td><td class="td_tr_plans"><%= undone%></td>
     </tr>  
     <% end %>
-    <% total, ok, fail, undone = Impasse::TestPlan.get_statistics(version.name)  %>
-    <tr><td class="td_tr_plans" style="text-align:left;"><strong>Total</strong></td><td class="td_tr_plans"><strong><%= total%></strong></td><td class="td_tr_plans"><strong><%= ok%></strong></td><td class="td_tr_plans"><strong><%= fail%></strong></td><td class="td_tr_plans"><strong><%= undone%></strong></td></tr>
+    <% total, ok, fail, proc, undone = Impasse::TestPlan.get_statistics(version.name)  %>
+    <tr><td class="td_tr_plans" style="text-align:left;"><strong>Total</strong></td><td class="td_tr_plans"><strong><%= total%></strong></td><td class="td_tr_plans"><strong><%= ok%></strong></td><td class="td_tr_plans"><strong><%= fail%></strong></td><td class="td_tr_plans"><strong><%= proc%></strong></td><td class="td_tr_plans"><strong><%= undone%></strong></tr>
     </table>
   <hr style="margin-top:10px;margin-bottom:10px;"/>
   <% end %>
