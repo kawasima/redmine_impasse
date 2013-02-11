@@ -27,8 +27,13 @@ function goBack()
 </table>
 <% content_for :sidebar do %>
   <h3><%=l(:label_test_plan_plural)%></h3>
-  <% plans, versions = Impasse::TestPlan.find_all_by_version(@project, params[:completed]) %>
+  <% plans, versions = Impasse::TestPlan.find_all_by_version(@project, true) %>
   <% versions.each do |version| %>
-    <%= link_to version.name, :controller=>:impasse_test_plans, :action=>:coverage, :project_id=>@project, :id=>version.id%><br />
+    <% if version.id == @version.to_i %>
+      <strong><%= version.name %></strong>
+    <% else %>
+      <%= link_to version.name, :controller=>:impasse_test_plans, :action=>:coverage, :project_id=>@project, :id=>version.id%>
+    <% end %>
+  <br />
   <% end %>
 <% end %>
