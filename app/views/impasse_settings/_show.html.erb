@@ -10,7 +10,7 @@
 
 %>
 <% if Rails::VERSION::MAJOR < 3 %>
-  <% labelled_tabular_form_for :setting, @impasse_setting,
+  <% labelled_form_for :setting, @impasse_setting,
      :url => {:controller => :impasse_settings, :action => :edit, :project_id => @project }, 
      :lang => current_language do |f| %>
   <%= render :partial => 'impasse_settings/form', :locals => {:f => f } %>
