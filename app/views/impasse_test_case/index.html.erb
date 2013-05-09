@@ -96,14 +96,14 @@
       <% if @allowed_projects.present? %>
 	<p><%=l(:notice_copy_cases_to_another_project)%></p>
 	<% if Rails::VERSION::MAJOR < 3 %>
-          <% labelled_tabular_form_for :copy_tests, @project, { :action => :copy_to_another_project } do |f| %>
+          <% labelled_form_for :copy_tests, @project, { :action => :copy_to_another_project } do |f| %>
 	    <p>
 	      <label for="dest_project_id"><%= l(:field_project) %></label>
 	      <%= select_tag('dest_project_id', project_tree_options_for_select(@allowed_projects, :selected => @target_project)) %>
 	    </p>
 	  <% end %>
 	<% else %>
-          <% output = labelled_tabular_form_for @project, :as => :copy_tests, :url => { :action => :copy_to_another_project } do |f| %>
+          <% output = labelled_form_for @project, :as => :copy_tests, :url => { :action => :copy_to_another_project } do |f| %>
 	    <p>
 	      <label for="dest_project_id"><%= l(:field_project) %></label>
 	      <%= select_tag('dest_project_id', project_tree_options_for_select(@allowed_projects, :selected => @target_project)) %>
