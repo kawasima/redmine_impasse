@@ -180,6 +180,13 @@ class ImpasseTestCaseController < ImpasseAbstractController
   end
 
   def copy_to_another_project
+
+	if params[:node_ids].nil?
+		flash[:error] = "Please select test case to copy"
+		redirect_to :action => :index, :project_id => @project
+		return
+	end
+
     copy_node_ids = []
     dest_project = Project.find(params[:dest_project_id])
     params[:node_ids].each do |id|

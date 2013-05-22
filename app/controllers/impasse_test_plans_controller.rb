@@ -21,10 +21,16 @@ class ImpasseTestPlansController < ImpasseAbstractController
 
   def new
     @test_plan = Impasse::TestPlan.new(params[:test_plan])
-    if request.post? and @test_plan.save
-      flash[:notice] = l(:notice_successful_create)
-      redirect_to :action => :tc_assign, :project_id => @project, :id => @test_plan
-    end
+	if request.post?
+		if params[:test_plan][:version_id].nil?
+			flash[:error] = "Please create a version"
+		else
+			if @test_plan.save
+				flash[:notice] = l(:notice_successful_create)
+				redirect_to :action => :tc_assign, :project_id => @project, :id => @test_plan
+			end
+		end
+	end
     @versions = @project.versions
   end
 
