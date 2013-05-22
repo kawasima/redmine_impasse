@@ -140,7 +140,7 @@
   </div>
   <% plans, versions = Impasse::TestPlan.find_all_by_version(@project, params[:completed]) %>
     <% versions.each do |version| %>
-  <h4><%=h version.name%> - <%= link_to "Pokrytí", :controller=>:impasse_test_plans, :action=>:coverage, :project_id=>@project, :id=>version.id%></h4>
+  <h4><%=h version.name%> - <%= link_to "PokrytÃ­", :controller=>:impasse_test_plans, :action=>:coverage, :project_id=>@project, :id=>version.id%></h4>
   <table style="border-collapse: collapse; width: 100%;">
     <tr><td class="td_tr_plans"></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/book-brown.png" alt="Total" /></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/tick.png" alt="OK" /></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/cross.png" alt="Failed" /></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/wall-brick.png" alt="In process" /></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/document-attribute-t.png" alt="No run" /></td></tr>
       <% plans[version].each do |test_plan| %>
