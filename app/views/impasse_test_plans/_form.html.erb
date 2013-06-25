@@ -5,7 +5,7 @@
   <p><%= form.text_area :notes, :rows => 10,
          :class => 'wiki-edit' %></p>
   <%= wikitoolbar_for 'test_plan_notes' %>
-  <p><%= form.select :version_id, @versions.collect{|v| [v.name, v.id]}, {:include_blank => false}, :required=>true%></p>
+  <p><%= form.select :version_id, @versions.collect{|v| [(@project != v.project ? v.project.name + ' - ' : '') + v.name, v.id]}, {:include_blank => false}, :required=>true%></p>
   <% @test_plan.custom_field_values.each do |value| %>
     <p><%= custom_field_tag_with_label :test_plan, value %></p>
   <% end %>
