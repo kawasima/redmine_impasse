@@ -25,7 +25,7 @@ class ImpasseTestPlansController < ImpasseAbstractController
       flash[:notice] = l(:notice_successful_create)
       redirect_to :action => :tc_assign, :project_id => @project, :id => @test_plan
     end
-    @versions = @project.versions
+    @versions = @project.shared_versions
   end
 
   def edit
@@ -35,7 +35,7 @@ class ImpasseTestPlansController < ImpasseAbstractController
       flash[:notice] = l(:notice_successful_update)
       redirect_to :action => :show, :project_id => @project, :id => @test_plan
     end
-    @versions = @project.versions
+    @versions = @project.shared_versions
   end
 
   def destroy
