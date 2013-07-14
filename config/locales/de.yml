@@ -17,6 +17,10 @@ de:
   label_statistics_assign: "Statistik"
   label_screenshots: "Screenshots"
 
+  label_test_plan_coverage:       "Coverage"
+  label_test_plan_coverage_cases: "Testcoverage"
+  label_test_plan_coverage_back:  "Zurück gehen"
+
   label_test_plan_new: "Testplan erstellen"
   label_test_case_new: "Testfall erstellen"
   label_test_case_edit: "Testfall bearbeiten"
