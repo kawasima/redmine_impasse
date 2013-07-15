@@ -1,5 +1,5 @@
 <% if Rails::VERSION::MAJOR < 3 %>
-  <% labelled_tabular_form_for :execution, @execution, {} do |f| %>
+  <% labelled_form_for :execution, @execution, {} do |f| %>
     <%= render :partial => "form", :locals => { :f => f } %>
   <% end %>
 <% else %>

@@ -8,7 +8,7 @@ class ImpasseTestPlansController < ImpasseAbstractController
   include CustomFieldsHelper
 
   menu_item :impasse
-  before_filter :find_project_by_project_id, :authorize
+  before_filter :find_project_by_project_id#, :authorize
 
   def index
     @test_plans_by_version, @versions = Impasse::TestPlan.find_all_by_version(@project, params[:completed])
@@ -21,10 +21,16 @@ class ImpasseTestPlansController < ImpasseAbstractController
 
   def new
     @test_plan = Impasse::TestPlan.new(params[:test_plan])
-    if request.post? and @test_plan.save
-      flash[:notice] = l(:notice_successful_create)
-      redirect_to :action => :tc_assign, :project_id => @project, :id => @test_plan
-    end
+	if request.post?
+		if params[:test_plan][:version_id].nil?
+			flash[:error] = "Please create a version"
+		else
+			if @test_plan.save
+				flash[:notice] = l(:notice_successful_create)
+				redirect_to :action => :tc_assign, :project_id => @project, :id => @test_plan
+			end
+		end
+	end
     @versions = @project.versions
   end
 
@@ -110,13 +116,13 @@ class ImpasseTestPlansController < ImpasseAbstractController
             test_case_ids << node.id
           end
 
-          for test_case_id in test_case_ids
-            test_plan_case =
-              Impasse::TestPlanCase.find_or_create_by_test_case_id_and_test_plan_id(
-                                                                                    :test_case_id => test_case_id,
-                                                                                    :test_plan_id => params[:test_plan_id],
-                                                                                    :node_order => 0)
-            new_cases += 1
+          for test_case_id in test_case_ids         
+              test_plan_case =
+                Impasse::TestPlanCase.find_or_create_by_test_case_id_and_test_plan_id(
+                                                                                      :test_case_id => test_case_id,
+                                                                                      :test_plan_id => params[:test_plan_id],
+                                                                                      :node_order => 0)
+              new_cases += 1
           end
         end
       end
@@ -133,5 +139,17 @@ class ImpasseTestPlansController < ImpasseAbstractController
   def autocomplete
     @users = @project.users.like(params[:q]).all(:limit => 100)
     render :layout => false
+  end
+  
+  def coverage
+    @versions = @project.versions
+    @version = params[:id]
+    render :layout => true
+  end
+  
+  def coverage_case
+    @versions = @project.versions
+    @case = params[:id]
+    render :layout => true
   end
 end

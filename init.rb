@@ -91,6 +91,6 @@ Redmine::Plugin.register :redmine_impasse do
     :html => {:class => 'custom_fields'}
   end
 
-  Mime::Type.register "application/json", :json_impasse
+  Mime::Type.register_alias "application/json", :json_impasse
 end
 
