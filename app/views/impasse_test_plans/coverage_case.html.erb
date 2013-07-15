@@ -10,8 +10,8 @@ function goBack()
     text-align: center;
   }
 </style>
-<h2>Pokrytí testu '<%= Impasse::TestPlan.find_test_case_name(@case) %>'</h2>
-<p><a href="javascript:goBack();" style="cursor: hand">&lt;&lt; Zpět</a></p>
+<h2><%=l(:label_test_plan_coverage_cases)%> '<%= Impasse::TestPlan.find_test_case_name(@case) %>'</h2>
+<p><a href="javascript:goBack();" style="cursor: hand">&lt;&lt; <%=l(:label_test_plan_coverage_back)%></a></p>
 <table style="border-collapse: collapse; width: 100%;">
   <tr><td class="td_tr_plans"></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/book-brown.png" alt="Total" /></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/tick.png" alt="OK" /></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/cross.png" alt="Failed" /></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/wall-brick.png" alt="In process" /></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/document-attribute-t.png" alt="No run" /></td></tr>
   <% plans = Impasse::TestPlan.find_testers(@case) %>

@@ -17,6 +17,10 @@ cs:
   label_statistics_assign: "Statistiky"
   label_screenshots: "Screenshoty"
 
+  label_test_plan_coverage:       "Pokrytí"
+  label_test_plan_coverage_cases: "Pokrytí testů"
+  label_test_plan_coverage_back:  "Zpět"
+
   label_test_plan_new: "Nový test plán"
   label_test_case_new: "Nový test case"
   label_test_case_edit: "Upravit test case"
