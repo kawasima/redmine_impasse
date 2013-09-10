@@ -473,7 +473,19 @@ jQuery(document).ready(function ($) {
 	    url: IMPASSE.url.requirementIssues,
 	    data: { },
 	    success: function(html) {
-		$("#requirements-view").html(html).show();
+					$("#requirements-view").html(html).show();
+					$("a.page,a.next").live("click", function(e) {
+			           var oldurl = $(this).attr("href");
+				       $("a.page").attr("href","#");
+				       $.ajax({
+					     url: oldurl,
+					     data: { },
+					     success: function(html) {
+					        $("#requirements-view").html(html).show();
+					        },
+					        error: ajax_error_handler
+				        });
+				    });	
 	    },
 	    error: ajax_error_handler
 	});
