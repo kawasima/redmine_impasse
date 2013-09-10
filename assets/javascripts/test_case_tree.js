@@ -474,9 +474,11 @@ jQuery(document).ready(function ($) {
 	    data: { },
 	    success: function(html) {
 					$("#requirements-view").html(html).show();
-					$("a.page,a.next").live("click", function(e) {
+					$("a.page,a.next, span.per-page a").live("click", function(e) {
 			           var oldurl = $(this).attr("href");
 				       $("a.page").attr("href","#");
+					   $("a.next").attr("href","#");
+					   $("span.per-page a").attr("href","#");
 				       $.ajax({
 					     url: oldurl,
 					     data: { },

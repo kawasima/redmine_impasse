@@ -112,3 +112,7 @@ li[rel="test_case"][data-inactive="true"] a {
     top: 0;
     right: 0;
 }
+
+#requirements-view {
+  overflow:auto;
+}
