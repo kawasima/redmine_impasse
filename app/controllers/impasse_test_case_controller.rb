@@ -129,9 +129,23 @@ class ImpasseTestCaseController < ImpasseAbstractController
           save_keywords(@node, params[:node_keywords])
 
           if @node.is_test_case? and params.include? :test_steps
-            @test_steps = params[:test_steps].collect{|i, ts| Impasse::TestStep.new(ts) }
+            #---------------------------------------------------------------------      
+            # BUGFIX: <sorting test steps> sort test steps list correctly
+            #   params[:test_steps] --> tmp_params (hash with key corresponding to the step number) --> tmp (sorted array)
+            #---------------------------------------------------------------------      
+            tmp_params = Hash.new
+            params[:test_steps].each do |k,v|
+                k = "#{v['step_number']}"
+                tmp_params[("#{k}").to_i] = v
+            end
+            tmp = tmp_params.sort
+            tmp_params.clear
+            @test_steps = tmp.collect{|i, ts| Impasse::TestStep.new(ts) }
             @test_steps.each{|ts| raise ActiveRecord::RecordInvalid.new(ts) unless ts.valid? }
             @test_case.test_steps.replace(@test_steps)
+            tmp.clear
+            #</sorting test steps>
+            #---------------------------------------------------------------------
           end
 
           if params[:attachments]
