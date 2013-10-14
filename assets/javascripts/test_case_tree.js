@@ -493,6 +493,29 @@ jQuery(document).ready(function ($) {
 	});
     });
 
+    $("#button-requirement-issues").bind("click", function(e) {
+	$.ajax({
+	    url: IMPASSE.url.requirementIssues,
+	    data: { },
+	    success: function(html) {
+					$("#requirements-view").html(html).show();
+					$("a.page").live("click", function(e) {
+			           var oldurl = $(this).attr("href");
+				       $("a.page").attr("href","#");
+				       $.ajax({
+					     url: oldurl,
+					     data: { },
+					     success: function(html) {
+					        $("#requirements-view").html(html).show();
+					        },
+					        error: ajax_error_handler
+				        });
+				    });	
+	    },
+	    error: ajax_error_handler
+	});
+    });
+
     $("#button-close-requirements").live("click", function(e) {
 	$("#requirements-view").hide();
 	e.preventDefault();
