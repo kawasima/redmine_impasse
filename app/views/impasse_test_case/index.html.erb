@@ -145,11 +145,11 @@
     <tr><td class="td_tr_plans"></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/book-brown.png" alt="Total" /></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/tick.png" alt="OK" /></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/cross.png" alt="Failed" /></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/wall-brick.png" alt="In process" /></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/document-attribute-t.png" alt="No run" /></td></tr>
       <% plans[version].each do |test_plan| %>
     <tr>
-  <% total, ok, fail, proc, undone = Impasse::TestPlan.get_statistics_for_plan(version.name,test_plan.name)  %>
+  <% total, ok, fail, proc, undone = Impasse::TestPlan.get_statistics_for_plan(version.name,test_plan.name, version.project_id)  %>
   <td class="td_tr_plans" style="text-align:left;"><%= link_to test_plan.name, :controller=>:impasse_test_plans, :action=>:show, :project_id=>@project, :id=>test_plan%></td><td class="td_tr_plans"><strong><%= total%></strong></td><td class="td_tr_plans"><%= ok%></td><td class="td_tr_plans"><%= fail%></td><td class="td_tr_plans"><%= proc%></td><td class="td_tr_plans"><%= undone%></td>
     </tr>  
     <% end %>
-    <% total, ok, fail, proc, undone = Impasse::TestPlan.get_statistics(version.name)  %>
+    <% total, ok, fail, proc, undone = Impasse::TestPlan.get_statistics(version.name, version.project_id)  %>
     <tr><td class="td_tr_plans" style="text-align:left;"><strong>Total</strong></td><td class="td_tr_plans"><strong><%= total%></strong></td><td class="td_tr_plans"><strong><%= ok%></strong></td><td class="td_tr_plans"><strong><%= fail%></strong></td><td class="td_tr_plans"><strong><%= proc%></strong></td><td class="td_tr_plans"><strong><%= undone%></strong></tr>
     </table>
   <hr style="margin-top:10px;margin-bottom:10px;"/>

@@ -14,21 +14,21 @@ module Impasse
 
     acts_as_customizable
 
-    def self.get_statistics_for_plan(version, plan)
-      total = count_by_sql ["SELECT count(status) FROM impasse_executions WHERE test_plan_case_id IN (SELECT id FROM impasse_test_plan_cases WHERE test_plan_id IN(SELECT id FROM impasse_test_plans WHERE name = '#{plan}' AND version_id = ((SELECT id FROM versions WHERE name = '#{version}'))))"]
-      ok = count_by_sql ["SELECT count(status) FROM impasse_executions WHERE status = '1' AND test_plan_case_id IN (SELECT id FROM impasse_test_plan_cases WHERE test_plan_id IN(SELECT id FROM impasse_test_plans WHERE name = '#{plan}' AND version_id = ((SELECT id FROM versions WHERE name = '#{version}'))))"]
-      nog = count_by_sql ["SELECT count(status) FROM impasse_executions WHERE status = '2' AND test_plan_case_id IN (SELECT id FROM impasse_test_plan_cases WHERE test_plan_id IN(SELECT id FROM impasse_test_plans WHERE name = '#{plan}' AND version_id = ((SELECT id FROM versions WHERE name = '#{version}'))))"]
-      block = count_by_sql ["SELECT count(status) FROM impasse_executions WHERE status = '3' AND test_plan_case_id IN (SELECT id FROM impasse_test_plan_cases WHERE test_plan_id IN(SELECT id FROM impasse_test_plans WHERE name = '#{plan}' AND version_id = ((SELECT id FROM versions WHERE name = '#{version}'))))"]
+    def self.get_statistics_for_plan(version, plan, project)
+      total = count_by_sql ["SELECT count(status) FROM impasse_executions WHERE test_plan_case_id IN (SELECT id FROM impasse_test_plan_cases WHERE test_plan_id IN(SELECT id FROM impasse_test_plans WHERE name = '#{plan}' AND version_id = ((SELECT id FROM versions WHERE name = '#{version}' AND project_id = #{project}))))"]
+      ok = count_by_sql ["SELECT count(status) FROM impasse_executions WHERE status = '1' AND test_plan_case_id IN (SELECT id FROM impasse_test_plan_cases WHERE test_plan_id IN(SELECT id FROM impasse_test_plans WHERE name = '#{plan}' AND version_id = ((SELECT id FROM versions WHERE name = '#{version}' AND project_id = #{project}))))"]
+      nog = count_by_sql ["SELECT count(status) FROM impasse_executions WHERE status = '2' AND test_plan_case_id IN (SELECT id FROM impasse_test_plan_cases WHERE test_plan_id IN(SELECT id FROM impasse_test_plans WHERE name = '#{plan}' AND version_id = ((SELECT id FROM versions WHERE name = '#{version}' AND project_id = #{project}))))"]
+      block = count_by_sql ["SELECT count(status) FROM impasse_executions WHERE status = '3' AND test_plan_case_id IN (SELECT id FROM impasse_test_plan_cases WHERE test_plan_id IN(SELECT id FROM impasse_test_plans WHERE name = '#{plan}' AND version_id = ((SELECT id FROM versions WHERE name = '#{version}' AND project_id = #{project}))))"]
       nok = nog+block
       undone = total-nok-ok
       [total,ok,nog,block,undone]
     end
     
-    def self.get_statistics(version)
-      total = count_by_sql ["SELECT count(status) FROM impasse_executions WHERE test_plan_case_id IN (SELECT id FROM impasse_test_plan_cases WHERE test_plan_id IN (SELECT id FROM impasse_test_plans WHERE version_id IN (SELECT id FROM versions WHERE name = '#{version}')))"]
-      ok = count_by_sql ["SELECT count(status) FROM impasse_executions WHERE status = '1' AND test_plan_case_id IN (SELECT id FROM impasse_test_plan_cases WHERE test_plan_id IN (SELECT id FROM impasse_test_plans WHERE version_id IN (SELECT id FROM versions WHERE name = '#{version}')))"]
-      nog = count_by_sql ["SELECT count(status) FROM impasse_executions WHERE status = '2' AND test_plan_case_id IN (SELECT id FROM impasse_test_plan_cases WHERE test_plan_id IN (SELECT id FROM impasse_test_plans WHERE version_id IN (SELECT id FROM versions WHERE name = '#{version}')))"]
-      block = count_by_sql ["SELECT count(status) FROM impasse_executions WHERE status = '3' AND test_plan_case_id IN (SELECT id FROM impasse_test_plan_cases WHERE test_plan_id IN (SELECT id FROM impasse_test_plans WHERE version_id IN (SELECT id FROM versions WHERE name = '#{version}')))"]
+    def self.get_statistics(version, project)
+      total = count_by_sql ["SELECT count(status) FROM impasse_executions WHERE test_plan_case_id IN (SELECT id FROM impasse_test_plan_cases WHERE test_plan_id IN (SELECT id FROM impasse_test_plans WHERE version_id IN (SELECT id FROM versions WHERE name = '#{version}' AND project_id = #{project})))"]
+      ok = count_by_sql ["SELECT count(status) FROM impasse_executions WHERE status = '1' AND test_plan_case_id IN (SELECT id FROM impasse_test_plan_cases WHERE test_plan_id IN (SELECT id FROM impasse_test_plans WHERE version_id IN (SELECT id FROM versions WHERE name = '#{version}' AND project_id = #{project})))"]
+      nog = count_by_sql ["SELECT count(status) FROM impasse_executions WHERE status = '2' AND test_plan_case_id IN (SELECT id FROM impasse_test_plan_cases WHERE test_plan_id IN (SELECT id FROM impasse_test_plans WHERE version_id IN (SELECT id FROM versions WHERE name = '#{version}' AND project_id = #{project})))"]
+      block = count_by_sql ["SELECT count(status) FROM impasse_executions WHERE status = '3' AND test_plan_case_id IN (SELECT id FROM impasse_test_plan_cases WHERE test_plan_id IN (SELECT id FROM impasse_test_plans WHERE version_id IN (SELECT id FROM versions WHERE name = '#{version}' AND project_id = #{project})))"]
       nok = nog+block
       undone = total-nok-ok
       [total,ok,nog,block,undone]
