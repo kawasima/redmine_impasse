@@ -51,9 +51,23 @@ class ImpasseTestCaseController < ImpasseAbstractController
           @node.save_keywords!(params[:node_keywords])
           @test_case.id = @node.id
           if @node.is_test_case? and params.include? :test_steps
-            @test_steps = params[:test_steps].collect{|i, ts| Impasse::TestStep.new(ts) }
+            #---------------------------------------------------------------------      
+            # BUGFIX: <sorting test steps> sort test steps list correctly
+            #   params[:test_steps] --> tmp_params (hash with key corresponding to the step number) --> tmp (sorted array)
+            #---------------------------------------------------------------------      
+            tmp_params = Hash.new
+            params[:test_steps].each do |k,v|
+              k = "#{v['step_number']}"
+              tmp_params[("#{k}").to_i] = v
+            end
+            tmp = tmp_params.sort
+            tmp_params.clear
+            @test_steps = tmp.collect{|i, ts| Impasse::TestStep.new(ts) }
             @test_steps.each{|ts| raise ActiveRecord::RecordInvalid.new(ts) unless ts.valid? }
             @test_case.test_steps.replace(@test_steps)
+            tmp.clear
+            #</sorting test steps>
+            #---------------------------------------------------------------------
           end
           @test_case.save!
           render :json => { :status => 'success', :message => l(:notice_successful_create), :ids => [@test_case.id] }
@@ -116,9 +130,23 @@ class ImpasseTestCaseController < ImpasseAbstractController
           @test_case.save!
 
           if @node.is_test_case? and params.include? :test_steps
-            @test_steps = params[:test_steps].collect{|i, ts| Impasse::TestStep.new(ts) }
+            #---------------------------------------------------------------------      
+            # BUGFIX: <sorting test steps> sort test steps list correctly
+            #   params[:test_steps] --> tmp_params (hash with key corresponding to the step number) --> tmp (sorted array)
+            #---------------------------------------------------------------------      
+            tmp_params = Hash.new
+            params[:test_steps].each do |k,v|
+                k = "#{v['step_number']}"
+                tmp_params[("#{k}").to_i] = v
+            end
+            tmp = tmp_params.sort
+            tmp_params.clear
+            @test_steps = tmp.collect{|i, ts| Impasse::TestStep.new(ts) }
             @test_steps.each{|ts| raise ActiveRecord::RecordInvalid.new(ts) unless ts.valid? }
             @test_case.test_steps.replace(@test_steps)
+            tmp.clear
+            #</sorting test steps>
+            #---------------------------------------------------------------------
           end
 
           if params[:attachments]
@@ -180,6 +208,13 @@ class ImpasseTestCaseController < ImpasseAbstractController
   end
 
   def copy_to_another_project
+
+	if params[:node_ids].nil?
+		flash[:error] = "Please select test case to copy"
+		redirect_to :action => :index, :project_id => @project
+		return
+	end
+
     copy_node_ids = []
     dest_project = Project.find(params[:dest_project_id])
     params[:node_ids].each do |id|
