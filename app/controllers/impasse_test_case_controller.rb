@@ -34,6 +34,7 @@ class ImpasseTestCaseController < ImpasseAbstractController
   
   def show
     @node, @test_case = get_node(params[:node])
+    @node_type_name = REL[@node.node_type_id]
     @setting = Impasse::Setting.find_by_project_id(@project) || Impasse::Setting.create(:project_id => @project.id)
 
     render :partial => 'show'
@@ -47,12 +48,26 @@ class ImpasseTestCaseController < ImpasseAbstractController
       begin
         ActiveRecord::Base.transaction do
           @node.save!
-          save_keywords(@node, params[:node_keywords])
+          @node.save_keywords!(params[:node_keywords])
           @test_case.id = @node.id
           if @node.is_test_case? and params.include? :test_steps
-            @test_steps = params[:test_steps].collect{|i, ts| Impasse::TestStep.new(ts) }
+            #---------------------------------------------------------------------      
+            # BUGFIX: <sorting test steps> sort test steps list correctly
+            #   params[:test_steps] --> tmp_params (hash with key corresponding to the step number) --> tmp (sorted array)
+            #---------------------------------------------------------------------      
+            tmp_params = Hash.new
+            params[:test_steps].each do |k,v|
+              k = "#{v['step_number']}"
+              tmp_params[("#{k}").to_i] = v
+            end
+            tmp = tmp_params.sort
+            tmp_params.clear
+            @test_steps = tmp.collect{|i, ts| Impasse::TestStep.new(ts) }
             @test_steps.each{|ts| raise ActiveRecord::RecordInvalid.new(ts) unless ts.valid? }
             @test_case.test_steps.replace(@test_steps)
+            tmp.clear
+            #</sorting test steps>
+            #---------------------------------------------------------------------
           end
           @test_case.save!
           render :json => { :status => 'success', :message => l(:notice_successful_create), :ids => [@test_case.id] }
@@ -111,13 +126,27 @@ class ImpasseTestCaseController < ImpasseAbstractController
       begin
         ActiveRecord::Base.transaction do
           save_node(@node)
+          @node.save_keywords!(params[:node_keywords])
           @test_case.save!
-          save_keywords(@node, params[:node_keywords])
 
           if @node.is_test_case? and params.include? :test_steps
-            @test_steps = params[:test_steps].collect{|i, ts| Impasse::TestStep.new(ts) }
+            #---------------------------------------------------------------------      
+            # BUGFIX: <sorting test steps> sort test steps list correctly
+            #   params[:test_steps] --> tmp_params (hash with key corresponding to the step number) --> tmp (sorted array)
+            #---------------------------------------------------------------------      
+            tmp_params = Hash.new
+            params[:test_steps].each do |k,v|
+                k = "#{v['step_number']}"
+                tmp_params[("#{k}").to_i] = v
+            end
+            tmp = tmp_params.sort
+            tmp_params.clear
+            @test_steps = tmp.collect{|i, ts| Impasse::TestStep.new(ts) }
             @test_steps.each{|ts| raise ActiveRecord::RecordInvalid.new(ts) unless ts.valid? }
             @test_case.test_steps.replace(@test_steps)
+            tmp.clear
+            #</sorting test steps>
+            #---------------------------------------------------------------------
           end
 
           if params[:attachments]
@@ -179,6 +208,13 @@ class ImpasseTestCaseController < ImpasseAbstractController
   end
 
   def copy_to_another_project
+
+	if params[:node_ids].nil?
+		flash[:error] = "Please select test case to copy"
+		redirect_to :action => :index, :project_id => @project
+		return
+	end
+
     copy_node_ids = []
     dest_project = Project.find(params[:dest_project_id])
     params[:node_ids].each do |id|
@@ -244,7 +280,7 @@ class ImpasseTestCaseController < ImpasseAbstractController
               new_test_case.save!
               test_case.test_steps.each do |ts|
                 attr = ts.attributes
-                attr[:test_case_id] = new_test_case._id
+                attr[:test_case_id] = new_test_case.id
                 Impasse::TestStep.create!(attr)
               end
             end
@@ -254,7 +290,8 @@ class ImpasseTestCaseController < ImpasseAbstractController
       end
       flash[:notice] = l(:notice_successful_create)
       redirect_to :action => :index, :project_id => dest_project
-    rescue
+    rescue => ex
+      logger.error(ex.message + "\n" + ex.backtrace.join("\n"))
       flash[:error] = l(:error_failed_to_update)
       redirect_to :action => :index, :project_id => @project
     end
@@ -296,34 +333,6 @@ class ImpasseTestCaseController < ImpasseAbstractController
 
     # If node has children, must update the node path of child nodes.
     node.update_child_nodes_path(old_node.path)
-  end
-
-  def save_keywords(node, keywords = "")
-    project_keywords = Impasse::Keyword.find_all_by_project_id(@project)
-    words = keywords.split(/\s*,\s*/)
-    words.delete_if {|word| word =~ /^\s*$/}.uniq!
-
-    node_keywords = node.node_keywords
-    keeps = []
-    words.each{|word|
-      keyword = project_keywords.detect {|k| k.keyword == word}
-      if keyword
-        node_keyword = node_keywords.detect {|nk| nk.keyword_id == keyword.id}
-        if node_keyword
-          keeps << node_keyword.id
-        else
-          new_node_keyword = Impasse::NodeKeyword.create(:keyword_id => keyword.id, :node_id => node.id)
-          keeps << new_node_keyword.id
-        end
-      else
-        new_keyword = Impasse::Keyword.create(:keyword => word, :project_id => @project.id)
-        new_node_keyword = Impasse::NodeKeyword.create(:keyword_id => new_keyword.id, :node_id => node.id)
-        keeps << new_node_keyword.id
-      end
-    }
-    node_keywords.each{|node_keyword|
-      node_keyword.destroy unless keeps.include? node_keyword.id
-    }
   end
 
   def get_root_name(test_plan_id)

@@ -21,18 +21,20 @@ namespace :redmine do
       project = ENV['project'].to_s.strip
       project = nil if project == '' || project == '*'
 
+      output_file = ENV['output'].to_s.strip || "export.xls"
+
       root = Impasse::Node.find_by_name_and_node_type_id(project, 1)
       nodes = Impasse::Node.find_children(root.id)
       nodes.unshift(root)
 
       tree, depth = convert(nodes)
       manager = FileSystemBookManager.new
-      book = manager.create("export.xlsx")
+      book = manager.create(output_file)
       sheet = book.getSheet("testcases");
 
       row = sheet.getRow(0)
-      row.cell(0).value = "No."
-      row.cell(1).value = "TestCases"
+      row.cell(0).value = "Id"
+      row.cell(1).value = "Node type id"
       row.cell(depth + 1).value = "Details"
       row.cell(depth + 2).value = "Summary"
       row.cell(depth + 3).value = "Preconditions"
@@ -51,24 +53,28 @@ namespace :redmine do
         sheet.cell("Details").value = test_suite.details
       elsif node[:node_type_id] == 3
         test_case = Impasse::TestCase.find(:first, :conditions => ["id=?", node[:id]], :include => :test_steps)
-        sheet.cell("Summary").value = test_case.summary
+        sheet.cell("Summary").value       = test_case.summary
         sheet.cell("Preconditions").value = test_case.preconditions
-        test_case.test_steps.each do |step, i|
+        test_case.test_steps.each_with_index do |step, i|
           sheet.nextRow unless i == 0
-          sheet.cell("Actions").value = step.actions
-          sheet.cell("Expected results").value = step.expected_results
+          sheet.cell("Actions").value          = step.actions
+          sheet.cell("Expected results").value = step.expected_results.to_s
         end
       end
       sheet.nextRow
     end
 
     def traverse(node, depth, sheet)
-      sheet.cell(1+depth).value = node[:name]
+      sheet.cell("Id").value           = node[:id]
+      sheet.cell("Node type id").value = node[:node_type_id]
+      sheet.cell(2+depth).value        = node[:name]
+      sheet.cell("Keywords").value     = node[:keywords]
       write_node(node, sheet)
       (node[:children] || []).each do |child|
         traverse(child, depth+1, sheet)
       end
     end
+
     def convert(nodes, prefix='node')
       level = 1
       node_map = {}
@@ -79,7 +85,8 @@ namespace :redmine do
           :id => node.id,
           :node_type_id => node.node_type_id,
           :name => node.name,
-          :children=>[]
+          :keywords => node.keywords.map{|keyword| keyword.keyword}.join(","),
+          :children=>[],
         }
         level = [node.level, level].max if node.respond_to? :level
         node_map[node.id] = jstree_node
@@ -91,7 +98,7 @@ namespace :redmine do
           jstree_nodes << jstree_node
         end
       end
-      [jstree_nodes, level-2]
+      [jstree_nodes, level]
     end
 
   end

@@ -1,9 +1,10 @@
+<% self.class.send(:include, ImpasseSettingsHelper) -%>
 <%= error_messages_for 'setting' %>
 <div class="box tabular">
   <p><%=f.select :bug_tracker_id, @project.trackers.collect {|t| [t.name, t.id]}, :required => true %></p>
   <p><%=f.select :requirement_tracker, @project.trackers.collect {|t| [t.name, t.id.to_s]}, {}, :multiple => true, :size => 5, :selected => @impasse_setting.requirement_tracker %></p>
 </div>
-<% unless @custom_fields_by_type.empty? %>
+<% unless @custom_fields_by_type.empty? and defined?(:impasse_custom_fields_tabs) %>
   <fieldset class="box" id="impasse_custom_fields"><legend><%=l(:label_custom_field_plural)%></legend>
     <% impasse_custom_fields_tabs.each do |tab| %>
       <% if @custom_fields_by_type[tab[:name]] %>

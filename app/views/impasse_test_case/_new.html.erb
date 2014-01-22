@@ -1,5 +1,5 @@
 <% if Rails::VERSION::MAJOR < 3 %>
-  <% labelled_tabular_form_for :test_case, @test_case, {} do |f| %>
+  <% labelled_form_for :test_case, @test_case, {} do |f| %>
     <%= render :partial => "form.#{params[:node_type]}", :locals => {:form => f} %>
     <button type="button" class="ui-button-submit"><%=l(:button_create)%></button>
     <button type="button" class="ui-button-cancel"><%=l(:button_cancel)%></button>
