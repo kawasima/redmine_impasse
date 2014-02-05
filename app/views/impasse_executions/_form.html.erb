@@ -4,22 +4,27 @@
 <%= hidden_field 'test_plan_case', 'test_plan_id', :value => @execution.test_plan_case.test_plan_id %>
 <%= hidden_field 'test_plan_case', 'test_case_id', :value => @execution.test_plan_case.test_case_id %>
 <div id="errorExplanation" style="display:none"></div>
+
 <div class="box tabular">
-  <p><%=label_tag :name, l(:field_name) %><%=h test_case.node.name %></p>
-  <div class="tabular-row"><%=label_tag :summary, l(:field_summary) %>
+  <p> <%=label_tag :name, l(:field_name) %><%=h test_case.node.name %></p>
+  <div class="tabular-row">
+  	<%=label_tag :summary, l(:field_summary) %>
     <div class="wiki"><%=textilizable test_case, :summary %></div>
   </div>
+  
   <% if !test_case.preconditions.nil? and test_case.preconditions.length > 0 %>
   <div class="tabular-row"><%=label_tag :preconditions, l(:field_preconditions)%>
     <div class="wiki"><%=textilizable test_case, :preconditions%></div>
   </div>
   <% end %>
+  
   <% if test_case.attachments.size > 0 %>
   <div class="tabular-row">
     <label><%=l(:label_screenshots)%></label>
     <%= render :partial => "impasse_screenshots/list", :locals => { :attachments => test_case.attachments } %>
   </div>
   <% end %>
+  
   <% if test_case.test_steps.size > 0 %>
   <div class="tabular-row">
     <label><%=l(:field_test_steps)%></label>
@@ -29,14 +34,27 @@
 	  <th>#</th>
 	  <th><%=l(:field_actions)%></th>
 	  <th><%=l(:field_expected_results)%></th>
+	  <th>Situação do passo</th>
 	</tr>
       </thead>
+      
       <tbody>
 	<% test_case.test_steps.each do |test_step| %>
 	<tr>
-	  <td><%= test_step.step_number %></td>
+	  <td><%= test_step.step_number %> - (<%= test_step.id %>)</td>
 	  <td class="wiki"><%=textilizable test_step.actions %></td>
 	  <td class="wiki"><%=textilizable test_step.expected_results %></td>
+	  <td> 
+	  	<div>	      
+	      <select name="status_step_execucao_<%= test_step.id %>">   	
+			<option value="<%=l(:label_execution_status_0)%>"><%=l(:label_execution_status_0)%></option>
+			<option value="<%=l(:label_execution_status_1)%>"><%=l(:label_execution_status_1)%></option>
+			<option value="<%=l(:label_execution_status_2)%>"><%=l(:label_execution_status_2)%></option>
+			<option value="<%=l(:label_execution_status_3)%>"><%=l(:label_execution_status_3)%></option>
+			<option value="<%=l(:label_execution_status_4)%>"><%=l(:label_execution_status_4)%></option>
+	      </select>
+    	</div>
+      </td>
 	</tr>
 	<% end %>
       </tbody>
@@ -45,7 +63,7 @@
   <% end %>
 
   <div class="tabular-row">
-    <label><%=l :field_execution_status %></label>
+    <label><%=l :field_execution_status %> </label>
     <div>
       <%= f.radio_button :status, "0" %><span class="label"><%=l(:label_execution_status_0) %></span>
       <%= f.radio_button :status, "1"%><span class="label"><%=l(:label_execution_status_1) %></span>
@@ -72,12 +90,14 @@
 	   <th><%=l(:label_execution_ts)%></th>
 	   <th><%=l(:label_executor)%></th>
 	   <th><%=l(:label_execution_status)%></th>
+	   <th>NOTA</th>
 	 </tr>
 	 <% @execution_histories.each do |history| %>
 	 <tr class="entry">
 	   <td class="center"><%= format_time(history.execution_ts) %></td>
 	   <td class="center"><%= history.executor.name %></td>
 	   <td class="center"><%= format_status(history.status) %></td>
+	   <td class="center"><%= history.notes %></td>
 	 </tr>
 	 <% end %>
        </table>
