@@ -35,8 +35,8 @@
 	<% test_case.test_steps.each do |test_step| %>
 	<tr>
 	  <td><%= test_step.step_number %></td>
-	  <td><%=h test_step.actions %></td>
-	  <td><%=h test_step.expected_results %></td>
+	  <td class="wiki"><%=textilizable test_step.actions %></td>
+	  <td class="wiki"><%=textilizable test_step.expected_results %></td>
 	</tr>
 	<% end %>
       </tbody>

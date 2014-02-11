@@ -54,7 +54,7 @@ Redmine::Plugin.register :redmine_impasse do
   name 'Redmine Impasse plugin'
   author 'kawasima'
   description 'Test management tool integrated Redmine'
-  version '1.2.2'
+  version '1.3.0'
   url 'http://unit8.net/redmine_impasse'
   author_url 'http://unit8.net/'
 
@@ -91,6 +91,6 @@ Redmine::Plugin.register :redmine_impasse do
     :html => {:class => 'custom_fields'}
   end
 
-  Mime::Type.register "application/json", :json_impasse
+  Mime::Type.register_alias "application/json", :json_impasse
 end
 
