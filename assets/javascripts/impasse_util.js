@@ -51,7 +51,7 @@ function show_notification_dialog(type, message) {
 	    var menuPosition = $this.offset().top;
 	    $this.css({zIndex: 10});
 
-	    $(window).scroll(function(e) {
+/* 	    $(window).scroll(function(e) {
 		var offsetTop = $(window).scrollTop() - menuPosition;
 		if(offsetTop > 0) {
 		    $this.css({position: "absolute", top: offsetTop});
@@ -59,7 +59,7 @@ function show_notification_dialog(type, message) {
 		    $this.css("position", "static");
 		}
 	    });
-	});
+ */	});
     }
 })(jQuery);
 

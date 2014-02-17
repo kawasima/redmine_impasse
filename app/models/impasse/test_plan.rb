@@ -14,6 +14,26 @@ module Impasse
 
     acts_as_customizable
 
+    def self.get_statistics_for_plan(version, plan, project)
+      total = count_by_sql ["SELECT count(status) FROM impasse_executions WHERE test_plan_case_id IN (SELECT id FROM impasse_test_plan_cases WHERE test_plan_id IN(SELECT id FROM impasse_test_plans WHERE name = '#{plan}' AND version_id = ((SELECT id FROM versions WHERE name = '#{version}' AND project_id = #{project}))))"]
+      ok = count_by_sql ["SELECT count(status) FROM impasse_executions WHERE status = '1' AND test_plan_case_id IN (SELECT id FROM impasse_test_plan_cases WHERE test_plan_id IN(SELECT id FROM impasse_test_plans WHERE name = '#{plan}' AND version_id = ((SELECT id FROM versions WHERE name = '#{version}' AND project_id = #{project}))))"]
+      nog = count_by_sql ["SELECT count(status) FROM impasse_executions WHERE status = '2' AND test_plan_case_id IN (SELECT id FROM impasse_test_plan_cases WHERE test_plan_id IN(SELECT id FROM impasse_test_plans WHERE name = '#{plan}' AND version_id = ((SELECT id FROM versions WHERE name = '#{version}' AND project_id = #{project}))))"]
+      block = count_by_sql ["SELECT count(status) FROM impasse_executions WHERE status = '3' AND test_plan_case_id IN (SELECT id FROM impasse_test_plan_cases WHERE test_plan_id IN(SELECT id FROM impasse_test_plans WHERE name = '#{plan}' AND version_id = ((SELECT id FROM versions WHERE name = '#{version}' AND project_id = #{project}))))"]
+      nok = nog+block
+      undone = total-nok-ok
+      [total,ok,nog,block,undone]
+    end
+    
+    def self.get_statistics(version, project)
+      total = count_by_sql ["SELECT count(status) FROM impasse_executions WHERE test_plan_case_id IN (SELECT id FROM impasse_test_plan_cases WHERE test_plan_id IN (SELECT id FROM impasse_test_plans WHERE version_id IN (SELECT id FROM versions WHERE name = '#{version}' AND project_id = #{project})))"]
+      ok = count_by_sql ["SELECT count(status) FROM impasse_executions WHERE status = '1' AND test_plan_case_id IN (SELECT id FROM impasse_test_plan_cases WHERE test_plan_id IN (SELECT id FROM impasse_test_plans WHERE version_id IN (SELECT id FROM versions WHERE name = '#{version}' AND project_id = #{project})))"]
+      nog = count_by_sql ["SELECT count(status) FROM impasse_executions WHERE status = '2' AND test_plan_case_id IN (SELECT id FROM impasse_test_plan_cases WHERE test_plan_id IN (SELECT id FROM impasse_test_plans WHERE version_id IN (SELECT id FROM versions WHERE name = '#{version}' AND project_id = #{project})))"]
+      block = count_by_sql ["SELECT count(status) FROM impasse_executions WHERE status = '3' AND test_plan_case_id IN (SELECT id FROM impasse_test_plan_cases WHERE test_plan_id IN (SELECT id FROM impasse_test_plans WHERE version_id IN (SELECT id FROM versions WHERE name = '#{version}' AND project_id = #{project})))"]
+      nok = nog+block
+      undone = total-nok-ok
+      [total,ok,nog,block,undone]
+    end
+    
     def self.find_all_by_version(project, show_closed = false)
       versions = project.shared_versions || []
       versions = versions.uniq.sort
@@ -57,6 +77,54 @@ END_OF_SQL
       def dup
         clone
       end
+    end
+    
+    def self.find_test_cases(version_id)
+      find_by_sql ["SELECT DISTINCT n.id AS id FROM impasse_test_plan_cases tpc	JOIN impasse_test_plans tp ON tp.id = tpc.test_plan_id JOIN impasse_test_cases tc ON tc.id = tpc.test_case_id JOIN impasse_nodes AS n ON n.id = tc.id WHERE tp.version_id = #{version_id} AND tc.active"]
+    end
+    
+    def self.find_test_case_name(test_case_id)
+      result = find_by_sql ["SELECT name FROM impasse_nodes WHERE id = #{test_case_id}"]
+      result[0].name 
+    end
+    
+    def self.find_version_name(version_id)
+      result = find_by_sql ["SELECT name FROM versions WHERE id = #{version_id}"]
+      result[0].name
+    end
+    
+    def self.find_test_coverage(version_id, test_case_id)
+      total = count_by_sql ["SELECT count(*) FROM impasse_executions e JOIN impasse_test_plan_cases tpc ON tpc.id = e.test_plan_case_id JOIN impasse_test_plans tp ON tp.id = tpc.test_plan_id JOIN impasse_test_cases tc ON tc.id = tpc.test_case_id WHERE tp.version_id = #{version_id} AND tc.id = #{test_case_id} AND tc.active"]
+      ok = count_by_sql ["SELECT count(*) FROM impasse_executions e JOIN impasse_test_plan_cases tpc ON tpc.id = e.test_plan_case_id JOIN impasse_test_plans tp ON tp.id = tpc.test_plan_id JOIN impasse_test_cases tc ON tc.id = tpc.test_case_id WHERE tp.version_id = #{version_id} AND tc.id = #{test_case_id} AND e.status = '1' AND tc.active"]
+      nog = count_by_sql ["SELECT count(*) FROM impasse_executions e JOIN impasse_test_plan_cases tpc ON tpc.id = e.test_plan_case_id JOIN impasse_test_plans tp ON tp.id = tpc.test_plan_id JOIN impasse_test_cases tc ON tc.id = tpc.test_case_id WHERE tp.version_id = #{version_id} AND tc.id = #{test_case_id} AND e.status = '2' AND tc.active"]
+      block = count_by_sql ["SELECT count(*) FROM impasse_executions e JOIN impasse_test_plan_cases tpc ON tpc.id = e.test_plan_case_id JOIN impasse_test_plans tp ON tp.id = tpc.test_plan_id JOIN impasse_test_cases tc ON tc.id = tpc.test_case_id WHERE tp.version_id = #{version_id} AND tc.id = #{test_case_id} AND e.status = '3' AND tc.active"]
+      nok = nog+block
+      undone = total-nok-ok
+      [total,ok,nog,block,undone]
+    end
+    
+    def self.find_test_coverage_stats(version_id)
+      total = count_by_sql ["SELECT count(*) FROM impasse_executions e JOIN impasse_test_plan_cases tpc ON tpc.id = e.test_plan_case_id JOIN impasse_test_plans tp ON tp.id = tpc.test_plan_id JOIN impasse_test_cases tc ON tc.id = tpc.test_case_id WHERE tp.version_id = #{version_id} AND tc.active"]
+      ok = count_by_sql ["SELECT count(*) FROM impasse_executions e JOIN impasse_test_plan_cases tpc ON tpc.id = e.test_plan_case_id JOIN impasse_test_plans tp ON tp.id = tpc.test_plan_id JOIN impasse_test_cases tc ON tc.id = tpc.test_case_id WHERE tp.version_id = #{version_id} AND e.status = '1' AND tc.active"]
+      nog = count_by_sql ["SELECT count(*) FROM impasse_executions e JOIN impasse_test_plan_cases tpc ON tpc.id = e.test_plan_case_id JOIN impasse_test_plans tp ON tp.id = tpc.test_plan_id JOIN impasse_test_cases tc ON tc.id = tpc.test_case_id WHERE tp.version_id = #{version_id} AND e.status = '2' AND tc.active"]
+      block = count_by_sql ["SELECT count(*) FROM impasse_executions e JOIN impasse_test_plan_cases tpc ON tpc.id = e.test_plan_case_id JOIN impasse_test_plans tp ON tp.id = tpc.test_plan_id JOIN impasse_test_cases tc ON tc.id = tpc.test_case_id WHERE tp.version_id = #{version_id} AND e.status = '3' AND tc.active"]
+      nok = nog+block
+      undone = total-nok-ok
+      [total,ok,nog,block,undone]
+    end
+    
+    def self.find_testers(case_id)
+      find_by_sql ["SELECT tp.id AS id, tp.name AS name, u.id AS u_id, u.firstname AS fname, u.lastname AS lname FROM users u JOIN impasse_executions e ON e.tester_id = u.id JOIN impasse_test_plan_cases tpc ON tpc.id = e.test_plan_case_id JOIN impasse_test_plans tp ON tp.id = tpc.test_plan_id JOIN impasse_test_cases tc ON tc.id = tpc.test_case_id JOIN impasse_nodes AS n ON n.id = tc.id WHERE tc.id = #{case_id} AND tc.active ORDER BY tp.name"]
+    end
+    
+    def self.find_case_coverage(case_id, plan_id)
+      total = count_by_sql ["SELECT count(e.status) FROM users u JOIN impasse_executions e ON e.tester_id = u.id JOIN impasse_test_plan_cases tpc ON tpc.id = e.test_plan_case_id JOIN impasse_test_plans tp ON tp.id = tpc.test_plan_id JOIN impasse_test_cases tc ON tc.id = tpc.test_case_id JOIN impasse_nodes AS n ON n.id = tc.id WHERE tc.id = #{case_id} AND tc.active AND tp.id = #{plan_id}"]
+      ok = count_by_sql ["SELECT count(e.status) FROM users u JOIN impasse_executions e ON e.tester_id = u.id JOIN impasse_test_plan_cases tpc ON tpc.id = e.test_plan_case_id JOIN impasse_test_plans tp ON tp.id = tpc.test_plan_id JOIN impasse_test_cases tc ON tc.id = tpc.test_case_id JOIN impasse_nodes AS n ON n.id = tc.id WHERE tc.id = #{case_id} AND tc.active AND tp.id = #{plan_id} AND e.status = '1'"]
+      nog = count_by_sql ["SELECT count(e.status) FROM users u JOIN impasse_executions e ON e.tester_id = u.id JOIN impasse_test_plan_cases tpc ON tpc.id = e.test_plan_case_id JOIN impasse_test_plans tp ON tp.id = tpc.test_plan_id JOIN impasse_test_cases tc ON tc.id = tpc.test_case_id JOIN impasse_nodes AS n ON n.id = tc.id WHERE tc.id = #{case_id} AND tc.active AND tp.id = #{plan_id} AND e.status = '2'"]
+      block = count_by_sql ["SELECT count(e.status) FROM users u JOIN impasse_executions e ON e.tester_id = u.id JOIN impasse_test_plan_cases tpc ON tpc.id = e.test_plan_case_id JOIN impasse_test_plans tp ON tp.id = tpc.test_plan_id JOIN impasse_test_cases tc ON tc.id = tpc.test_case_id JOIN impasse_nodes AS n ON n.id = tc.id WHERE tc.id = #{case_id} AND tc.active AND tp.id = #{plan_id} AND e.status = '3'"]
+      nok = nog+block
+      undone = total-nok-ok
+      [total,ok,nog,block,undone]
     end
   end
 end

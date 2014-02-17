@@ -473,7 +473,44 @@ jQuery(document).ready(function ($) {
 	    url: IMPASSE.url.requirementIssues,
 	    data: { },
 	    success: function(html) {
-		$("#requirements-view").html(html).show();
+					$("#requirements-view").html(html).show();
+					$("a.page,a.next, span.per-page a").live("click", function(e) {
+			           var oldurl = $(this).attr("href");
+				       $("a.page").attr("href","#");
+					   $("a.next").attr("href","#");
+					   $("span.per-page a").attr("href","#");
+				       $.ajax({
+					     url: oldurl,
+					     data: { },
+					     success: function(html) {
+					        $("#requirements-view").html(html).show();
+					        },
+					        error: ajax_error_handler
+				        });
+				    });	
+	    },
+	    error: ajax_error_handler
+	});
+    });
+
+    $("#button-requirement-issues").bind("click", function(e) {
+	$.ajax({
+	    url: IMPASSE.url.requirementIssues,
+	    data: { },
+	    success: function(html) {
+					$("#requirements-view").html(html).show();
+					$("a.page").live("click", function(e) {
+			           var oldurl = $(this).attr("href");
+				       $("a.page").attr("href","#");
+				       $.ajax({
+					     url: oldurl,
+					     data: { },
+					     success: function(html) {
+					        $("#requirements-view").html(html).show();
+					        },
+					        error: ajax_error_handler
+				        });
+				    });	
 	    },
 	    error: ajax_error_handler
 	});
