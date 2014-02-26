@@ -34,7 +34,6 @@
 	  <th>#</th>
 	  <th><%=l(:field_actions)%></th>
 	  <th><%=l(:field_expected_results)%></th>
-	  <th>Situação do passo</th>
 	</tr>
       </thead>
       
@@ -44,18 +43,50 @@
 	  <td><%= test_step.step_number %> - (<%= test_step.id %>)</td>
 	  <td class="wiki"><%=textilizable test_step.actions %></td>
 	  <td class="wiki"><%=textilizable test_step.expected_results %></td>
-	  <td> 
-	  	<div>	      
-	      <select name="status_step_execucao_<%= test_step.id %>">   	
-			<option value="<%=l(:label_execution_status_0)%>"><%=l(:label_execution_status_0)%></option>
+	</tr>  
+	<tr>
+	  <td align="left" width="100"> 
+	  	Situação do passo: <BR>
+	  		      
+	      <select name="status_step_execucao[<%= @execution.test_plan_case.test_case_id %>][<%= @execution.test_plan_case.test_plan_id%>][<%= test_step.id %>]" >   	
+			<option value="<%=l(:label_execution_status_0)%>_<%= test_step.id %>"><%=l(:label_execution_status_0)%></option>
 			<option value="<%=l(:label_execution_status_1)%>"><%=l(:label_execution_status_1)%></option>
 			<option value="<%=l(:label_execution_status_2)%>"><%=l(:label_execution_status_2)%></option>
 			<option value="<%=l(:label_execution_status_3)%>"><%=l(:label_execution_status_3)%></option>
 			<option value="<%=l(:label_execution_status_4)%>"><%=l(:label_execution_status_4)%></option>
 	      </select>
+	   </td>
+	    
+	      <td colspan="2">
+	      	<div>  
+	       		<fieldset class="collapsible collapsed">
+				     <legend onclick="toggleFieldset(this);">execution log passo </legend>
+				     <div style="display:none;">
+				       <table class="list">
+					 <tr>
+					   <th><%=l(:label_execution_ts)%></th>
+					   <th><%=l(:label_executor)%></th>
+					   <th><%=l(:label_execution_status)%></th>
+					   <th><%=l(:label_execution_status)%></th>
+					   <th>NOTA</th>
+					   <th>bug</th>
+					 </tr>
+					 <% @execution_histories.each do |history| %>
+					 <tr class="entry">
+					   <td class="center"><%= format_time(history.execution_ts) %></td>
+					   <td class="center"><%= history.executor.name %></td>
+					   <td class="center"><%= format_status(history.status) %></td>
+					   <td class="center"><%= history.notes %></td>
+					   <td class="center">bug #</td>
+					 </tr>
+					 <% end %>
+				       </table>
+				     </div>
+			  	</fieldset>
     	</div>
-      </td>
-	</tr>
+    	</td>
+      </tr>
+      
 	<% end %>
       </tbody>
     </table>

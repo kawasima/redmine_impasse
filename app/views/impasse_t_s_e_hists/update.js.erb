@@ -1,0 +1,12 @@
+<% if @impasse_t_s_e_hist.valid? %>
+  hideModal();
+  if ($(".impasse_t_s_e_hists.list").length) {
+    $("#<%= dom_id @impasse_t_s_e_hist %>").replaceWith("<%= j render(@impasse_t_s_e_hist) %>");
+    $("#<%= dom_id @impasse_t_s_e_hist %>").effect("highlight");
+  } else {
+    window.location.href = "<%= url_for @impasse_t_s_e_hist %>";
+  }
+<% else %>
+  $("#errorExplanation").remove();
+  $("<%= j error_messages_for("impasse_t_s_e_hist") %>").prependTo("#edit_impasse_t_s_e_hist_<%= @impasse_t_s_e_hist.id %>");
+<% end %>
