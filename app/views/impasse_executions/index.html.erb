@@ -1,11 +1,16 @@
 <% content_for :header_tags do %>
   <%= stylesheet_link_tag 'jquery-ui', 'jquery.noty.css', 'noty_theme_twitter.css', 'impasse', :plugin => 'redmine_impasse' %>
   <% heads_for_wiki_formatter %>
-  <%= javascript_include_tag('jquery', 'jquery-ui',
+  <%= javascript_include_tag('jquery', 
+  				 'jquery-ui',
 			     'jquery.hotkeys.js',
 			     'jquery.jstree.js',
-			     'jquery.blockUI.js', 'jquery.noty.js',
-			     'impasse_util', 'executions', 'screenshots',
+			     'jquery.blockUI.js', 
+			     'jquery.noty.js',
+			     'impasse_util', 
+			     'executions', 
+			     'screenshots',
+			     'impasse_execution_step',
 			     :plugin => 'redmine_impasse') %>
 
   <%= include_calendar_headers_tags %>
@@ -18,7 +23,9 @@
         executionsList: "<%= url_for :controller=>:impasse_executions, :action=>:get_list, :project_id=>@project, :test_plan_id=>@test_plan.id %>",
         executionsPut:  "<%=url_for :controller=>:impasse_executions, :action=>:put, :project_id=>@project %>",
         executionsDel:  "<%=url_for :controller=>:impasse_executions, :action=>:delete, :project_id=>@project %>",
-        executionBugsNew: "<%=url_for :controller=>:impasse_execution_bugs, :action=>:new, :project_id=>@project %>",
+        executionBugsNew: "<%=url_for :controller=>:impasse_execution_bugs, :action=>:new, :project_id=>@project, :test_plan_id=>@test_plan.id %>",
+        executionBugsNewStep: "<%=url_for :controller=>:impasse_t_s_e_hists, :action=>:new_step, :project_id=>@project, :test_plan_id=>@test_plan.id %>",
+        
         executionBugsCreate: "<%=url_for :controller=>:impasse_execution_bugs, :action=>:create %>",
         executionBugsCreate: "<%=url_for :controller=>:impasse_execution_bugs, :action=>:create %>",
         issue: "<%= Redmine::Utils::relative_url_root %>/issues",
@@ -69,9 +76,10 @@
 	    </td>
 	  </tr>
 	  <tr class="filter">
-	    <th><%= l(:field_status)%></th>
+	    <th><%= l(:field_status)%>asdasdadas</th>
 	    <td>
 	      <input type="checkbox" id="cb_execution_status_all" checked="checked" disabled="disabled"/>
+	      zxczxczxczcxz
 	      <label for="cb_execution_status_all">All</label>
 	      <%= check_box_tag 'execution_status', 0, false, :id=>'cb_execution_status_0'%>
 	      <label for="cb_execution_status_0"><%=l(:label_execution_status_0)%></label>
@@ -80,7 +88,7 @@
 	      <%= check_box_tag 'execution_status', 2, false, :id=>'cb_execution_status_2'%>
 	      <label for="cb_execution_status_2"><%=l(:label_execution_status_2)%></label>
 	      <%= check_box_tag 'execution_status', 3, false, :id=>'cb_execution_status_3'%>
-	      <label for="cb_execution_status_3"><%=l(:label_execution_status_3)%></label>
+	      <label for="cb_execution_status_3"><%=l(:label_execution_status_3)%> </label>
 	    </td>
 	  </tr>
 	  <tr class="filter">
@@ -104,7 +112,7 @@
     <div id="testplan-tree"></div>
   </div>
   <div class="splitcontentright" style="position: relative">
-    <div id="executions-view" style="width: 100%;">
+    <div id="executions-view" style="width: 100%; top: 0 !important;">
     </div>
   </div>
 </div>

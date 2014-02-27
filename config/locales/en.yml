@@ -16,6 +16,10 @@ en:
   label_execution: "Execution"
   label_statistics_assign: "Statistics"
   label_screenshots: "Screenshots"
+  
+  label_test_plan_coverage:       "Coverage"
+  label_test_plan_coverage_cases: "Coverage of Test"
+  label_test_plan_coverage_back:  "Go Back"
 
   label_test_plan_new: "New test plan"
   label_test_case_new: "New test case"

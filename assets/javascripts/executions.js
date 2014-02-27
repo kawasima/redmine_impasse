@@ -8,16 +8,20 @@ jQuery(document).ready(function ($) {
 		"test_plan_case[test_plan_id]": test_plan_id,
 		"test_plan_case[test_case_id]": node_id
 	    },
-	    success: function(html) {
-		$("#executions-view").html($(html));
-		$("span.label", $("#executions-view"))
-		    .css({cursor:'pointer'})
-		    .click(function(e) {
-			$(this).prev().attr("checked", "checked");
-		    });
-		$("#executions-view .screenshots").tinycarousel();
-
-	    },
+		success: function(html) {
+			var winHeight = $(window).height();
+			var $executionsView = $("#executions-view");
+			$executionsView.css({height:'', overflow:''}).html(html);
+			$("span.label", $executionsView)
+			.css({cursor:'pointer'})
+			.click(function(e) {
+				$(this).prev().attr("checked", "checked");
+			});
+			$(".screenshots", $executionsView).tinycarousel();
+			if ($executionsView.height() > winHeight) {
+				$executionsView.height(winHeight - 1).css('overflow', 'scroll');
+			}
+		},
 	    error: ajax_error_handler,
 	    complete: function() { $("#executions-view").unblock(); }
 	});
@@ -91,6 +95,7 @@ jQuery(document).ready(function ($) {
     $("#executions-view form").live("submit", function(e) {
 	var $this = $(this);
 	var post_save_function = function() { $.unblockUI() };
+	
 	var execution_status = $this.find(":radio[name='execution[status]']:checked").val();
 	if(execution_status == "2") { // NG
 	    post_save_function = function() {
@@ -99,7 +104,7 @@ jQuery(document).ready(function ($) {
 			    $.unblockUI();
 			    $("#issue-dialog").html(data).dialog({
 				modal:true,
-				minWidth: 800,
+				minWidth: 900,
 				zIndex: 25,
 				title: IMPASSE.label.issueNew
 			    });

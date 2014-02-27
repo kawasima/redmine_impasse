@@ -1,0 +1,25 @@
+<% html = capture do %>
+  <h3 class="title"><%= l(:label_impasse_t_s_e_hist) %></h3>
+
+  <div class="box">
+    <p>
+      <b>Test steps:</b>
+      <%= @impasse_t_s_e_hist.test_steps %>
+    </p>
+    <p>
+      <b>Execution histories:</b>
+      <%= @impasse_t_s_e_hist.execution_histories %>
+    </p>
+    <p>
+      <b>Executions:</b>
+      <%= @impasse_t_s_e_hist.executions %>
+    </p>
+  </div>
+
+  <p class="buttons">
+    <%= submit_tag l(:button_cancel), onclick: "hideModal(this);", type: "button" %>
+  </p>
+<% end %>
+
+$("#ajax-modal").html("<%= j html %>").find(".box").css("z-index", "auto");
+showModal("ajax-modal", "600px");

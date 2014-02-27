@@ -1,0 +1,14 @@
+<%= labelled_form_for(@impasse_t_s_e_hist, remote: true) do |f| %>
+  <%= error_messages_for "impasse_t_s_e_hist" %>
+
+  <div class="box tabular">
+    <p><%= f.text_field :test_steps %></p>
+    <p><%= f.text_field :execution_histories %></p>
+    <p><%= f.text_field :executions %></p>
+  </div>
+
+  <p class="buttons">
+    <%= f.submit %>
+    <%= submit_tag l(:button_cancel), onclick: "hideModal(this);", type: "button" %>
+  </p>
+<% end %>

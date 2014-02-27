@@ -1,0 +1,13 @@
+<% if @impasse_t_s_e_hist.valid? %>
+  hideModal();
+  if ($(".impasse_t_s_e_hists.list").length) {
+    $(".nodata").hide();
+    $(".impasse_t_s_e_hists").show();
+    $("<%= j render(@impasse_t_s_e_hist, formats: [:html]) %>").prependTo(".impasse_t_s_e_hists tbody").effect("highlight");
+  } else {
+    window.location.href = "<%= url_for @impasse_t_s_e_hist %>";
+  }
+<% else %>
+  $("#errorExplanation").remove();
+  $("<%= j error_messages_for("impasse_t_s_e_hist") %>").prependTo("#new_impasse_t_s_e_hist");
+<% end %>

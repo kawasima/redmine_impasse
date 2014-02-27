@@ -1,0 +1,81 @@
+  <table class="attributes">
+    <tr>
+      <th class="subject"><%=l(:field_name)%></th>
+      <td><%=h @node.name %></td>
+    </tr>
+    <% unless @node.keywords.empty? %>
+    <tr>
+      <th><%=l(:field_keywords)%></th>
+      <td><%=h @node.keywords.map{|k| k.keyword }.join(",") %></td>
+    </tr>
+    <% end %>
+    <% @test_case.visible_custom_field_values.each do |custom_value| %>
+      <% if !custom_value.value.blank? %>
+	<tr>
+	  <th><%=h custom_value.custom_field.name %></th>
+	  <td><%=h show_value(custom_value) %></td>
+	</tr>
+      <% end %>
+    <% end %>
+  </table>
+  
+  <% if @test_case.summary? %>
+  <p><strong><%=l(:field_summary)%></strong></p>
+  <div class="wiki">
+  <%= textilizable @test_case, :summary %>
+  </div>
+  <% end %>
+
+  <% if @test_case.preconditions? %>
+  <p><strong><%=l(:field_preconditions)%></strong></p>
+  <%= textilizable @test_case, :preconditions %>
+  <% end %>
+
+  <% if @test_case.attachments.size > 0 %>
+  <p><strong><%=l(:label_screenshots)%></strong></p>
+  <%= render :partial => "impasse_screenshots/list", :locals => { :attachments => @test_case.attachments } %>
+  <% end %>
+  <div class="clear"/>
+
+  <% if @test_case.test_steps.size > 0 %>    
+    <p><strong><%=l(:field_test_steps)%></strong></p>
+    <table class="list">
+      <tr>
+	<th>#</th>
+	<th><%=l(:field_actions)%></th>
+	<th><%=l(:field_expected_results)%></th>
+      </tr>
+      <% @test_case.test_steps.each do |test_step| %>
+	<tr class="<%= cycle 'odd', 'even'%>">
+	  <td class="id"><%= test_step.step_number %></td>
+	  <td><%=textilizable test_step.actions %></td>
+	  <td><%=textilizable test_step.expected_results %></td>
+	</tr>
+      <% end %>
+    </table>
+  <% end %>
+
+  <% if @setting.can_manage_requirements? and @test_case.requirement_issues.size > 0 %>
+    <p><strong><%=l(:label_requirement_plural) %></strong></p>
+    <table class="list issues">
+      <tr>
+	<th>#</th>
+	<th><%=l(:field_tracker)%></th>
+	<th><%=l(:field_subject)%></th>
+      </tr>
+      <tbody>
+	<% for requirement in @test_case.requirement_issues %>
+	  <% issue = requirement.issue %>
+	  <tr id="issue-<%= h(issue.id) %>" class="jstree-draggable <%= cycle('odd', 'even') %> <%= issue.css_classes %>">
+	    <td class="id">
+              <%= link_to h(issue.id), :controller => 'issues', :action => 'show', :id => issue %>
+	    </td>
+	    <td class="tracker"><%=h issue.tracker %></td>
+	    <td class="subject">
+              <%= link_to h(truncate(issue.subject, :length => 60)), :controller => 'issues', :action => 'show', :id => issue %> (<%=h issue.status %>)
+	    </td>
+	  </tr>
+	<% end %>
+      </tbody>      
+    </table>
+  <% end %>
