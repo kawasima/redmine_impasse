@@ -95,6 +95,7 @@ jQuery(document).ready(function ($) {
     $("#executions-view form").live("submit", function(e) {
 	var $this = $(this);
 	var post_save_function = function() { $.unblockUI() };
+	
 	var execution_status = $this.find(":radio[name='execution[status]']:checked").val();
 	if(execution_status == "2") { // NG
 	    post_save_function = function() {

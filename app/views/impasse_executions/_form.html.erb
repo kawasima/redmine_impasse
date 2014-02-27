@@ -46,10 +46,12 @@
 	</tr>  
 	<tr>
 	  <td align="left" width="100"> 
+	  	 
 	  	Situação do passo: <BR>
 	  		      
-	      <select name="status_step_execucao[<%= @execution.test_plan_case.test_case_id %>][<%= @execution.test_plan_case.test_plan_id%>][<%= test_step.id %>]" >   	
-			<option value="<%=l(:label_execution_status_0)%>_<%= test_step.id %>"><%=l(:label_execution_status_0)%></option>
+	      <select  class="status_step_execucao" codigo="<%= @execution.test_plan_case.test_case_id %>_<%= @execution.test_plan_case.test_plan_id%>_<%= test_step.id %>" name="status_step_execucao[<%= @execution.test_plan_case.test_case_id %>][<%= @execution.test_plan_case.test_plan_id%>][<%= test_step.id %>]"  >   	
+			<option selected="true" value=""></option>
+			<option value="<%=l(:label_execution_status_0)%>"><%=l(:label_execution_status_0)%></option>
 			<option value="<%=l(:label_execution_status_1)%>"><%=l(:label_execution_status_1)%></option>
 			<option value="<%=l(:label_execution_status_2)%>"><%=l(:label_execution_status_2)%></option>
 			<option value="<%=l(:label_execution_status_3)%>"><%=l(:label_execution_status_3)%></option>
@@ -60,7 +62,7 @@
 	      <td colspan="2">
 	      	<div>  
 	       		<fieldset class="collapsible collapsed">
-				     <legend onclick="toggleFieldset(this);">execution log passo </legend>
+				     <legend onclick="toggleFieldset(this);">execution log do passo </legend>
 				     <div style="display:none;">
 				       <table class="list">
 					 <tr>
@@ -77,7 +79,31 @@
 					   <td class="center"><%= history.executor.name %></td>
 					   <td class="center"><%= format_status(history.status) %></td>
 					   <td class="center"><%= history.notes %></td>
-					   <td class="center">bug #</td>
+					   <td class="center">
+					   		 <% unless @execution_histories.empty? %>
+								  <fieldset class="collapsible collapsed">
+								     <legend onclick="toggleFieldset(this);"><%= l(:label_execution_histories) %> Historico de bug</legend>
+								     <div style="display:none;">
+								       <table class="list">
+									 <tr>
+									   <th><%=l(:label_execution_ts)%>(bug)</th>
+									   <th><%=l(:label_executor)%>(executor)</th>
+									   <th><%=l(:label_execution_status)%>(status do bug)</th>
+									   <th>NOTA</th>
+									 </tr>
+									 <% @execution_histories.each do |history| %>
+									 <tr class="entry">
+									   <td class="center"><%= format_time(history.execution_ts) %></td>
+									   <td class="center"><%= history.executor.name %></td>
+									   <td class="center"><%= format_status(history.status) %></td>
+									   <td class="center"><%= history.notes %></td>
+									 </tr>
+									 <% end %>
+								       </table>
+								     </div>
+								  </fieldset>
+							<% end %>
+					   </td>
 					 </tr>
 					 <% end %>
 				       </table>

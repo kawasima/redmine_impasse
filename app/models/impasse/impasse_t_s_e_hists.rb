@@ -1,5 +1,5 @@
 module Impasse
-  class ImpasseTSEHist < ActiveRecord::Base
+  class ImpasseTSEHists < ActiveRecord::Base
     unloadable
   
     set_table_name "impasse_t_s_e_hists"

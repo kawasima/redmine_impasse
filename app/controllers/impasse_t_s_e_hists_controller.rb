@@ -1,12 +1,13 @@
 class ImpasseTSEHistsController < ApplicationController
   unloadable
+    
   
   respond_to :html, :json
-  respond_to :js, only: [:show, :new, :create, :edit, :update, :destroy]
+  #respond_to :js, only: [:show, :new_step, :create, :edit, :update, :destroy]
 
-  before_filter :find_project_by_project_id
-  before_filter :find_impasse_t_s_e_hist, only: [:show, :edit, :update, :destroy]
-  before_filter :authorize
+ # before_filter :find_project_by_project_id
+ # before_filter :find_impasse_t_s_e_hists, only: [:new_step,:show, :edit, :update, :destroy]
+ # before_filter :authorize
 
   include SortHelper
   helper :sort
@@ -16,6 +17,23 @@ class ImpasseTSEHistsController < ApplicationController
     sort_update %w( created_at updated_at)
     @impasse_t_s_e_hist_pages, @impasse_t_s_e_hists = paginate ImpasseTSEHist.where(project_id: @project).order(sort_clause)
     respond_with @impasse_t_s_e_hists
+  end
+
+ def new_step
+    setting = Impasse::Setting.find_or_create_by_project_id(@project)
+    
+    puts "<br><BR> new_step >>>> setting.bug_tracker_id => #{setting.bug_tracker_id}     params = #{params} post => #{@POST}"
+    
+    unless setting.bug_tracker_id.nil?
+      unless @project.trackers.find_by_id(setting.bug_tracker_id).nil?
+        @issue.tracker_id = setting.bug_tracker_id
+      end
+    end
+
+    respond_to do |format|
+      format.html { render :partial => 'new' }
+      format.js   { render :partial => 'issues/attributes' }
+    end
   end
 
   def show

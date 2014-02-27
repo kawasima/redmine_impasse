@@ -27,6 +27,9 @@ class ImpasseExecutionBugsController < ImpasseAbstractController
 
   def new
     setting = Impasse::Setting.find_or_create_by_project_id(@project)
+    
+    puts "<br><BR> setting.bug_tracker_id => #{setting.bug_tracker_id}     params = #{params} "
+    
     unless setting.bug_tracker_id.nil?
       unless @project.trackers.find_by_id(setting.bug_tracker_id).nil?
         @issue.tracker_id = setting.bug_tracker_id
@@ -38,7 +41,7 @@ class ImpasseExecutionBugsController < ImpasseAbstractController
       format.js   { render :partial => 'issues/attributes' }
     end
   end
-
+  
   def create
     call_hook(:controller_issues_new_before_save, { :params => params, :issue => @issue })
     if @issue.save
