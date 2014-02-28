@@ -51,6 +51,13 @@ object_to_prepare.to_prepare do
 end
 
 Redmine::Plugin.register :redmine_impasse do
+  menu :project_menu, :impasse_exec_step_hists, {controller: "impasse_exec_step_hists", action: "index" }, caption: :label_impasse_exec_step_hist_plural, param: :project_id
+ 
+ # project_module :impasse_exec_step_hists do
+ #   permission :view_impasse_exec_step_hists, impasse_exec_step_hists: [:new, :index, :show]
+ #   permission :manage_impasse_exec_step_hists, impasse_exec_step_hists: [:new, :create, :edit, :update, :destroy]
+ # end
+ 
   name 'Redmine Impasse plugin'
   author 'kawasima'
   description 'Test management tool integrated Redmine'
@@ -75,6 +82,7 @@ Redmine::Plugin.register :redmine_impasse do
       'impasse_execution_bugs' => [:new, :edit, :destroy, :upload_attachments],
       'impasse_requirement_issues' => [:add_test_case, :remove_test_case],
       'impasse_screenshots' => [:new, :destroy],
+      'impasse_exec_step_hists' => [:new, :create, :edit, :update, :destroy],
     }, :require => :member
 
     permission :setting_testcases, {

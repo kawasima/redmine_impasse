@@ -1,0 +1,13 @@
+<%= labelled_form_for(@impasse_exec_step_hist) do |f| %>
+  <%= error_messages_for "impasse_exec_step_hist" %>
+
+  <div class="box tabular">
+    <p><%= f.text_field :test_steps %></p>
+    <p><%= f.text_field :test_plan_case %></p>
+    <p><%= f.text_field :issue %></p>
+  </div>
+
+  <p class="buttons">
+    <%= f.submit %>
+  </p>
+<% end %>

@@ -16,3 +16,8 @@ RAILS_ENV=production rails g redmine:scaffold impasse impasse_test_step_executio
 
 RAILS_ENV=production rails g redmine:scaffold impasse impasse_t_s_e_hist  test_steps:belongs_to execution_histories:belongs_to executions:belongs_to
  
+ 
+ 
+RAILS_ENV=production rails g redmine:scaffold impasse impasse_exec_step_hists test_steps:belongs_to test_plan_case:belongs_to issue:belongs_to
+
+RAILS_ENV=production rails destroy redmine:scaffold impasse impasse_exec_step_hists

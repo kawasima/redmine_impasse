@@ -1,0 +1,31 @@
+<div class="contextual">
+  <%= link_to l(:label_impasse_exec_step_hist_new), new_impasse_exec_step_hist_path, class: "icon icon-add", remote: true %>
+</div>
+
+<h2><%= l(:label_impasse_exec_step_hist_plural) %></h2>
+
+<% if @impasse_exec_step_hists.empty? %>
+  <p class="nodata"><%= l(:label_no_data) %></p>
+<% end %>
+
+<div class="autoscroll">
+  <table class="list impasse_exec_step_hists" style="<%= "display: none;" if @impasse_exec_step_hists.empty? %>">
+    <thead>
+      <tr>
+        <%= sort_header_tag "test_steps", caption: l(:field_test_steps) %>
+        <%= sort_header_tag "test_plan_case", caption: l(:field_test_plan_case) %>
+        <%= sort_header_tag "issue", caption: l(:field_issue) %>
+        <%= sort_header_tag "created_at", caption: l(:field_created_on), default_order: "desc" %>
+        <%= sort_header_tag "updated_at", caption: l(:field_updated_on), default_order: "desc" %>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= render @impasse_exec_step_hists %>
+    </tbody>
+  </table>
+</div>
+
+<p class="pagination"><%= pagination_links_full @impasse_exec_step_hist_pages %></p>
+
+<% html_title l(:label_impasse_exec_step_hist_plural) -%>

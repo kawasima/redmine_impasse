@@ -1,0 +1,7 @@
+<% html = capture do %>
+  <h3 class="title"><%= l(:label_impasse_exec_step_hist_new) %></h3>
+  <%= render partial: "form" %>
+<% end %>
+
+$("#ajax-modal").html("<%= j html %>").find(".box").css("z-index", "auto");
+showModal("ajax-modal", "600px");
