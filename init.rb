@@ -82,7 +82,7 @@ Redmine::Plugin.register :redmine_impasse do
       'impasse_execution_bugs' => [:new, :edit, :destroy, :upload_attachments],
       'impasse_requirement_issues' => [:add_test_case, :remove_test_case],
       'impasse_screenshots' => [:new, :destroy],
-      'impasse_exec_step_hists' => [:new, :create, :edit, :update, :destroy],
+      'impasse_exec_step_hists' => [:new, :edit, :destroy, :upload_attachments],
     }, :require => :member
 
     permission :setting_testcases, {
