@@ -8,6 +8,8 @@ $(document).ready(function() {
 
 		var execution_status = $('#edit_execution').find(":radio[name='execution[status]']:checked").val();
 
+alert($this.attr('test_step_id'));
+
 		if ($(this).val() == 'Com falha') {// NG
 
 			post_save_function = function() {
@@ -17,15 +19,15 @@ $(document).ready(function() {
 						modal : true,
 						minWidth : 900,
 						zIndex : 25,
-						title : IMPASSE.label.issueNew
+						title : IMPASSE.label.issueNew+' Adicionando falha do passo test_step_id = '+$this.attr('test_step_id')
 					});
 				});
 			};
 		}
 		$.ajax({
-			url : IMPASSE.url.executionsPut,
+			url : IMPASSE.url.executionsStepPut,
 			type : 'POST',
-			data : $('#edit_execution').serialize() + "&record=true",
+			data : $('#edit_execution').serialize() + "&record=true" +"test_step_id="+$this.attr('test_step_id'),
 			success : function(data) {
 				show_notification_dialog(data.status, data.message);
 				if (data.errors) {
@@ -49,10 +51,46 @@ $(document).ready(function() {
 			}
 		});
 		jQuery.blockUI({
-			message : "<h1>Saving...</h1>"
+			message : "<h1>Salvando situação do passo</h1>"
 		});
 		return false;
-
 	});
 
+
+    $("#issue-dialog #button-create-issue").die('click').live("click", function(e) {
+	$.ajax({
+	    url: IMPASSE.url.executionBugsNewStepCreate,
+	    type: 'POST',
+	    data: $("#issue-form").serialize()
+		+ "&execution_bug[execution_id]="+ $("#executions-view :hidden#execution_id").val(),
+	    success: function(data) {
+		if (data.errors) {
+		    if ($("#issue-dialog .errorExplanation").size() == 0)
+			$("#issue-dialog").prepend($("<div/>").addClass("errorExplanation").attr("id", "errorExplanation"));
+		    var list = $("<ul/>");
+		    $.each(data.errors, function(i, msg) {
+			list.append($("<li/>").text(msg));
+		    });
+		    $("#issue-dialog #errorExplanation").html(list);
+		    return;
+		} else {
+		    $("#issue-dialog form#attachments-form :hidden[name=issue_id]").val(data.issue_id);
+		    $("#issue-dialog form#attachments-form").submit();
+		}
+		var bugs = $("#execution-bugs-list");
+		 
+		if (bugs)
+		    bugs.append(",");
+		bugs.append($("<a/>")
+			    .attr("href", IMPASSE.url.issue + "/" + data['issue_id'])
+			    .text("#" + data['issue_id']))
+		    .parents("p:first").show();
+		$("#issue-dialog").dialog("close");
+	    },
+	    complete: function() { $("#issue-dialog").unblock() }
+	});
+	$("#issue-dialog").block({message:"<h1>Salvando passo</h1>"})
+	return false;
+    });
+    
 });

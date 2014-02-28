@@ -28,7 +28,7 @@ class ImpasseExecStepHistsController < ImpasseAbstractController
   def new
     setting = Impasse::Setting.find_or_create_by_project_id(@project)
     
-    puts "<br><BR> setting.bug_tracker_id => #{setting.bug_tracker_id}     params = #{params} "
+  #  puts "<br><BR> setting.bug_tracker_id => #{setting.bug_tracker_id}     params = #{params} "
     
     unless setting.bug_tracker_id.nil?
       unless @project.trackers.find_by_id(setting.bug_tracker_id).nil?
@@ -42,10 +42,28 @@ class ImpasseExecStepHistsController < ImpasseAbstractController
     end
   end
   
+   def put
+      begin
+        ActiveRecord::Base.transaction do
+            @execution_history_step = Impasse::ExecStepHists.new(params[:execution])
+            @execution_history_step.save!
+         end
+      rescue
+         render :json => { :status => 'error', :message => l(:error_failed_to_update), :errors => @execution_history_step.errors.full_messages }
+      end
+    render :json => { :status => 'success', :message => l(:notice_successful_update) }
+     # if errors.empty?
+      # render :json => { :status => 'success', :message => l(:notice_successful_update) }
+    # else
+      # render :json => { :status => 'error', :message => l(:error_failed_to_update), :errors => errors }
+    # end
+  end
+  
   def create
     call_hook(:controller_issues_new_before_save, { :params => params, :issue => @issue })
     if @issue.save
-      execution_bug = Impasse::ExecutionBug.new(:execution_id => params[:execution_bug][:execution_id], :bug_id => @issue.id)
+      execution_bug = self.new(:execution_id => params[:execution_bug][:execution_id], :bug_id => @issue.id)
+      #execution_bug.methods
       execution_bug.save!
       
       flash[:notice] = l(:notice_successful_create)

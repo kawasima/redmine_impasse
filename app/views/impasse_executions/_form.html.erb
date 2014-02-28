@@ -47,9 +47,9 @@
 	<tr>
 	  <td align="left" width="100"> 
 	  	 
-	  	Situação do passo: <BR>
+	  	Situação do passo: <BR> 
 	  		      
-	      <select  class="status_step_execucao" codigo="<%= @execution.test_plan_case.test_case_id %>_<%= @execution.test_plan_case.test_plan_id%>_<%= test_step.id %>" name="status_step_execucao[<%= @execution.test_plan_case.test_case_id %>][<%= @execution.test_plan_case.test_plan_id%>][<%= test_step.id %>]"  >   	
+	      <select  class="status_step_execucao" test_step_id="<%= test_step.id %>" name="status_step_execucao[<%= test_step.id %>]"  >   	
 			<option selected="true" value=""></option>
 			<option value="<%=l(:label_execution_status_0)%>"><%=l(:label_execution_status_0)%></option>
 			<option value="<%=l(:label_execution_status_1)%>"><%=l(:label_execution_status_1)%></option>
