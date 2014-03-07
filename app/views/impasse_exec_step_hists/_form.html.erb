@@ -1,5 +1,8 @@
 <%= call_hook(:view_issues_form_details_top, { :issue => @issue, :form => f }) %>
 
+<%= text_field 'issue', 'test_steps_id', :value => '' %>
+<%= text_field 'issue', 'status', :value => '' %>
+
 <div id="issue_descr_fields" <%= 'style="display:none"' unless @issue.new_record? || @issue.errors.any? %>>
 <% if Rails::VERSION::MAJOR < 3 %>
   <p><%= f.select :tracker_id, @project.trackers.collect {|t| [t.name, t.id]}, :required => true %></p>
