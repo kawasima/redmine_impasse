@@ -39,7 +39,7 @@ $(document).ready(function() {
 					var test_case_id = $(":hidden[name='test_plan_case[test_case_id]']", $this).val();
 
 					$("#issue_test_steps_id").val($this.attr('test_step_id'));
-                    $("#issue_status").val($this.val());
+                    $("#issue_test_step_status").val($this.val());
 
 					$("#testplan-tree li#exec_" + test_case_id + " a  ins").css({
 						backgroundImage : "url(" + EXEC_ICONS[execution_status] + ")"
