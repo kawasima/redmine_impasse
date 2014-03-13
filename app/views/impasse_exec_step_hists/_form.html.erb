@@ -2,8 +2,9 @@
  
 <%= text_field 'issue', 'test_steps_id', :value => '' %>
 <%= text_field 'issue', 'test_step_status', :value => '' %>
-<%= text_field 'issue', 'test_plan_case', :value => params[:test_plan_case][:test_plan_id] %>
-<%= text_field 'issue', 'test_plan_id', :value =>  params.to_s %>
+<%= text_field 'issue', 'test_plan_id', :value =>  ''%>
+<%= text_field 'issue', 'test_case_id', :value => '' %>
+
 
 <div id="issue_descr_fields" <%= 'style="display:none"' unless @issue.new_record? || @issue.errors.any? %>>
 <% if Rails::VERSION::MAJOR < 3 %>

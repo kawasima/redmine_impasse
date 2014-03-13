@@ -8,6 +8,11 @@ $(document).ready(function() {
 
 		var execution_status = $('#edit_execution').find(":radio[name='execution[status]']:checked").val();
 
+        alert(" issue_test_steps_id => "+$this.attr('test_step_id'));
+        alert(" issue_test_step_status => "+$this.val());
+        alert(" issue_test_case_id => "+$this.attr('test_case_id'));
+        alert(" issue_test_plan_id => "+$this.attr('test_plan_id'));
+                           
 		if ($this.val() == 'Com falha') {// NG
 			//post_save_function = function() {
 			$.get(IMPASSE.url.executionBugsNewStep, {}, function(data) {
@@ -18,43 +23,48 @@ $(document).ready(function() {
 					zIndex : 25,
 					title : IMPASSE.label.issueNew + ' Adicionando falha do passo test_step_id = ' + $this.attr('test_step_id') + " situacao = " + $this.val()
 				});
+				
+		$("#issue_test_steps_id").val($this.attr('test_step_id'));
+        $("#issue_test_step_status").val($this.val());
+        $("#issue_test_case_id").val($this.attr('test_case_id'));
+        $("#issue_test_plan_id").val($this.attr('test_plan_id'));
 			});
 			//};
-		}
-		$.ajax({
-			url : IMPASSE.url.executionsStepPut,
-			type : 'POST',
-			data : $('#edit_execution').serialize(),
-			success : function(data) {
-				show_notification_dialog(data.status, data.message);
-				if (data.errors) {
-					var ul = $("<ul/>");
-					$.each(data.errors, function(i, error) {
-						ul.append($("<li/>").html(error));
-					});
-					$("#errorExplanation").html(ul).show();
-				} else {
-					$("#errorExplanation").hide();
-					post_save_function();
-					var test_case_id = $(":hidden[name='test_plan_case[test_case_id]']", $this).val();
-
-					$("#issue_test_steps_id").val($this.attr('test_step_id'));
-                    $("#issue_test_step_status").val($this.val());
-alert("test_case_id => "+test_case_id);
-					$("#testplan-tree li#exec_" + test_case_id + " a  ins").css({
-						backgroundImage : "url(" + EXEC_ICONS[execution_status] + ")"
-					});
+		}else {
+			$.ajax({
+				url : IMPASSE.url.executionsStepPut,
+				type : 'POST',
+				data : $('#edit_execution').serialize()+ "&test_step_id=" + $this.attr('test_step_id')+"&test_step_status="+ $this.val()+"&test_case_id="+$this.attr('test_case_id')+"&test_plan_id="+$this.attr('test_plan_id'),
+				success : function(data) {
+					show_notification_dialog(data.status, data.message);
+					if (data.errors) {
+						var ul = $("<ul/>");
+						$.each(data.errors, function(i, error) {
+							ul.append($("<li/>").html(error));
+						});
+						$("#errorExplanation").html(ul).show();
+					} else {
+						$("#errorExplanation").hide();
+						post_save_function();
+						var test_case_id = $(":hidden[name='test_plan_case[test_case_id]']", $this).val();
+		
+	
+						$("#testplan-tree li#exec_" + test_case_id + " a  ins").css({
+							backgroundImage : "url(" + EXEC_ICONS[execution_status] + ")"
+						});
+					}
+	
+				},
+				complete : function(data) {
+					jQuery.unblockUI();
+					//$("#issue-dialog").dialog("close");
 				}
-
-			},
-			complete : function(data) {
-				jQuery.unblockUI();
-				//$("#issue-dialog").dialog("close");
-			}
-		});
-		jQuery.blockUI({
-			message : "<h1>Salvando situação do passo</h1>"
-		});
+			});
+			jQuery.blockUI({
+				message : "<h1>Salvando situação do passo</h1>"
+			});
+		}
+		
 		return false;
 	});
 

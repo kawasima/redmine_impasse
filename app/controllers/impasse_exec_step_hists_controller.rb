@@ -2,9 +2,10 @@ class ImpasseExecStepHistsController < ImpasseAbstractController
   unloadable
 
   menu_item :impasse
-  before_filter :find_project_by_project_id, :only => [:new, :create]
-  before_filter :check_for_default_issue_status, :only => [:new, :create]
-  before_filter :build_new_issue_from_params, :only => [:new, :create]
+  before_filter :find_project_by_project_id, :only => [:new, :create,:execution_step,:create_step_bug]
+  #before_filter :find_project_by_project_id, :authorize
+  before_filter :check_for_default_issue_status, :only => [:new, :create, :create_step_bug]
+  before_filter :build_new_issue_from_params, :only => [:new, :create, :create_step_bug]
 
   helper :journals
   helper :projects
@@ -24,6 +25,10 @@ class ImpasseExecStepHistsController < ImpasseAbstractController
   helper :sort
   include SortHelper
   include IssuesHelper
+  
+  
+  include ActionView::Helpers::AssetTagHelper
+  
   def new
     setting = Impasse::Setting.find_or_create_by_project_id(@project)
 
@@ -95,72 +100,86 @@ class ImpasseExecStepHistsController < ImpasseAbstractController
   # end
   end
   
-# @execution_bug_step.methods => [:inspect, :to_s, :to_a, :to_ary, :frozen?, :==, :eql?, :hash, :[], :[]=, :at, :fetch, :first, :last, :concat, :<<, 
-# :push, :pop, :shift, :unshift, :insert, :each, :each_index, :reverse_each, :length, :size, :empty?, 
-# :find_index, :index, :rindex, :join, :reverse, :reverse!, 
-# :rotate, :rotate!, 
-# :sort, :sort!, :sort_by!,
- # :collect, :collect!, 
- # :map, :map!, 
- # :select, :select!,
-  # :keep_if, :values_at, 
-  # :delete, :delete_at, :delete_if, 
-  # :reject, :reject!, 
-  # :zip, :transpose, 
-  # :replace, :clear, :fill, :include?, :<=>, :slice, :slice!, :assoc, :rassoc, :+, :*, :-, :&, :|, :uniq, :uniq!, :compact, :compact!, :flatten, :flatten!, :count, 
-  # :shuffle!, :shuffle, :sample, :cycle, :permutation, :combination, :repeated_permutation, 
-  # :repeated_combination, :product, :take, :take_while, :drop, :drop_while, :pack, :extract_options!, 
-  # :blank?, :to_sentence, :to_formatted_s, :to_default_s, :to_xml, :uniq_by, :uniq_by!,
-   # :to_param, :to_query, :from, :to, :second, :third, :fourth, :fifth, :forty_two, :in_groups_of, :in_groups, :split,
-    # :append, :prepend, :to_json, :as_json, :encode_json, :dclone, :shelljoin, :to_csv, 
-    # :to_ber, :to_ber_sequence, :to_ber_set, :to_ber_appsequence, :to_ber_contextspecific, :to_ber_oid, :diff, :reverse_hash, 
-    # :replacenextlarger, :patch, :entries, :sort_by, :grep, :find, :detect, :find_all, :flat_map, :collect_concat, :inject, 
-    # :reduce, :partition, :group_by, :all?, :any?, :one?, :none?, :min, :max, :minmax, :min_by, :max_by, :minmax_by, 
-    # :member?, :each_with_index, :each_entry, :each_slice, :each_cons, :each_with_object, :chunk, :slice_before, :to_set, 
-    # :sum, :index_by, :many?, :exclude?, :psych_to_yaml, :to_yaml_properties, :to_yaml, :in?, :present?, :presence, 
-    # :acts_like?, :try, :html_safe?, :duplicable?, :`, :instance_values, :instance_variable_names, :with_options, 
-    # :require_or_load, :require_dependency, :require_association, :load_dependency, :load, :require, :unloadable, :nil?, :===, :=~, :!~, 
-    # :class, :singleton_class, :clone, :dup, :initialize_dup, :initialize_clone, :taint, :tainted?, :untaint, :untrust,
-     # :untrusted?, :trust, :freeze, :methods, :singleton_methods, :protected_methods, :private_methods,
-      # :public_methods, :instance_variables, :instance_variable_get, :instance_variable_set, 
-      # :instance_variable_defined?, :instance_of?, :kind_of?, :is_a?, :tap, :send, :public_send,
-       # :respond_to?, :respond_to_missing?, :extend, :display, :method, :public_method, 
-       # :define_singleton_method, :object_id, :to_enum, :enum_for, :gem, :silence_warnings,
-        # :enable_warnings, :with_warnings, :silence_stderr, :silence_stream, :suppress, :capture, :silence, :quietly,
-         # :class_eval, :debugger, :breakpoint, :suppress_warnings, :equal?, :!, :!=, :instance_eval, :instance_exec, :__send__, :__id__]
+   def put_step
+    begin
 
-  def create
-    call_hook(:controller_issues_new_before_save, { :params => params, :issue => @issue })
-        
-    if @issue.save
-      @execution_bug_step = Impasse::ExecStepHist.new
-    #  @execution_bug_step.attributes[:test_steps_id] = params[:execution_bug_step][:test_step_id]
-    #  @execution_bug_step.attributes[:project_id] = @project.id
-    #  @execution_bug_step.project
+      ActiveRecord::Base.transaction do
+        puts "metodo put_step
+
+          #{params[:execution]}
+
+          "
+
+        @execution_history_step = Impasse::ExecStepHists.new(params[:execution])
+
+        puts "execution_history_step put
+
+             #{@execution_history_step}
+
+          "
+        @execution_history_step.save!
+        render :json => { :status => 'success', :message => l(:notice_successful_update) }
+      end
+    rescue
+      puts "
+
+         erro #{@execution_history_step} #{@execution_history_step}
+
+         "
+      render :json => { :status => 'error', :message => l(:error_failed_to_update), :errors => @execution_history_step }
+    end
+  # render_error l(:error_no_default_issue_status)
+  # if errors.empty?
+  # render :json => { :status => 'success', :message => l(:notice_successful_update) }
+  # else
+  # render :json => { :status => 'error', :message => l(:error_failed_to_update), :errors => errors }
+  # end
+  end
+    
+   def execution_step
       
+      @execution_bug_step = Impasse::ExecStepHist.new   
       @execution_bug_step.project = @project
       @execution_bug_step.author = User.current
       @execution_bug_step.execution_ts = Time.now.to_datetime
       @execution_bug_step.executor_id = User.current.id
-      @execution_bug_step.test_steps_id = params[:execution_bug_step][:test_step_id]
-    #  @execution_bug_step.test_plan_case_id = 
+      @execution_bug_step.test_steps_id = params[:test_steps_id]  
+      @execution_bug_step.test_plan_case_id = params[:test_plan_case_id]
+      @execution_bug_step.test_plan_case_id = params[:test_case_id]
+      @execution_bug_step.status = params[:test_step_status]
+         
+    if  @execution_bug_step.save  
+      #execution_bug = self.new(:execution_id => params[:execution_bug][:execution_id], :bug_id => @issue.id)     
+      flash[:notice] = l(:notice_successful_create)
+      respond_to do |format|
+        format.json  { render :json => { :status => 'success'} }
+          #format.json  { render :json => { :status => 'success', :issue_id => @issue.id } }
+      end
+    else
+        respond_to do |format|
+        format.json { render :json => { :status => 'error', :errors => @execution_bug_step.errors.full_messages } }
+      end
+    end
+  end
+
+  def create_step_bug
+    call_hook(:controller_issues_new_before_save, { :params => params, :issue => @issue })
+        
+        
+        
+        
+    if @issue.save
+      @execution_bug_step = Impasse::ExecStepHist.new    
+      @execution_bug_step.project = @project
+      @execution_bug_step.author = User.current
+      @execution_bug_step.execution_ts = Time.now.to_datetime
+      @execution_bug_step.executor_id = User.current.id
+      @execution_bug_step.test_steps_id = params[:issue][:test_steps_id]  
+      @execution_bug_step.test_plan_case_id = params[:issue][:test_plan_case_id]
+      @execution_bug_step.test_plan_case_id = params[:issue][:test_case_id]
+      @execution_bug_step.status = params[:issue][:test_step_status]
+      @execution_bug_step.issue_id = @issue.id
       
- # @execution_bug_step.attributes =>
-      # {"id"=>nil,
-      # "test_steps_id"=>nil,
-      # "test_plan_case_id"=>nil,
-      # "issue_id"=>nil,
-      # "author_id"=>0,
-      # "project_id"=>0,
-      # "tester_id"=>nil,
-      # "build_id"=>nil,
-      # "expected_date"=>nil,
-      # "status"=>nil,
-      # "execution_ts"=>nil,
-      # "executor_id"=>nil,
-      # "created_at"=>nil,
-      # "updated_at"=>nil
-      #  
       puts "
       
       

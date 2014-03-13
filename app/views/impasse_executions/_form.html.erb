@@ -3,6 +3,8 @@
 <%= f.hidden_field :id %>
 <%= hidden_field 'test_plan_case', 'test_plan_id', :value => @execution.test_plan_case.test_plan_id %>
 <%= hidden_field 'test_plan_case', 'test_case_id', :value => @execution.test_plan_case.test_case_id %>
+<%= hidden_field 'test_plan_case', 'project_id', :value => @execution.test_plan_case.test_case_id %>
+
 <div id="errorExplanation" style="display:none"></div>
 
 <div class="box tabular">
@@ -48,8 +50,10 @@
 	  <td align="left" width="100"> 
 	  	 
 	  	Situação do passo: <BR> 
-	  		      
-	      <select  class="status_step_execucao" test_step_id="<%= test_step.id %>" name="status_step_execucao[<%= test_step.id %>]"  >   	
+	  		      <%= hidden_field 'test_plan_case', 'test_plan_id', :value => @execution.test_plan_case.test_plan_id %>
+<%= hidden_field 'test_plan_case', 'test_case_id', :value => @execution.test_plan_case.test_case_id %>
+
+	      <select  class="status_step_execucao" test_step_id="<%= test_step.id %>" test_plan_id="<%= @execution.test_plan_case.test_plan_id %>" test_case_id="<%= @execution.test_plan_case.test_case_id %>" name="status_step_execucao[<%= test_step.id %>]"  >   	
 			<option selected="true" value=""></option>
 			<option value="<%=l(:label_execution_status_0)%>"><%=l(:label_execution_status_0)%></option>
 			<option value="<%=l(:label_execution_status_1)%>"><%=l(:label_execution_status_1)%></option>
