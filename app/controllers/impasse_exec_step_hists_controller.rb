@@ -143,6 +143,7 @@ class ImpasseExecStepHistsController < ImpasseAbstractController
       @execution_bug_step.execution_ts = Time.now.to_datetime
       @execution_bug_step.executor_id = User.current.id
       @execution_bug_step.test_steps_id = params[:execution_bug_step][:test_step_id]
+    #  @execution_bug_step.test_plan_case_id = 
       
  # @execution_bug_step.attributes =>
       # {"id"=>nil,

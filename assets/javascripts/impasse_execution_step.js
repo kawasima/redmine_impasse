@@ -40,7 +40,7 @@ $(document).ready(function() {
 
 					$("#issue_test_steps_id").val($this.attr('test_step_id'));
                     $("#issue_test_step_status").val($this.val());
-
+alert("test_case_id => "+test_case_id);
 					$("#testplan-tree li#exec_" + test_case_id + " a  ins").css({
 						backgroundImage : "url(" + EXEC_ICONS[execution_status] + ")"
 					});
