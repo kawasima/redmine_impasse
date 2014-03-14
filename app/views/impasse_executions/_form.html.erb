@@ -64,9 +64,9 @@
 	   </td>
 	    
 	      <td colspan="2">
-	      	<div>  
+	      	<div id="issue-dialog-step-hist">  
 	       		<fieldset class="collapsible collapsed">
-				     <legend onclick="toggleFieldset(this);">execution log do passo </legend>
+				     <legend onclick="toggleFieldset(this);">execution log do passo <%= test_step.step_number %> - (<%= test_step.id %>)</legend>
 				     <div style="display:none;">
 				       <table class="list">
 					 <tr>

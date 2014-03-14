@@ -8,16 +8,16 @@ $(document).ready(function() {
 
 		var execution_status = $('#edit_execution').find(":radio[name='execution[status]']:checked").val();
 
-        alert(" issue_test_steps_id => "+$this.attr('test_step_id'));
-        alert(" issue_test_step_status => "+$this.val());
-        alert(" issue_test_case_id => "+$this.attr('test_case_id'));
-        alert(" issue_test_plan_id => "+$this.attr('test_plan_id'));
+   //     alert(" issue_test_steps_id => "+$this.attr('test_step_id'));
+   //     alert(" issue_test_step_status => "+$this.val());
+   //     alert(" issue_test_case_id => "+$this.attr('test_case_id'));
+   //     alert(" issue_test_plan_id => "+$this.attr('test_plan_id'));
                            
 		if ($this.val() == 'Com falha') {// NG
 			//post_save_function = function() {
 			$.get(IMPASSE.url.executionBugsNewStep, {}, function(data) {
 				jQuery.unblockUI();
-				$("#issue-dialog").html(data).dialog({
+				$("#issue-dialog-step").html(data).dialog({
 					modal : true,
 					minWidth : 900,
 					zIndex : 25,
@@ -68,39 +68,42 @@ $(document).ready(function() {
 		return false;
 	});
 
-	$("#issue-dialog #button-create-issue").die('click').live("click", function(e) {
+	$("#issue-dialog-step #button-create-issue-step").die('click').live("click", function(e) {
+		alert("estou aqui #issue-dialog-step #button-create-issue-step");
 		$.ajax({
 			url : IMPASSE.url.executionBugsNewStepCreate,
 			type : 'POST',
 			data : $("#issue-form").serialize() + "&execution_bug_step[test_step_id]=" + $("#executions-view :hidden#execution_id").val(),
 			success : function(data) {
 				if (data.errors) {
-					if ($("#issue-dialog .errorExplanation").size() == 0)
-						$("#issue-dialog").prepend($("<div/>").addClass("errorExplanation").attr("id", "errorExplanation"));
+					if ($("#issue-dialog-step .errorExplanation").size() == 0)
+						$("#issue-dialog-step").prepend($("<div/>").addClass("errorExplanation").attr("id", "errorExplanation"));
 					var list = $("<ul/>");
 					$.each(data.errors, function(i, msg) {
 						list.append($("<li/>").text(msg));
 					});
-					$("#issue-dialog #errorExplanation").html(list);
+					$("#issue-dialog-step #errorExplanation").html(list);
 					return;
 				} else {
-					$("#issue-dialog form#attachments-form :hidden[name=issue_id]").val(data.issue_id);
-					$("#issue-dialog form#attachments-form").submit();
+					$("#issue-dialog-step form#attachments-form :hidden[name=issue_id]").val(data.issue_id);
+					$("#issue-dialog-step form#attachments-form").submit();
 				}
 				var bugs = $("#execution-bugs-list");
 
 				if (bugs)
 					bugs.append(",");
 				bugs.append($("<a/>").attr("href", IMPASSE.url.issue + "/" + data['issue_id']).text("#" + data['issue_id'])).parents("p:first").show();
-				$("#issue-dialog").dialog("close");
+				$("#issue-dialog-step").dialog("close");
 			},
-			complete : function() {
-				$("#issue-dialog").unblock()
-			}
+			complete : function(data) {
+					jQuery.unblockUI();
+					//$("#issue-dialog").dialog("close");
+				}
 		});
-		$("#issue-dialog").block({
-			message : "<h1>Salvando passo</h1>"
-		})
+		//$("#issue-dialog").block({message : "<h1>Salvando passo</h1>"});
+		jQuery.blockUI({
+				message : "<h1>Salvando situação do passo</h1>"
+			});
 		return false;
 	});
 

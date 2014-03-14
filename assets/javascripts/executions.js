@@ -140,7 +140,7 @@ jQuery(document).ready(function ($) {
 	return false;
     });
 
-    $("#issue-dialog #button-create-issue").live("click", function(e) {
+    $("#issue-dialog #button-create-issue").die('click').live("click", function(e) {
 	$.ajax({
 	    url: IMPASSE.url.executionBugsCreate,
 	    type: 'POST',

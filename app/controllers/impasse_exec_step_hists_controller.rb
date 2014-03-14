@@ -165,10 +165,7 @@ class ImpasseExecStepHistsController < ImpasseAbstractController
   def create_step_bug
     call_hook(:controller_issues_new_before_save, { :params => params, :issue => @issue })
         
-        
-        
-        
-    if @issue.save
+     if @issue.save
       @execution_bug_step = Impasse::ExecStepHist.new    
       @execution_bug_step.project = @project
       @execution_bug_step.author = User.current
@@ -179,23 +176,10 @@ class ImpasseExecStepHistsController < ImpasseAbstractController
       @execution_bug_step.test_plan_case_id = params[:issue][:test_case_id]
       @execution_bug_step.status = params[:issue][:test_step_status]
       @execution_bug_step.issue_id = @issue.id
-      
-      puts "
-      
-      
-      @project ===> #{@project.id}
-      
-      sdasdasdadadas 
-      
-      @execution_bug_step.attributes => #{@execution_bug_step.attributes} 
-          
-      "
-      #execution_bug = self.new(:execution_id => params[:execution_bug][:execution_id], :bug_id => @issue.id)
-     
+        
      @execution_bug_step.save!
-      #execution_bug = self.new(:execution_id => params[:execution_bug][:execution_id], :bug_id => @issue.id)
-     
-           flash[:notice] = l(:notice_successful_create)
+         
+     flash[:notice] = l(:notice_successful_create)
       respond_to do |format|
         format.json  { render :json => { :status => 'success', :issue_id => @issue.id } }
       end
@@ -251,4 +235,9 @@ class ImpasseExecStepHistsController < ImpasseAbstractController
     return false
     end
   end
+  
+  def step_list
+    
+  end
+  
 end
