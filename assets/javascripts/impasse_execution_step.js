@@ -60,11 +60,24 @@ $(document).ready(function() {
 					//$("#issue-dialog").dialog("close");
 				}
 			});
+			
+			//div-step-hist_<%= test_step.id %>			
+			$.get(IMPASSE.url.executionStepHistList, {}, function(data) {
+				jQuery.unblockUI();
+				alert("CArregar o resultado em "+"#div-step-hist_"+$this.attr('test_step_id'));
+				$("#div-step-hist_"+$this.attr('test_step_id')).html(data).dialog({
+					modal : true,
+					minWidth : 900,
+					zIndex : 25,
+					title : ' Carregando historico do passo :: = ' + $this.attr('test_step_id') + " situacao = " + $this.val()
+				});
+			});
+			
 			jQuery.blockUI({
 				message : "<h1>Salvando situação do passo</h1>"
 			});
-		}
-		
+			
+		}//else {
 		return false;
 	});
 

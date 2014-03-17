@@ -238,6 +238,51 @@ class ImpasseExecStepHistsController < ImpasseAbstractController
   
   def step_list
     
+    # puts "
+#     
+    # @execution_bug_step => exites?  #{@execution_bug_step}
+#     
+    # "
+    
+      sql = <<-END_OF_SQL
+             SELECT impasse_exec_step_hists.*, issues.author_id as bug_author_id, 
+              issues.subject as bug_subject, 
+              issues.description as bug_description,
+              issues.status_id, 
+              issue_statuses.name as bug_status,
+              users.firstname as executor_firstname
+              FROM impasse_exec_step_hists 
+              left join issues on issues.id = impasse_exec_step_hists.issue_id
+              left join issue_statuses on issues.status_id = issue_statuses.id
+              left join users on users.id = impasse_exec_step_hists.executor_id
+                AND impasse_exec_step_hists.test_steps_id=? 
+                and impasse_exec_step_hists.project_id = ?
+              END_OF_SQL
+
+    @executionsHist= Impasse::ExecStepHist.find_by_sql [sql, 1,1]
+    # puts "<BR><BR> @executionsHist.size =====> #{@executionsHist.size}<BR><BR>
+#     
+    # executionsHist ===> #{@executionsHist}
+    # "
+    
+   # if executionsHist.size == 0
+      #@execution = Impasse::Execution.new
+      #@execution.test_plan_case = Impasse::TestPlanCase.find_by_test_plan_id_and_test_case_id(params[:test_plan_case][:test_plan_id], params[:test_plan_case][:test_case_id])
+   # else
+      #@execution = executions.first
+   # end
+    #@execution.attributes = params[:execution]
+    #@execution_histories = Impasse::ExecutionHistory.find(:all, :joins => [ :executor ], :conditions => ["test_plan_case_id=?", @execution.test_plan_case_id], :order => "execution_ts DESC")
+   # if request.post? and @execution.save
+   #   render :json => {'status'=>true}
+   # else
+   #   render :partial=>'edit'
+   # end
+     # flash[:notice] = l(:notice_successful_create)
+      # respond_to do |format|
+        # format.json  { render :json => { :status => 'success', :issue_id => 11111 } }
+      # end
+        render :partial=>'list_edit'
   end
   
 end

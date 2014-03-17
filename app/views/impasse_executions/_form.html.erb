@@ -50,8 +50,8 @@
 	  <td align="left" width="100"> 
 	  	 
 	  	Situação do passo: <BR> 
-	  		      <%= hidden_field 'test_plan_case', 'test_plan_id', :value => @execution.test_plan_case.test_plan_id %>
-<%= hidden_field 'test_plan_case', 'test_case_id', :value => @execution.test_plan_case.test_case_id %>
+	  	   <%= hidden_field 'test_plan_case', 'test_plan_id', :value => @execution.test_plan_case.test_plan_id %>
+		   <%= hidden_field 'test_plan_case', 'test_case_id', :value => @execution.test_plan_case.test_case_id %>
 
 	      <select  class="status_step_execucao" test_step_id="<%= test_step.id %>" test_plan_id="<%= @execution.test_plan_case.test_plan_id %>" test_case_id="<%= @execution.test_plan_case.test_case_id %>" name="status_step_execucao[<%= test_step.id %>]"  >   	
 			<option selected="true" value=""></option>
@@ -62,55 +62,12 @@
 			<option value="<%=l(:label_execution_status_4)%>"><%=l(:label_execution_status_4)%></option>
 	      </select>
 	   </td>
-	    
+	    <div id="div-step-hist_<%= test_step.id %>">colocar aqui</div>
 	      <td colspan="2">
-	      	<div id="issue-dialog-step-hist">  
 	       		<fieldset class="collapsible collapsed">
-				     <legend onclick="toggleFieldset(this);">execution log do passo <%= test_step.step_number %> - (<%= test_step.id %>)</legend>
-				     <div style="display:none;">
-				       <table class="list">
-					 <tr>
-					   <th><%=l(:label_execution_ts)%></th>
-					   <th><%=l(:label_executor)%></th>
-					   <th><%=l(:label_execution_status)%></th>
-					   <th><%=l(:label_execution_status)%></th>
-					   <th>NOTA</th>
-					   <th>bug</th>
-					 </tr>
-					 <% @execution_histories.each do |history| %>
-					 <tr class="entry">
-					   <td class="center"><%= format_time(history.execution_ts) %></td>
-					   <td class="center"><%= history.executor.name %></td>
-					   <td class="center"><%= format_status(history.status) %></td>
-					   <td class="center"><%= history.notes %></td>
-					   <td class="center">
-					   		 <% unless @execution_histories.empty? %>
-								  <fieldset class="collapsible collapsed">
-								     <legend onclick="toggleFieldset(this);"><%= l(:label_execution_histories) %> Historico de bug</legend>
-								     <div style="display:none;">
-								       <table class="list">
-									 <tr>
-									   <th><%=l(:label_execution_ts)%>(bug)</th>
-									   <th><%=l(:label_executor)%>(executor)</th>
-									   <th><%=l(:label_execution_status)%>(status do bug)</th>
-									   <th>NOTA</th>
-									 </tr>
-									 <% @execution_histories.each do |history| %>
-									 <tr class="entry">
-									   <td class="center"><%= format_time(history.execution_ts) %></td>
-									   <td class="center"><%= history.executor.name %></td>
-									   <td class="center"><%= format_status(history.status) %></td>
-									   <td class="center"><%= history.notes %></td>
-									 </tr>
-									 <% end %>
-								       </table>
-								     </div>
-								  </fieldset>
-							<% end %>
-					   </td>
-					 </tr>
-					 <% end %>
-				       </table>
+				     <legend id="step-legend-click_<%= test_step.id %>" onclick="toggleFieldset(this);" >execution log do passo <%= test_step.step_number %> - (<%= test_step.id %>)</legend>
+				     <div style="display:true;">
+				     	<div id="issue-dialog-step-hist_<%= test_step.id %>" > </div>
 				     </div>
 			  	</fieldset>
     	</div>
