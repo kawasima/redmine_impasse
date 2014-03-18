@@ -7,11 +7,6 @@ $(document).ready(function() {
 
 		var execution_status = $('#edit_execution').find(":radio[name='execution[status]']:checked").val();
 
-		//     alert(" issue_test_steps_id => "+$this.attr('test_step_id'));
-		//     alert(" issue_test_step_status => "+$this.val());
-		//     alert(" issue_test_case_id => "+$this.attr('test_case_id'));
-		//     alert(" issue_test_plan_id => "+$this.attr('test_plan_id'));
-
 		if ($this.val() == 'Com falha') {// NG
 			//post_save_function = function() {
 			$.get(IMPASSE.url.executionBugsNewStep, {}, function(data) {
@@ -30,6 +25,7 @@ $(document).ready(function() {
 			});
 			//};
 		} else {
+		//	alert("&test_step_id=" + $this.attr('test_step_id') + "&test_step_status=" + $this.val() + "&test_case_id=" + $this.attr('test_case_id') + "&test_plan_id=" + $this.attr('test_plan_id'));
 			$.ajax({
 				url : IMPASSE.url.executionsStepPut,
 				type : 'POST',
@@ -56,11 +52,25 @@ $(document).ready(function() {
 				complete : function(data) {
 					jQuery.unblockUI();
 					//$("#issue-dialog").dialog("close");
+					$.get(IMPASSE.url.executionStepHistList + "&test_step_id=" + $this.attr('test_step_id') + "&test_step_status=" + $this.val() + "&test_case_id=" + $this.attr('test_case_id') + "&test_plan_id=" + $this.attr('test_plan_id'), {}, function(data) {
+						jQuery.unblockUI();
+						//	alert("CArregar o resultado em " + "#div-step-hist_" + $this.attr('test_step_id'));
+
+						$("#div-step-hist_" + $this.attr('test_step_id')).html(data);
+
+						// $("#div-step-hist_"+$this.attr('test_step_id')).html(data).dialog({
+						// modal : true,
+						// minWidth : 900,
+						// zIndex : 25,
+						// title : ' Carregando historico do passo :: = ' + $this.attr('test_step_id') + " situacao = " + $this.val()
+						// });
+
+					});
 				}
 			});
 
 			//div-step-hist_<%= test_step.id %>
-			$.get(IMPASSE.url.executionStepHistList, {}, function(data) {
+			$.get(IMPASSE.url.executionStepHistList + "&test_step_id=" + $this.attr('test_step_id') + "&test_step_status=" + $this.val() + "&test_case_id=" + $this.attr('test_case_id') + "&test_plan_id=" + $this.attr('test_plan_id'), {}, function(data) {
 				jQuery.unblockUI();
 				//	alert("CArregar o resultado em " + "#div-step-hist_" + $this.attr('test_step_id'));
 
