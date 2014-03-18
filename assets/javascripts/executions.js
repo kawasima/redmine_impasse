@@ -7,10 +7,10 @@ jQuery(document).ready(function($) {
 	function sobrescrever_show_test_case() {
 		$(".list select ").each(function() {
 			var step_id = $(this).attr('test_step_id');
-			$.get(IMPASSE.url.executionStepHistList+"&test_case_id="+$(this).attr('test_case_id')+"&test_step_id="+step_id, {}, function(data) {
+			$.get(IMPASSE.url.executionStepHistList + "&test_case_id=" + $(this).attr('test_case_id') + "&test_step_id=" + step_id, {}, function(data) {
 				jQuery.unblockUI();
-			//	alert("CArregar o resultado em qweqweqweqe" + "#div-step-hist_" +step_id);
-				$("#div-step-hist_" +step_id).html(data);
+				//	alert("CArregar o resultado em qweqweqweqe" + "#div-step-hist_" +step_id);
+				$("#div-step-hist_" + step_id).html(data);
 			});
 		});
 

@@ -116,12 +116,12 @@ $(document).ready(function() {
 					jQuery.unblockUI();
 					$("#div-step-hist_" + $("#issue_test_steps_id").val()).html(data);
 				});
-				$("#issue-dialog").dialog("close");
-			/*
-				$("#ajax-indicator").style({
-								display : 'none'
-							})*/
-			
+				//	$("#issue-dialog").dialog("close");
+				/*
+				 $("#ajax-indicator").style({
+				 display : 'none'
+				 })*/
+
 			}
 		});
 		//$("#issue-dialog").block({message : "<h1>Salvando passo</h1>"});
