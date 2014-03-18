@@ -1,5 +1,4 @@
 $(document).ready(function() {
-
 	$('.status_step_execucao').die('change').live('change', function() {
 		var $this = $(this);
 		var post_save_function = function() {
@@ -8,11 +7,11 @@ $(document).ready(function() {
 
 		var execution_status = $('#edit_execution').find(":radio[name='execution[status]']:checked").val();
 
-   //     alert(" issue_test_steps_id => "+$this.attr('test_step_id'));
-   //     alert(" issue_test_step_status => "+$this.val());
-   //     alert(" issue_test_case_id => "+$this.attr('test_case_id'));
-   //     alert(" issue_test_plan_id => "+$this.attr('test_plan_id'));
-                           
+		//     alert(" issue_test_steps_id => "+$this.attr('test_step_id'));
+		//     alert(" issue_test_step_status => "+$this.val());
+		//     alert(" issue_test_case_id => "+$this.attr('test_case_id'));
+		//     alert(" issue_test_plan_id => "+$this.attr('test_plan_id'));
+
 		if ($this.val() == 'Com falha') {// NG
 			//post_save_function = function() {
 			$.get(IMPASSE.url.executionBugsNewStep, {}, function(data) {
@@ -23,18 +22,18 @@ $(document).ready(function() {
 					zIndex : 25,
 					title : IMPASSE.label.issueNew + ' Adicionando falha do passo test_step_id = ' + $this.attr('test_step_id') + " situacao = " + $this.val()
 				});
-				
-		$("#issue_test_steps_id").val($this.attr('test_step_id'));
-        $("#issue_test_step_status").val($this.val());
-        $("#issue_test_case_id").val($this.attr('test_case_id'));
-        $("#issue_test_plan_id").val($this.attr('test_plan_id'));
+
+				$("#issue_test_steps_id").val($this.attr('test_step_id'));
+				$("#issue_test_step_status").val($this.val());
+				$("#issue_test_case_id").val($this.attr('test_case_id'));
+				$("#issue_test_plan_id").val($this.attr('test_plan_id'));
 			});
 			//};
-		}else {
+		} else {
 			$.ajax({
 				url : IMPASSE.url.executionsStepPut,
 				type : 'POST',
-				data : $('#edit_execution').serialize()+ "&test_step_id=" + $this.attr('test_step_id')+"&test_step_status="+ $this.val()+"&test_case_id="+$this.attr('test_case_id')+"&test_plan_id="+$this.attr('test_plan_id'),
+				data : $('#edit_execution').serialize() + "&test_step_id=" + $this.attr('test_step_id') + "&test_step_status=" + $this.val() + "&test_case_id=" + $this.attr('test_case_id') + "&test_plan_id=" + $this.attr('test_plan_id'),
 				success : function(data) {
 					show_notification_dialog(data.status, data.message);
 					if (data.errors) {
@@ -47,42 +46,45 @@ $(document).ready(function() {
 						$("#errorExplanation").hide();
 						post_save_function();
 						var test_case_id = $(":hidden[name='test_plan_case[test_case_id]']", $this).val();
-		
-	
+
 						$("#testplan-tree li#exec_" + test_case_id + " a  ins").css({
 							backgroundImage : "url(" + EXEC_ICONS[execution_status] + ")"
 						});
 					}
-	
+
 				},
 				complete : function(data) {
 					jQuery.unblockUI();
 					//$("#issue-dialog").dialog("close");
 				}
 			});
-			
-			//div-step-hist_<%= test_step.id %>			
+
+			//div-step-hist_<%= test_step.id %>
 			$.get(IMPASSE.url.executionStepHistList, {}, function(data) {
 				jQuery.unblockUI();
-				alert("CArregar o resultado em "+"#div-step-hist_"+$this.attr('test_step_id'));
-				$("#div-step-hist_"+$this.attr('test_step_id')).html(data).dialog({
-					modal : true,
-					minWidth : 900,
-					zIndex : 25,
-					title : ' Carregando historico do passo :: = ' + $this.attr('test_step_id') + " situacao = " + $this.val()
-				});
+				//	alert("CArregar o resultado em " + "#div-step-hist_" + $this.attr('test_step_id'));
+
+				$("#div-step-hist_" + $this.attr('test_step_id')).html(data);
+
+				// $("#div-step-hist_"+$this.attr('test_step_id')).html(data).dialog({
+				// modal : true,
+				// minWidth : 900,
+				// zIndex : 25,
+				// title : ' Carregando historico do passo :: = ' + $this.attr('test_step_id') + " situacao = " + $this.val()
+				// });
+
 			});
-			
+
 			jQuery.blockUI({
 				message : "<h1>Salvando situação do passo</h1>"
 			});
-			
+
 		}//else {
 		return false;
 	});
 
 	$("#issue-dialog-step #button-create-issue-step").die('click').live("click", function(e) {
-		alert("estou aqui #issue-dialog-step #button-create-issue-step");
+		//	alert("estou aqui #issue-dialog-step #button-create-issue-step");
 		$.ajax({
 			url : IMPASSE.url.executionBugsNewStepCreate,
 			type : 'POST',
@@ -109,14 +111,23 @@ $(document).ready(function() {
 				$("#issue-dialog-step").dialog("close");
 			},
 			complete : function(data) {
+				jQuery.unblockUI();
+				$.get(IMPASSE.url.executionStepHistList + "&test_case_id=" + $("#issue_test_case_id").val() + "&test_step_id=" + $("#issue_test_steps_id").val(), {}, function(data) {
 					jQuery.unblockUI();
-					//$("#issue-dialog").dialog("close");
-				}
+					$("#div-step-hist_" + $("#issue_test_steps_id").val()).html(data);
+				});
+				$("#issue-dialog").dialog("close");
+			/*
+				$("#ajax-indicator").style({
+								display : 'none'
+							})*/
+			
+			}
 		});
 		//$("#issue-dialog").block({message : "<h1>Salvando passo</h1>"});
 		jQuery.blockUI({
-				message : "<h1>Salvando situação do passo</h1>"
-			});
+			message : "<h1>Salvando situação do passo</h1>"
+		});
 		return false;
 	});
 

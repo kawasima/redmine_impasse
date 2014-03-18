@@ -241,7 +241,7 @@ class ImpasseExecStepHistsController < ImpasseAbstractController
     # puts "
 #     
     # @execution_bug_step => exites?  #{@execution_bug_step}
-#     
+#      {"test_plan_id"=>"1", "test_case_id"=>"3", "test_step_id"=>"2", 
     # "
     
       sql = <<-END_OF_SQL
@@ -255,11 +255,16 @@ class ImpasseExecStepHistsController < ImpasseAbstractController
               left join issues on issues.id = impasse_exec_step_hists.issue_id
               left join issue_statuses on issues.status_id = issue_statuses.id
               left join users on users.id = impasse_exec_step_hists.executor_id
-                AND impasse_exec_step_hists.test_steps_id=? 
-                and impasse_exec_step_hists.project_id = ?
+              AND impasse_exec_step_hists.id in (select id from impasse_test_plan_cases 
+                                                    where impasse_test_plan_cases.test_plan_id = ? 
+                                                      AND impasse_test_plan_cases.test_case_id = ?
+                                                 )
+              AND impasse_exec_step_hists.test_steps_id=? 
+              order by impasse_exec_step_hists.execution_ts desc
               END_OF_SQL
 
-    @executionsHist= Impasse::ExecStepHist.find_by_sql [sql, 1,1]
+    @executionsHist= Impasse::ExecStepHist.find_by_sql [sql, params[:test_plan_id],params[:test_case_id],params[:test_step_id]]
+    
     # puts "<BR><BR> @executionsHist.size =====> #{@executionsHist.size}<BR><BR>
 #     
     # executionsHist ===> #{@executionsHist}

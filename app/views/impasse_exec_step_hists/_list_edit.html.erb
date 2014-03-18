@@ -13,8 +13,8 @@
 		<td class="center"><%= format_time(history.execution_ts) %></td>
 		<td class="center"><%= history.executor_firstname %></td>
 		<td class="center"><%= history.status %></td>
-		<td class="center"><%= history.issue_id %></td>
-		<td class="center"><%= history.bug_status %></td>  
+		<td class="center"><a href="/issues/<%= history.issue_id %>" class="issue tracker-1 status-1 priority-2 priority-default created-by-me"><%= history.issue_id %></a></td>
+		<td class="center"><%= history.bug_status %></td>
 		<td class="center"><%= history.bug_subject %></td>
 		<td class="center"><%= history.bug_description %></td>
 	</tr>
