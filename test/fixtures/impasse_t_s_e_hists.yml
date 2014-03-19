@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  test_steps: 
+  execution_histories: 
+  executions: 
+
+two:
+  test_steps: 
+  execution_histories: 
+  executions: 

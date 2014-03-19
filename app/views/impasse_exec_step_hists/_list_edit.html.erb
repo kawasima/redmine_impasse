@@ -1,0 +1,22 @@
+<table class="list">
+	<tr>
+		<th>data</th>
+		<th>executor</th>
+		<th>status do passo</th>
+		<th># bug</th>
+		<th>Bug Situacao</th>
+		<th>Bug Assunto</th>
+		<th>Bug Descrição</th>
+	</tr>
+	<% @executionsHist.each do |history| %>
+	<tr class="entry">
+		<td class="center"><%= format_time(history.execution_ts) %></td>
+		<td class="center"><%= history.executor_firstname %></td>
+		<td class="center"><%= history.status %></td>
+		<td class="center"><a href="/issues/<%= history.issue_id %>" class="issue tracker-1 status-1 priority-2 priority-default created-by-me"><%= history.issue_id %></a></td>
+		<td class="center"><%= history.bug_status %></td>
+		<td class="center"><%= history.bug_subject %></td>
+		<td class="center"><%= history.bug_description %></td>
+	</tr>
+	<% end %>
+</table>
