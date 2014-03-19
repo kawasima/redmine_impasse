@@ -262,68 +262,26 @@ class ImpasseExecStepHistsController < ImpasseAbstractController
 
     @executionsHist= Impasse::ExecStepHist.find_by_sql [sql,params[:test_step_id]]
     
-    # puts "<BR><BR> @executionsHist.size =====> #{@executionsHist.size}<BR><BR>  
-    # executionsHist ===> #{@executionsHist}
-    # "
-    
-   # if executionsHist.size == 0
-      #@execution = Impasse::Execution.new
-      #@execution.test_plan_case = Impasse::TestPlanCase.find_by_test_plan_id_and_test_case_id(params[:test_plan_case][:test_plan_id], params[:test_plan_case][:test_case_id])
-   # else
-      #@execution = executions.first
-   # end
-    #@execution.attributes = params[:execution]
-    #@execution_histories = Impasse::ExecutionHistory.find(:all, :joins => [ :executor ], :conditions => ["test_plan_case_id=?", @execution.test_plan_case_id], :order => "execution_ts DESC")
-   # if request.post? and @execution.save
-   #   render :json => {'status'=>true}
-   # else
-   #   render :partial=>'edit'
-   # end
-     # flash[:notice] = l(:notice_successful_create)
-      # respond_to do |format|
-        # format.json  { render :json => { :status => 'success', :issue_id => 11111 } }
-      # end
         render :partial=>'list_edit'
   end
   
     def step_last
     
-    # puts "
-#     
-    # @execution_bug_step => exites?  #{@execution_bug_step}
-#      {"test_plan_id"=>"1", "test_case_id"=>"3", "test_step_id"=>"2", 
-    # "
-    
       sql = <<-END_OF_SQL
              SELECT impasse_exec_step_hists.*
               FROM impasse_exec_step_hists 
-              where test_steps_id=?
-              order by tb1.execution_ts desc
+              where id = (SELECT max(id) 
+                            FROM impasse_exec_step_hists 
+                           WHERE test_steps_id=?
+                           )
               END_OF_SQL
 
-    @executionsHist= Impasse::ExecStepHist.find_by_sql [sql,params[:test_step_id]]
-    
-    # puts "<BR><BR> @executionsHist.size =====> #{@executionsHist.size}<BR><BR>  
-    # executionsHist ===> #{@executionsHist}
-    # "
-    
-   # if executionsHist.size == 0
-      #@execution = Impasse::Execution.new
-      #@execution.test_plan_case = Impasse::TestPlanCase.find_by_test_plan_id_and_test_case_id(params[:test_plan_case][:test_plan_id], params[:test_plan_case][:test_case_id])
-   # else
-      #@execution = executions.first
-   # end
-    #@execution.attributes = params[:execution]
-    #@execution_histories = Impasse::ExecutionHistory.find(:all, :joins => [ :executor ], :conditions => ["test_plan_case_id=?", @execution.test_plan_case_id], :order => "execution_ts DESC")
-   # if request.post? and @execution.save
-   #   render :json => {'status'=>true}
-   # else
-   #   render :partial=>'edit'
-   # end
-     # flash[:notice] = l(:notice_successful_create)
-      # respond_to do |format|
-        # format.json  { render :json => { :status => 'success', :issue_id => 11111 } }
-      # end
-        render :partial=>'list_edit'
+    @executionsHistStepLast = Impasse::ExecStepHist.find_by_sql [sql,params[:test_step_id]]
+     
+       respond_to do |format|
+         @executionsHistStepLast.each do |executionsHistStepLast|
+          format.json  { render :json => { :status => 'success', :status_step => executionsHistStepLast.status , :test_steps_id => executionsHistStepLast.test_steps_id, :test_plan_case_id => executionsHistStepLast.test_plan_case_id, :issue_id => executionsHistStepLast.issue_id, :project_id => executionsHistStepLast.project_id } }
+          end
+       end
   end
 end

@@ -7,13 +7,24 @@ jQuery(document).ready(function($) {
 	function sobrescrever_show_test_case() {
 		$(".list select ").each(function() {
 			var step_id = $(this).attr('test_step_id');
+			
 			$.get(IMPASSE.url.executionStepHistList + "&test_case_id=" + $(this).attr('test_case_id') + "&test_step_id=" + step_id, {}, function(data) {
 				jQuery.unblockUI();
 				//	alert("CArregar o resultado em qweqweqweqe" + "#div-step-hist_" +step_id);
 				$("#div-step-hist_" + step_id).html(data);
 			});
-		});
 
+			$.get(IMPASSE.url.executionStepHistLast + "?test_step_id=" + step_id, {}, function(data) {
+				jQuery.unblockUI();
+				var status_step = data.status_step;
+				$("#status_step_execucao_" + data.test_steps_id).find("option").each(function() {
+					//alert("value => "+$(this).val()+ " ===   data.status_step "+ data.status_step);
+					if ($(this).val() == data.status_step) {
+						$(this).prop("selected", "selected");
+					}
+				});
+			});
+		});
 	}
 
 	function show_test_case(node_id) {

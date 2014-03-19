@@ -59,7 +59,12 @@ test_case = test_plan_case.test_case %>
 					<BR>
 					<%= hidden_field 'test_plan_case', 'test_plan_id', :value => @execution.test_plan_case.test_plan_id %>
 					<%= hidden_field 'test_plan_case', 'test_case_id', :value => @execution.test_plan_case.test_case_id %>
-					<select  class="status_step_execucao" test_step_id="<%= test_step.id %>" test_plan_id="<%= @execution.test_plan_case.test_plan_id %>" test_case_id="<%= @execution.test_plan_case.test_case_id %>" name="status_step_execucao[<%= test_step.id %>]"  >
+					<select  class="status_step_execucao"
+					test_step_id="<%= test_step.id %>"
+					test_plan_id="<%= @execution.test_plan_case.test_plan_id %>"
+					test_case_id="<%= @execution.test_plan_case.test_case_id %>"
+					name="status_step_execucao[<%= test_step.id %>]"
+					id="status_step_execucao_<%= test_step.id %>"  >
 						<option selected="true" value=""></option>
 						<option value="<%= l(:label_execution_status_0)%>"><%= l(:label_execution_status_0)%></option>
 						<option value="<%= l(:label_execution_status_1)%>"><%= l(:label_execution_status_1)%></option>
@@ -72,8 +77,8 @@ test_case = test_plan_case.test_case %>
 						<legend id="step-legend-click_<%= test_step.id %>" onclick="toggleFieldset(this);" >
 							Histórico do passo <%= test_step.step_number %> - (<%= test_step.id %>)
 						</legend>
-						<div style="display:true;">
-							<div id="div-step-hist_<%= test_step.id %>">colocar aqui</div>
+						<div style="display:false;">
+							<div id="div-step-hist_<%= test_step.id %>"></div>
 						</div>
 					</fieldset>
 	</div>
