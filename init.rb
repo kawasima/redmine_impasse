@@ -59,9 +59,9 @@ Redmine::Plugin.register :redmine_impasse do
  # end
  
   name 'Redmine Impasse plugin'
-  author 'kawasima'
+  author 'kawasima (atualizado por Rafael Roque de Mello)'
   description 'Test management tool integrated Redmine'
-  version '1.3.0'
+  version '1.3.1-step'
   url 'http://unit8.net/redmine_impasse'
   author_url 'http://unit8.net/'
 
