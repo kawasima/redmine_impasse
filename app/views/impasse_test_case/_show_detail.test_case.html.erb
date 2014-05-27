@@ -1,24 +1,3 @@
-  <table class="attributes">
-    <tr>
-      <th class="subject"><%=l(:field_name)%></th>
-      <td><%=h @node.name %></td>
-    </tr>
-    <% unless @node.keywords.empty? %>
-    <tr>
-      <th><%=l(:field_keywords)%></th>
-      <td><%=h @node.keywords.map{|k| k.keyword }.join(",") %></td>
-    </tr>
-    <% end %>
-    <% @test_case.visible_custom_field_values.each do |custom_value| %>
-      <% if !custom_value.value.blank? %>
-	<tr>
-	  <th><%=h custom_value.custom_field.name %></th>
-	  <td><%=h show_value(custom_value) %></td>
-	</tr>
-      <% end %>
-    <% end %>
-  </table>
-  
   <% if @test_case.summary? %>
   <p><strong><%=l(:field_summary)%></strong></p>
   <div class="wiki">
