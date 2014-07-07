@@ -11,7 +11,7 @@
     <th width="10%"></th>
   </tr></thead>
   <tbody>
-  <% (@custom_fields_by_type[tab[:name]] || []).sort.each do |custom_field| -%>
+  <% (@custom_fields_by_type[tab[:name].gsub("-","::")] || []).sort.each do |custom_field| -%>
     <tr class="<%= cycle("odd", "even") %>">
       <td><%= link_to h(custom_field.name), { :action => :edit, :id => custom_field } %></td>
       <td align="center"><%= l(Redmine::CustomFieldFormat.label_for(custom_field.field_format)) %></td>
@@ -32,4 +32,4 @@
   </tbody>
 </table>
 
-<p><%= link_to l(:label_custom_field_new), { :controller => :impasse_custom_fields, :action => :new, :type => tab[:name] }, :class => 'icon icon-add' %></p>
+<p><%= link_to l(:label_custom_field_new), { :controller => :impasse_custom_fields, :action => :new, :type => tab[:name].gsub("-","::") }, :class => 'icon icon-add' %></p>

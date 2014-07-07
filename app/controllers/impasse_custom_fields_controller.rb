@@ -8,7 +8,7 @@ class ImpasseCustomFieldsController < ImpasseAbstractController
 
   def index
     @custom_fields_by_type = CustomField.find(:all).group_by {|f| f.class.name }
-    @tab = params[:tab] || 'Impasse::TestCaseCustomField'
+    @tab = params[:tab] || 'Impasse-TestCaseCustomField'
   end
 
   def new
@@ -22,7 +22,7 @@ class ImpasseCustomFieldsController < ImpasseAbstractController
     if request.post? and @custom_field.save
       flash[:notice] = l(:notice_successful_create)
       call_hook(:controller_custom_fields_new_after_save, :params => params, :custom_field => @custom_field)
-      redirect_to :action => 'index', :tab => @custom_field.class.name
+      redirect_to :action => 'index', :tab => @custom_field.class.name.gsub("::","-")
     else
       @trackers = Tracker.find(:all, :order => 'position')
     end

@@ -10,6 +10,7 @@ module Impasse
 
     validates_presence_of :name
     validates_length_of :name, :maximum => 100
+    validates_presence_of :version
 
     acts_as_customizable
 

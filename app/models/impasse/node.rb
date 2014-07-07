@@ -294,6 +294,37 @@ ORDER BY level, T.node_order
       connection.update(sql)
     end
 
+    def save_keywords!(keywords = "")
+      root_node = Impasse::Node.find(self.path.sub(/^\.(\d+)\.[\d\.]*$/, '\1').to_i)
+      project = Project.find(root_node.name)
+      project_keywords = Impasse::Keyword.find_all_by_project_id(project)
+      words = keywords.split(/\s*,\s*/)
+      words.delete_if {|word| word =~ /^\s*$/}.uniq!
+
+      node_keywords = self.node_keywords
+      keeps = []
+      words.each do |word|
+        keyword = project_keywords.detect {|k| k.keyword == word}
+        if keyword
+          node_keyword = node_keywords.detect {|nk| nk.keyword_id == keyword.id}
+          if node_keyword
+            keeps << node_keyword.id
+          else
+            new_node_keyword = Impasse::NodeKeyword.create(:keyword_id => keyword.id, :node_id => self.id)
+            keeps << new_node_keyword.id
+          end
+        else
+          new_keyword = Impasse::Keyword.create(:keyword => word, :project_id => project.id)
+          new_node_keyword = Impasse::NodeKeyword.create(:keyword_id => new_keyword.id, :node_id => self.id)
+          keeps << new_node_keyword.id
+        end
+      end
+
+      node_keywords.each do |node_keyword|
+        node_keyword.destroy unless keeps.include? node_keyword.id
+      end
+    end
+
     private
     def recalculate_path
       if parent.nil?
