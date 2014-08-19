@@ -19,19 +19,23 @@ class ImpasseExecutionsController < ImpasseAbstractController
   end
 
   def put
+    puts "<BR><BR>=====> #{params}<BR><BR>"
     @node = Impasse::Node.find(params[:test_plan_case][:test_case_id])
+     puts "<BR><BR> @node.id =====> #{@node.id}<BR><BR>"
     test_case_ids = (@node.is_test_case?) ? [ @node.id ] : @node.all_decendant_cases.collect{|tc| tc.id}
     if params[:execution] and params[:execution][:expected_date]
       params[:execution][:expected_date] = Time.at(params[:execution][:expected_date].to_i)
     end
-
+puts "<BR><BR>test_case_ids =====> #{test_case_ids}<BR><BR>"
     status = 'success'
     errors = []
     for test_case_id in test_case_ids
+      
       test_plan_case = Impasse::TestPlanCase.find(:first, :conditions=>[
                                                                         "test_plan_id=? AND test_case_id=?",
                                                                         params[:test_plan_case][:test_plan_id],
                                                                         test_case_id])
+#puts "<BR><BR>test_plan_case.methods =====> #{test_plan_case.methods}<BR><BR>"
       next if test_plan_case.nil?
       execution = Impasse::Execution.find_or_initialize_by_test_plan_case_id(test_plan_case.id)
       execution.attributes = params[:execution]
@@ -40,6 +44,9 @@ class ImpasseExecutionsController < ImpasseAbstractController
         execution.executor_id = User.current.id
       end
 
+puts "<BR><BR>params[:record] =====> #{params[:record]}<BR><BR>"
+
+puts "<BR><BR>execution.attributes =====> #{execution.attributes}<BR><BR>"
       begin
         ActiveRecord::Base.transaction do
           execution.save!
@@ -96,6 +103,7 @@ WHERE exists (
     AND tpc.test_plan_id=? AND tpc.test_case_id=?)
 END_OF_SQL
     executions = Impasse::Execution.find_by_sql [sql, params[:test_plan_case][:test_plan_id], params[:test_plan_case][:test_case_id]]
+  #  puts "<BR><BR>=====> #{params}<BR><BR>"
     if executions.size == 0
       @execution = Impasse::Execution.new
       @execution.test_plan_case = Impasse::TestPlanCase.find_by_test_plan_id_and_test_case_id(

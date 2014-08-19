@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  test_steps: 
+  test_plan_case: 
+  issue: 
+
+two:
+  test_steps: 
+  test_plan_case: 
+  issue: 

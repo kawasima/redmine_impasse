@@ -20,4 +20,5 @@ else
   match 'projects/:project_id/impasse/screenshots/:attachment_id(.:size).:format', :controller => 'impasse_screenshots', :action => 'show', :attachment_id => /\d+/
   match 'projects/:project_id/impasse/screenshots/(:action/(:id))', :controller => 'impasse_screenshots'
   match 'impasse/custom_fields/(:action(/:id))', :controller => 'impasse_custom_fields'
+  match 'projects/:project_id/impasse/exec_step_hists/(:action(/:id))', :controller => 'impasse_exec_step_hists'
 end

@@ -1,0 +1,39 @@
+<script>
+function goBack()
+  {
+  window.history.back()
+  }
+</script>
+<style type="text/css">
+  .td_tr_plans {
+    border: 1px solid silver;
+    text-align: center;
+  }
+</style>
+<h2><%= Impasse::TestPlan.find_version_name(@version) %> - <%=l(:label_test_plan_coverage_cases)%> </h2>
+<p><%= link_to "<< "+ l(:label_test_plan_coverage_back), :controller=>:impasse_test_case, :project_id=>@project%></p>
+<table style="border-collapse: collapse; width: 100%;">
+  <tr><td class="td_tr_plans"></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/book-brown.png" alt="Total" /></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/tick.png" alt="OK" /></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/cross.png" alt="Failed" /></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/wall-brick.png" alt="In process" /></td><td class="td_tr_plans"><img src="/plugin_assets/redmine_impasse/stylesheets/images/document-attribute-t.png" alt="No run" /></td></tr>
+  <% cases = Impasse::TestPlan.find_test_cases(@version) %>
+  <% cases.each do |case_row| %>
+    <% case_name = Impasse::TestPlan.find_test_case_name(case_row.id) %>
+    <tr>
+      <% total, ok, fail, proc, undone = Impasse::TestPlan.find_test_coverage(@version, case_row.id) %>
+      <td class="td_tr_plans" style="text-align:left;"><%= link_to case_name, :controller=>:impasse_test_plans, :action=>:coverage_case, :project_id=>@project, :id=>case_row.id%></td><td class="td_tr_plans"><strong><%= total%></strong></td><td class="td_tr_plans"><%= ok%></td><td class="td_tr_plans"><%= fail%></td><td class="td_tr_plans"><%= proc%></td><td class="td_tr_plans"><%= undone%></td>
+    </tr>  
+  <% end %>
+  <% total, ok, fail, proc, undone = Impasse::TestPlan.find_test_coverage_stats(@version)  %>
+  <tr><td class="td_tr_plans" style="text-align:left;"><strong>Total</strong></td><td class="td_tr_plans"><strong><%= total%></strong></td><td class="td_tr_plans"><strong><%= ok%></strong></td><td class="td_tr_plans"><strong><%= fail%></strong></td><td class="td_tr_plans"><strong><%= proc%></strong></td><td class="td_tr_plans"><strong><%= undone%></strong></tr>
+</table>
+<% content_for :sidebar do %>
+  <h3><%=l(:label_test_plan_plural)%></h3>
+  <% plans, versions = Impasse::TestPlan.find_all_by_version(@project, true) %>
+  <% versions.each do |version| %>
+    <% if version.id == @version.to_i %>
+      <strong><%= version.name %></strong>
+    <% else %>
+      <%= link_to version.name, :controller=>:impasse_test_plans, :action=>:coverage, :project_id=>@project, :id=>version.id%>
+    <% end %>
+  <br />
+  <% end %>
+<% end %>

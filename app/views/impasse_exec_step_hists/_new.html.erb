@@ -1,0 +1,31 @@
+<div class="box">
+<% if Rails::VERSION::MAJOR < 3 %>
+  <% labelled_form_for :issue, @issue, :url => {:controller => 'issues', :action => 'create', :project_id => @project},
+                               :html => {:multipart => true, :id => 'issue-form', :class => 'tabular new-issue-form'} do |f| %>
+    <%= error_messages_for 'issue' %>
+    <%= render :partial => 'form', :locals => {:f => f} %>
+  <% end %>
+<% else %>
+  <% output = labelled_form_for @issue,
+       :url => {:controller => 'issues', :action => 'create', :project_id => @project},
+       :as  => :issue,
+       :html => {:multipart => true, :id => 'issue-form', :class => 'tabular new-issue-form'} do |f| %>
+    <%= error_messages_for 'issue' %>
+    <%= render :partial => 'form', :locals => {:f => f} %>
+  <% end %>
+  <%= output %>
+<% end %>
+
+<form id="attachments-form" class="tabular" target="upload-target" action="<%=url_for :action => 'upload_attachments', :project_id => @project %>" method="post" enctype="multipart/form-data">
+<%= hidden_field_tag "authenticity_token", form_authenticity_token %>
+<input type="hidden" name="issue_id" value=""/>
+<p id="attachments_form"><%= label_tag('attachments[1][file]', l(:label_attachment_plural))%><%= render :partial => 'attachments/form' %></p>
+</form>
+<iframe name="upload-target" width="0" height="0"></iframe>
+<div id="preview" class="wiki"></div>
+
+<button id="button-create-issue-step"><%=l(:button_create)%></button>
+</div>
+<% content_for :header_tags do %>
+    <%= stylesheet_link_tag 'scm' %>
+<% end %>

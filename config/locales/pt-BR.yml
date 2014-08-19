@@ -44,6 +44,7 @@ pt-BR:
   label_execution_status_1: "Passou"
   label_execution_status_2: "Com falha"
   label_execution_status_3: "Bloqueado"
+  label_execution_status_4: "Persiste"
   label_execution_ts: "Executado"
   label_executor: "Executor"
   label_execution_status: "Estado"

@@ -25,7 +25,11 @@ jQuery(document).ready(function ($) {
 	    remove: {
 		label: IMPASSE.label.buttonDelete,
 		icon:  IMPASSE.url.iconDelete,
-		action: function(node) { this.remove(node); }
+		action: function(node) {
+		    if (confirm(IMPASSE.label.textAreYouSure)) {
+			this.remove(node);
+		    }
+		}
 	    }
 	}
     };
@@ -414,6 +418,12 @@ jQuery(document).ready(function ($) {
 		    ajax_error_handler(xhr, status, ex);
 		}
 	    });
+	})
+	.bind("select_node.jstree", function(e, data) {
+	    $("#test-case-view").block(impasse_loading_options());
+	    var node_id = data.rslt.obj.attr("id").replace("node_", "");
+	    location.replace("#testcase-" + node_id);
+	    show_test_case(node_id);
 	});
 
     $("#testcase-dialog .add-test-step").live("click", function() {
@@ -447,14 +457,6 @@ jQuery(document).ready(function ($) {
 	return false;
     });
 
-    $("li[rel=test_case]", testcaseTree).live("click", function() {
-	$("#test-case-view").block(impasse_loading_options());
-	var $node = $(this);
-	var node_id = $(this).attr("id").replace("node_", "");
-	location.replace("#testcase-" + node_id);
-	show_test_case(node_id);
-    });
-
     $(".splitcontentright .floating").floatmenu();
 
     $.getJSON(IMPASSE.url.testKeywords, function(json) {
@@ -471,7 +473,44 @@ jQuery(document).ready(function ($) {
 	    url: IMPASSE.url.requirementIssues,
 	    data: { },
 	    success: function(html) {
-		$("#requirements-view").html(html).show();
+					$("#requirements-view").html(html).show();
+					$("a.page,a.next, span.per-page a").live("click", function(e) {
+			           var oldurl = $(this).attr("href");
+				       $("a.page").attr("href","#");
+					   $("a.next").attr("href","#");
+					   $("span.per-page a").attr("href","#");
+				       $.ajax({
+					     url: oldurl,
+					     data: { },
+					     success: function(html) {
+					        $("#requirements-view").html(html).show();
+					        },
+					        error: ajax_error_handler
+				        });
+				    });	
+	    },
+	    error: ajax_error_handler
+	});
+    });
+
+    $("#button-requirement-issues").bind("click", function(e) {
+	$.ajax({
+	    url: IMPASSE.url.requirementIssues,
+	    data: { },
+	    success: function(html) {
+					$("#requirements-view").html(html).show();
+					$("a.page").live("click", function(e) {
+			           var oldurl = $(this).attr("href");
+				       $("a.page").attr("href","#");
+				       $.ajax({
+					     url: oldurl,
+					     data: { },
+					     success: function(html) {
+					        $("#requirements-view").html(html).show();
+					        },
+					        error: ajax_error_handler
+				        });
+				    });	
 	    },
 	    error: ajax_error_handler
 	});

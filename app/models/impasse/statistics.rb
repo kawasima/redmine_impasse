@@ -115,7 +115,7 @@ LEFT OUTER JOIN users
 
     def self.summary_daily(test_plan_id, test_suite_id=nil)
       sql = <<-END_OF_SQL
-SELECT CASE WHEN execution_ts IS NULL OR exe.status='0' THEN NULL ELSE execution_ts END AS execution_date,
+SELECT CASE WHEN execution_ts IS NULL OR exe.status='0' THEN NULL ELSE cast(execution_ts as date) END AS execution_date,
   SUM(CASE exe.status WHEN '1' THEN 1 ELSE 0 END) AS ok,
   SUM(CASE exe.status WHEN '2' THEN 1 ELSE 0 END) AS ng,
   SUM(CASE exe.status WHEN '3' THEN 1 ELSE 0 END) AS block,
