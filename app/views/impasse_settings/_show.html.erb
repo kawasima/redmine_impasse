@@ -1,6 +1,6 @@
 <%
-@impasse_setting = Impasse::Setting.find_or_create_by_project_id(:project_id => @project.id)
-@custom_fields_by_type = CustomField.find(:all).group_by {|f| f.class.name }
+@impasse_setting = Impasse::Setting.find_or_initialize_by(:project_id => @project.id)
+@custom_fields_by_type = CustomField.all.group_by {|f| f.class.name }
 @impasse_custom_fields = {
   'Impasse::TestCaseCustomField'  => @project.test_case_custom_fields,
   'Impasse::TestSuiteCustomField' => @project.test_suite_custom_fields,

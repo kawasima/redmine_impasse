@@ -1,7 +1,9 @@
 module Impasse
   class RequirementIssue < ActiveRecord::Base
     unloadable
-    set_table_name "impasse_requirement_issues"
+    self.table_name = "impasse_requirement_issues"
+
+    attr_accessible :issue_id
 
     belongs_to :issue
     has_many :requirement_cases, :foreign_key => "requirement_id"

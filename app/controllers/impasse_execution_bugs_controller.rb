@@ -3,7 +3,6 @@ class ImpasseExecutionBugsController < ImpasseAbstractController
 
   menu_item :impasse
   before_filter :find_project_by_project_id, :only => [:new, :create]
-  before_filter :check_for_default_issue_status, :only => [:new, :create]
   before_filter :build_new_issue_from_params, :only => [:new, :create]
   
   helper :journals
@@ -23,10 +22,11 @@ class ImpasseExecutionBugsController < ImpasseAbstractController
   include RepositoriesHelper
   helper :sort
   include SortHelper
+  helper :issues
   include IssuesHelper
 
   def new
-    setting = Impasse::Setting.find_or_create_by_project_id(@project)
+    setting = Impasse::Setting.find_or_initialize_by(:project_id => @project)
     @issue.tracker_id = setting.bug_tracker_id unless setting.bug_tracker_id.nil?
 
     respond_to do |format|
@@ -70,7 +70,11 @@ class ImpasseExecutionBugsController < ImpasseAbstractController
       @issue = @project.issues.visible.find(params[:id])
     end
     @issue.project = @project    # Tracker must be set before custom field values
-    @issue.tracker ||= @project.trackers.find((params[:issue] && params[:issue][:tracker_id]) || params[:tracker_id] || :first)
+    if (params[:issue] && params[:issue][:tracker_id]) || params[:tracker_id]
+      @issue.tracker ||= @project.trackers.find((params[:issue] && params[:issue][:tracker_id]) || params[:tracker_id])
+    else
+      @issue.tracker ||= @project.trackers.first
+    end
     if @issue.tracker.nil?
       render_error l(:error_no_tracker_in_project)
       return false
@@ -86,10 +90,4 @@ class ImpasseExecutionBugsController < ImpasseAbstractController
     @available_watchers = (@issue.project.users.sort + @issue.watcher_users).uniq
   end
 
-  def check_for_default_issue_status
-    if IssueStatus.default.nil?
-      render_error l(:error_no_default_issue_status)
-      return false
-    end
-  end
 end

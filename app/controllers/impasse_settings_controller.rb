@@ -7,7 +7,7 @@ class ImpasseSettingsController < ImpasseAbstractController
   end
 
   def edit
-    @setting = Impasse::Setting.find_or_create_by_project_id(:project_id => @project.id)
+    @setting = Impasse::Setting.find_or_initialize_by(:project_id => @project.id)
     unless params[:setting][:requirement_tracker]
       params[:setting][:requirement_tracker] = []
     end

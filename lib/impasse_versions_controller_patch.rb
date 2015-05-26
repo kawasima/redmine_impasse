@@ -12,7 +12,7 @@ module ImpasseVersionsControllerPatch
 
   module InstanceMethods
     def destroy_with_impasse
-      test_plans = Impasse::TestPlan.find_by_version_id(@version.id)
+      test_plans = Impasse::TestPlan.find_by(:version_id => @version.id)
       if test_plans
         respond_to do |format|
           format.html {
