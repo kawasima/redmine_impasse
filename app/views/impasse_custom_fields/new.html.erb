@@ -3,7 +3,7 @@
   &#187; <%= l(:label_custom_field_new) %></h2>
 
 <% if Rails::VERSION::MAJOR < 3 %>
-  <% labelled_tabular_form_for :custom_field, @custom_field, {} do |f| %>
+  <% labelled_form_for :custom_field, @custom_field, {} do |f| %>
     <%= render :partial => "custom_fields/form", :locals => {:f => f} %>
   <%= hidden_field_tag 'type', @custom_field.type %>
     <%= submit_tag l(:button_create) %>
