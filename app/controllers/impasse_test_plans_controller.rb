@@ -15,8 +15,8 @@ class ImpasseTestPlansController < ImpasseAbstractController
   end
 
   def show
-    @test_plan = Impasse::TestPlan.find(:first, :conditions => { :id => params[:id]}, :include => :version)
-    @setting = Impasse::Setting.find_by_project_id(@project) || Impasse::Setting.create(:project_id => @project.id)
+    @test_plan = Impasse::TestPlan.where(:id => params[:id]).includes(:version).first
+    @setting = Impasse::Setting.find_by(:project_id => @project) || Impasse::Setting.create(:project_id => @project.id)
   end
 
   def new
@@ -100,7 +100,7 @@ class ImpasseTestPlansController < ImpasseAbstractController
   def add_test_case
     if params.include? :test_case_ids
       new_cases = 0
-      nodes = Impasse::Node.find(:all, :conditions => ["id in (?)", params[:test_case_ids]])
+      nodes = Impasse::Node.where("id in (?)", params[:test_case_ids])
       ActiveRecord::Base.transaction do
         for node in nodes
           test_case_ids = []
@@ -112,8 +112,7 @@ class ImpasseTestPlansController < ImpasseAbstractController
 
           for test_case_id in test_case_ids
             test_plan_case =
-              Impasse::TestPlanCase.find_or_create_by_test_case_id_and_test_plan_id(
-                                                                                    :test_case_id => test_case_id,
+              Impasse::TestPlanCase.find_or_create_by(:test_case_id => test_case_id,
                                                                                     :test_plan_id => params[:test_plan_id],
                                                                                     :node_order => 0)
             new_cases += 1
@@ -131,7 +130,7 @@ class ImpasseTestPlansController < ImpasseAbstractController
   end
 
   def autocomplete
-    @users = @project.users.like(params[:q]).all(:limit => 100)
+    @users = @project.users.like(params[:q]).limit(100)
     render :layout => false
   end
 end

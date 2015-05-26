@@ -18,7 +18,7 @@ module ImpassePlugin
         project = context[:project]
         snippet = ''
   
-        setting = Impasse::Setting.find_by_project_id(project.id) || Impasse::Setting.create(:project_id => project.id)
+        setting = Impasse::Setting.find_by(:project_id => project.id) || Impasse::Setting.create(:project_id => project.id)
 
         if setting.bug_tracker_id == issue.tracker_id
           snippet << show_execution_bugs(issue, project)
@@ -43,7 +43,7 @@ module ImpassePlugin
         project = context[:project]
         snippet = ''
   
-        setting = Impasse::Setting.find_by_project_id(project.id) || Impasse::Setting.create(:project_id => project.id)
+        setting = Impasse::Setting.find_by(:project_id => project.id) || Impasse::Setting.create(:project_id => project.id)
         if setting.requirement_tracker and setting.requirement_tracker.include? issue.tracker_id.to_s
           snippet << show_requirement_cases(issue, project)
         end
@@ -62,12 +62,12 @@ module ImpassePlugin
 
         project = context[:project]
         
-        setting = Impasse::Setting.find_by_project_id(project.id) || Impasse::Setting.create(:project_id => project.id)
+        setting = Impasse::Setting.find_by(:project_id => project.id) || Impasse::Setting.create(:project_id => project.id)
 
         if setting.requirement_tracker
           style = (setting.requirement_tracker.include? issue.tracker_id.to_s) ? '' : 'style="display: none;"'
           req_tracker_ids = "[#{setting.requirement_tracker.select{|e| e != "" }.join(',')}]"
-          @requirement_issue = Impasse::RequirementIssue.find_by_issue_id(issue.id)
+          @requirement_issue = Impasse::RequirementIssue.find_by(:issue_id => issue.id)
           snippet << "<p #{style}>" <<
             "<label>#{l(:field_num_of_cases)}</label>" <<
             text_field('requirement_issue', 'num_of_cases', :size => 3) << '</p>' << %{
@@ -94,7 +94,7 @@ module ImpassePlugin
       params = context[:params]
       issue = context[:issue]
 
-      setting = Impasse::Setting.find_by_project_id(issue.project.id) || Impasse::Setting.create(:project_id => issue.project.id)
+      setting = Impasse::Setting.find_by(:project_id => issue.project.id) || Impasse::Setting.create(:project_id => issue.project.id)
       if setting.requirement_tracker and setting.requirement_tracker.include? issue.tracker_id.to_s
         num_of_cases = params[:requirement_issue] && params[:requirement_issue][:num_of_cases].to_i || 0
         requirement = Impasse::RequirementIssue.new(:issue_id => issue.id)
@@ -108,7 +108,7 @@ module ImpassePlugin
       issue = context[:issue]
 
       if params[:requirement_issue]
-        requirement = Impasse::RequirementIssue.find_by_issue_id(issue.id) || Impasse::RequirementIssue.new(:issue_id => issue.id)
+        requirement = Impasse::RequirementIssue.find_by(:issue_id => issue.id) || Impasse::RequirementIssue.new(:issue_id => issue.id)
         requirement.num_of_cases = params[:requirement_issue][:num_of_cases].to_i
         requirement.save!
       end
@@ -116,8 +116,7 @@ module ImpassePlugin
 
     private
     def show_execution_bugs(issue, project)
-      execution_bug = Impasse::ExecutionBug.find(:first, :joins => [{ :execution => { :test_plan_case => :test_plan}}],
-                                                 :conditions => { :bug_id => issue.id })
+      execution_bug = Impasse::ExecutionBug.where(:bug_id => issue.id).joins(:execution => { :test_plan_case => :test_plan}).first
         
       if execution_bug and execution_bug.execution and execution_bug.execution.test_plan_case
         test_plan_case = execution_bug.execution.test_plan_case
@@ -135,15 +134,13 @@ module ImpassePlugin
     end
 
     def show_num_of_cases(issue, project)
-      requirement = Impasse::RequirementIssue.find_by_issue_id(issue.id)
+      requirement = Impasse::RequirementIssue.find_by(:issue_id => issue.id)
       num_of_cases = requirement ? requirement.num_of_cases : 0
       "<tr><th>#{l(:field_num_of_cases)}:</th><td>#{num_of_cases}</td></tr>"
     end
 
     def show_requirement_cases(issue, project)
-      requirement = Impasse::RequirementIssue.find(
-        :first, :conditions => { :issue_id => issue.id },
-        :include => :test_cases)
+      requirement = Impasse::RequirementIssue.where(:issue_id => issue.id).includes(:test_cases).first
       snippet = ''
       if requirement and requirement.test_cases
         snippet << "<hr/><p><strong>#{l(:label_test_case_plural)}</strong></p><table class=\"list\">"

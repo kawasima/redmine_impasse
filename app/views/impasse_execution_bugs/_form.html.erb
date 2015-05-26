@@ -8,7 +8,7 @@
       :with => "Form.serialize('issue-form')" %>
 <% else %>
 <p><%= f.select :tracker_id, @issue.project.trackers.collect {|t| [t.name, t.id]}, {:required => true},
-                :onchange => "updateIssueFrom('#{escape_javascript project_issue_form_path(@project, :id => @issue, :format => 'js')}')" %></p>
+                :onchange => "updateIssueFrom('#{escape_javascript update_issue_form_path(@project, @issue)}')" %></p>
 <% end %>
 
 <p><%= f.text_field :subject, :size => 80, :required => true %></p>
