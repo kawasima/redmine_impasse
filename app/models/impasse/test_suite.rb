@@ -4,6 +4,8 @@ module Impasse
     self.table_name = "impasse_test_suites"
     self.include_root_in_json = false
 
+    attr_accessible :details
+
     belongs_to :node, :foreign_key => :id
 
     acts_as_customizable

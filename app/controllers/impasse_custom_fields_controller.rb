@@ -19,7 +19,7 @@ class ImpasseCustomFieldsController < ImpasseAbstractController
     rescue
     end
     (redirect_to(:action => 'index'); return) unless @custom_field.is_a?(CustomField)
-    if request.post? and @custom_field.save
+    if (request.post? or request.patch?) and @custom_field.save
       flash[:notice] = l(:notice_successful_create)
       call_hook(:controller_custom_fields_new_after_save, :params => params, :custom_field => @custom_field)
       redirect_to :action => 'index', :tab => @custom_field.class.name
@@ -30,7 +30,7 @@ class ImpasseCustomFieldsController < ImpasseAbstractController
 
   def edit
     @custom_field = CustomField.find(params[:id])
-    if (request.post? || request.put?) and @custom_field.update_attributes(params[:custom_field])
+    if (request.post? || request.put? or request.patch?) and @custom_field.update_attributes(params[:custom_field])
       flash[:notice] = l(:notice_successful_update)
       call_hook(:controller_custom_fields_edit_after_save, :params => params, :custom_field => @custom_field)
       redirect_to :action => 'index', :tab => @custom_field.class.name

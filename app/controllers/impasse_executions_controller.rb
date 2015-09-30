@@ -32,7 +32,7 @@ class ImpasseExecutionsController < ImpasseAbstractController
                                                                         test_case_id).first
       next if test_plan_case.nil?
       execution = Impasse::Execution.find_or_initialize_by(:test_plan_case_id => test_plan_case.id)
-      execution.attributes = params[:execution]
+      execution.update_attributes(params[:execution])
       if params[:record]
         execution.execution_ts = Time.now.to_datetime
         execution.executor_id = User.current.id
@@ -101,9 +101,9 @@ END_OF_SQL
     else
       @execution = executions.first
     end
-    @execution.attributes = params[:execution] if params[:execution].present?
+    @execution.update_attributes(params[:execution]) if params[:execution].present?
     @execution_histories = Impasse::ExecutionHistory.where(:test_plan_case_id => @execution.test_plan_case_id).joins(:executor).order("execution_ts DESC")
-    if request.post? and @execution.save
+    if (request.post? or request.patch?) and @execution.save
       render :json => {'status'=>true}
     else
       render :partial=>'edit'
