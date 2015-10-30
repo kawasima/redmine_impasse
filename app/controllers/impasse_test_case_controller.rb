@@ -352,7 +352,7 @@ class ImpasseTestCaseController < ImpasseAbstractController
     node = original_node.dup
 
     if node.is_test_case?
-      original_case = Impasse::TestCase.find(original_node.id, :include => :test_steps)
+      original_case = Impasse::TestCase.where(:id => original_node.id).includes(:test_steps).first
       test_case = original_case.dup
       original_case.test_steps.each{|ts| test_case.test_steps << ts.dup }
     else
