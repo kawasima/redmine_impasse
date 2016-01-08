@@ -61,7 +61,7 @@ namespace :redmine do
       end
       
       def save(filename)
-        csv_string = CSV.generate do |csv|
+        csv_string = Redmine::Export::CSV.generate do |csv|
           headerRow = Array.new
           @header.sort.map do |rowkey, celvalue|
             headerRow << celvalue
