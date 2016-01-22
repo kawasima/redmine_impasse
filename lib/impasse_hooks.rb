@@ -1,5 +1,8 @@
 module ImpassePlugin
   class Hook < Redmine::Hook::ViewListener
+ 
+    include IssuesHelper
+
     def exception(context, ex)
       context[:controller].send(:flash)[:error] = "Impasse error: #{ex.message} (#{ex.class})"
       if Rails::VERSION::MAJOR < 3
@@ -136,7 +139,10 @@ module ImpassePlugin
     def show_num_of_cases(issue, project)
       requirement = Impasse::RequirementIssue.find_by(:issue_id => issue.id)
       num_of_cases = requirement ? requirement.num_of_cases : 0
-      "<tr><th>#{l(:field_num_of_cases)}:</th><td>#{num_of_cases}</td></tr>"
+
+      issue_fields_rows do |rows|
+       rows.left l(:field_num_of_cases), num_of_cases.to_s, :class => 'num_of_cases' 
+      end
     end
 
     def show_requirement_cases(issue, project)
