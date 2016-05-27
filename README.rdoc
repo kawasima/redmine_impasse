@@ -1,4 +1,4 @@
 = impasse
 
-Impasse is test management tool like Testlink.
+Impasse is test management tool like Testlink
 
