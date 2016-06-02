@@ -7,6 +7,6 @@ class CreateImpasseRequirementCases < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table :impasse_requirement_issues
+    drop_table :impasse_requirement_cases
   end
 end
