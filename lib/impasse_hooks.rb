@@ -123,15 +123,16 @@ module ImpassePlugin
         
       if execution_bug and execution_bug.execution and execution_bug.execution.test_plan_case
         test_plan_case = execution_bug.execution.test_plan_case
-        return "<div class='splitcontent'><div class='splitcontentleft'><div class='test_case attribute'><div class='label'>#{l(:field_test_case)}:</div><div class='value'>" <<
-          link_to(test_plan_case.test_case.node.name, {
-                    :controller => :impasse_executions,
-                    :action => :index,
-                    :project_id => project,
-                    :id => test_plan_case.test_plan.id,
-                    :anchor => "testcase-#{test_plan_case.test_case.id}"
-                  }) <<
-          "</div></div></div></div>"
+        link_option = link_to(test_plan_case.test_case.node.name, {
+                                                             :controller => :impasse_executions,
+                                                             :action => :index,
+                                                             :project_id => project,
+                                                             :id => test_plan_case.test_plan.id,
+                                                             :anchor => "testcase-#{test_plan_case.test_case.id}"
+                                                         })
+        return issue_fields_rows do |row|
+          row.left l(:field_test_case), link_option, :class => 'num_of_cases'
+        end
       end
       ''
     end
