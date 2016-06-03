@@ -123,7 +123,7 @@ module ImpassePlugin
         
       if execution_bug and execution_bug.execution and execution_bug.execution.test_plan_case
         test_plan_case = execution_bug.execution.test_plan_case
-        return "<tr><th>#{l(:field_test_case)}</th><td>" <<
+        return "<div class='splitcontent'><div class='splitcontentleft'><div class='test_case attribute'><div class='label'>#{l(:field_test_case)}:</div><div class='value'>" <<
           link_to(test_plan_case.test_case.node.name, {
                     :controller => :impasse_executions,
                     :action => :index,
@@ -131,7 +131,7 @@ module ImpassePlugin
                     :id => test_plan_case.test_plan.id,
                     :anchor => "testcase-#{test_plan_case.test_case.id}"
                   }) <<
-          "</td></tr>"
+          "</div></div></div></div>"
       end
       ''
     end
