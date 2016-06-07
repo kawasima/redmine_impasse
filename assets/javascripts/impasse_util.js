@@ -52,9 +52,9 @@ function show_notification_dialog(type, message) {
 	    $this.css({zIndex: 10});
 
 	    $(window).scroll(function(e) {
-		var offsetTop = $(window).scrollTop() - menuPosition;
-		if(offsetTop > 0) {
-		    $this.css({position: "absolute", top: offsetTop});
+			var offsetTop = $(window).scrollTop() - menuPosition;
+			if(offsetTop > 0) {
+		    $this.css({position: "absolute"});
 		} else {
 		    $this.css("position", "static");
 		}

@@ -131,14 +131,14 @@ jQuery(document).ready(function ($) {
     }
 
     var openDialog = function(data, edit_type) {
-		var node = $(data.rslt.obj);
+	var node = $(data.rslt.obj);
 		var node_type = node.attr("rel");
-		var request = { node_type: node_type };
+	var request = { node_type: node_type };
 	if (node.attr("id")) {
 	    request['node[id]'] = node.attr("id").replace("node_", "");
 	}
 
-		$.ajax({
+	$.ajax({
 	    url: AJAX_URL[edit_type],
 	    data: request,
 	    success: function(html) {
@@ -190,18 +190,11 @@ jQuery(document).ready(function ($) {
 				$(window).scrollTop(top);
 				return;
 			    }
-				$.each(r.ids, function(i, id) {
+			    $.each(r.ids, function(i, id) {
 				dialog[node_type].unbind("dialogbeforeclose");
 				node.attr("id", "node_" + id);
 				node.data("jstree", (node_type=='test_case')?LEAF_MENU:FOLDER_MENU);
-					if ($.jstree._reference(node) != null){
-						$.jstree._reference(node).set_text(node, tc["node[name]"]);
-
-					}else
-					{
-						$.jstree._reference(0).set_text(node, tc["node[name]"]);
-					}
-
+					$.jstree._reference(node).set_text(node, tc["node[name]"]);
 			    });
 			    dialog[node_type].dialog('close');
 			    show_notification_dialog(r.status, r.message);
