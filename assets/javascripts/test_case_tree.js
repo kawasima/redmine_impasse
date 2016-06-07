@@ -131,14 +131,14 @@ jQuery(document).ready(function ($) {
     }
 
     var openDialog = function(data, edit_type) {
-	var node = $(data.rslt.obj);
-	var node_type = node.attr("rel");
-	var request = { node_type: node_type };
+		var node = $(data.rslt.obj);
+		var node_type = node.attr("rel");
+		var request = { node_type: node_type };
 	if (node.attr("id")) {
 	    request['node[id]'] = node.attr("id").replace("node_", "");
 	}
 
-	$.ajax({
+		$.ajax({
 	    url: AJAX_URL[edit_type],
 	    data: request,
 	    success: function(html) {
@@ -174,7 +174,7 @@ jQuery(document).ready(function ($) {
 		$(".screenshots", dialog[node_type]).tinycarousel();
 
 		dialog[node_type].find(":button.ui-button-submit").one("click", function(e) {
-		    var ajaxOptions = {
+			var ajaxOptions = {
 			type: 'POST',
 			url:AJAX_URL[edit_type],
 			success: function(r, status, xhr) {
@@ -190,11 +190,18 @@ jQuery(document).ready(function ($) {
 				$(window).scrollTop(top);
 				return;
 			    }
-			    $.each(r.ids, function(i, id) {
+				$.each(r.ids, function(i, id) {
 				dialog[node_type].unbind("dialogbeforeclose");
 				node.attr("id", "node_" + id);
 				node.data("jstree", (node_type=='test_case')?LEAF_MENU:FOLDER_MENU);
-				$.jstree._reference(node).set_text(node, tc["node[name]"]);
+					if ($.jstree._reference(node) != null){
+						$.jstree._reference(node).set_text(node, tc["node[name]"]);
+
+					}else
+					{
+						$.jstree._reference(0).set_text(node, tc["node[name]"]);
+					}
+
 			    });
 			    dialog[node_type].dialog('close');
 			    show_notification_dialog(r.status, r.message);
@@ -213,7 +220,7 @@ jQuery(document).ready(function ($) {
 		    if (window.FormData) {
 			var formData = new FormData();
 			$(".new-screenshot", dialog[node_type]).each(function(i) {
-			    formData.append("attachments["+i+"][file]", dataURLtoBlob(this.src) ,'screenshot.png');
+				formData.append("attachments["+i+"][file]", dataURLtoBlob(this.src) ,'screenshot.png');
 			});
 			for (var key in tc) { formData.append(key, tc[key]) }
 

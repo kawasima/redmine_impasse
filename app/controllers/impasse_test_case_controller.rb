@@ -54,6 +54,10 @@ class ImpasseTestCaseController < ImpasseAbstractController
             @test_steps.each{|ts| raise ActiveRecord::RecordInvalid.new(ts) unless ts.valid? }
             @test_case.test_steps.replace(@test_steps)
           end
+          if params[:attachments]
+            attachments = Attachment.attach_files(@test_case, params[:attachments])
+            create_thumbnail(attachments) if Object.const_defined?(:Magick)
+          end
           @test_case.save!
           render :json => { :status => 'success', :message => l(:notice_successful_create), :ids => [@test_case.id] }
         end
