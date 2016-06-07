@@ -235,6 +235,7 @@ jQuery(document).ready(function ($) {
 	    },
 	    error: ajax_error_handler
 	});
+        location.reload();
     };
 
     var plugins = ["themes","json_data","ui","cookies","types", "hotkey"];
