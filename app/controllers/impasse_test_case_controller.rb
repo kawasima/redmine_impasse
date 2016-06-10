@@ -6,6 +6,7 @@ class ImpasseTestCaseController < ImpasseAbstractController
   helper :custom_fields
   include CustomFieldsHelper
   include ImpasseScreenshotsHelper
+  include ImpasseTestCaseHelper
 
   menu_item :impasse
   before_filter :find_project, :authorize
@@ -16,6 +17,11 @@ class ImpasseTestCaseController < ImpasseAbstractController
       @allowed_projects.delete_if{|project| @project.id == project.id }
     end
     @setting = Impasse::Setting.find_by(:project_id => @project) || Impasse::Setting.create(:project_id => @project.id)
+    respond_to do |format|
+      format.html {
+      }
+      format.csv  {send_data(export_to_csv(), :type => 'text/csv; header=present', :filename => 'impasse_export.csv')}
+    end
   end
 
   def list

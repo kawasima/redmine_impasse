@@ -123,6 +123,10 @@
       <div id="requirements-view" style="width: 100%;"></div>
       <div id="test-case-view" style="width: 100%;"></div>
     </div>
+    <div style="position: absolute;bottom: 30px;width: 100%"></div>
+    <% other_formats_links do |f| %>
+        <%= f.link_to 'CSV', :url => params.merge(:format => 'csv', :page=>nil)%>
+    <% end %>
   </div>
 </div>
 
