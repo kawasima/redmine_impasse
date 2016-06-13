@@ -216,6 +216,9 @@ jQuery(document).ready(function ($) {
                             });
                             dialog[node_type].dialog('close');
                             show_notification_dialog(r.status, r.message);
+							if (edit_type == 'new' && node_type == 'test_case') {
+								data.inst.refresh(data.inst._get_parent(data.rslt.oc));
+							}
                         },
                         error: ajax_error_handler
                     };
@@ -244,7 +247,6 @@ jQuery(document).ready(function ($) {
                         ajaxOptions["data"] = tc;
                     }
                     $.ajax(ajaxOptions);
-                    location.reload();
                 });
             },
             error: ajax_error_handler
