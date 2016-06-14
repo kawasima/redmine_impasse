@@ -2,15 +2,15 @@
   <%= stylesheet_link_tag 'jquery-ui', 'jquery.noty.css', 'noty_theme_twitter.css', 'jquery.Jcrop.min.css', 'impasse', :plugin => 'redmine_impasse' %>
   <% heads_for_wiki_formatter %>
   <%= javascript_include_tag(
-      'jquery', 'jquery-ui', 'jquery.cookie.js', 'jquery.color.js', 'jquery.Jcrop.js',
-      'jquery.hotkeys.js', 'jquery.jstree.js', 'jquery.blockUI.js', 'jquery.noty.js',
-      'impasse_util', 'test_case_tree', 'screenshots',
-      :plugin => 'redmine_impasse') %>
+          'jquery', 'jquery-ui', 'jquery.cookie.js', 'jquery.color.js', 'jquery.Jcrop.js',
+          'jquery.hotkeys.js', 'jquery.jstree.js', 'jquery.blockUI.js', 'jquery.noty.js',
+          'impasse_util', 'test_case_tree', 'screenshots',
+          :plugin => 'redmine_impasse') %>
   <script type="text/javascript">
     jQuery.jstree._themes = '<%=Redmine::Utils::relative_url_root%>/plugin_assets/redmine_impasse/stylesheets/themes/';
     var IMPASSE = {
       url: {
-        testCaseNew:  "<%=url_for :controller=>:impasse_test_case, :action=>:new, :project_id=>@project%>",
+        testCaseNew: "<%=url_for :controller=>:impasse_test_case, :action=>:new, :project_id=>@project%>",
         testCaseEdit: "<%=url_for :controller=>:impasse_test_case, :action=>:edit, :project_id=>@project%>",
         testCaseList: "<%= url_for :controller=>:impasse_test_case, :action=>:list, :project_id=>@project %>",
         testCaseShow: "<%= url_for :controller=>:impasse_test_case, :action=>:show, :project_id=>@project %>",
@@ -27,8 +27,8 @@
         iconDelete: "<%=image_path 'delete.png'%>",
         iconAdd: "<%=image_path 'add.png'%>",
         iconTestSuite: "<%=Redmine::Utils::relative_url_root%>/plugin_assets/redmine_impasse/stylesheets/images/documents-stack.png",
-        iconTestCase:  "<%=Redmine::Utils::relative_url_root%>/plugin_assets/redmine_impasse/stylesheets/images/document-attribute-t.png",
-        iconProject:   "<%=Redmine::Utils::relative_url_root%>/plugin_assets/redmine_impasse/stylesheets/images/book-brown.png",
+        iconTestCase: "<%=Redmine::Utils::relative_url_root%>/plugin_assets/redmine_impasse/stylesheets/images/document-attribute-t.png",
+        iconProject: "<%=Redmine::Utils::relative_url_root%>/plugin_assets/redmine_impasse/stylesheets/images/book-brown.png",
         iconLoading: "<%=image_path 'loading.gif'%>"
       },
       label: {
@@ -37,7 +37,7 @@
         buttonDelete: "<%=l(:button_delete)%>",
         buttonCreate: "<%=l(:button_create)%>",
         testSuiteEdit: "<%=l(:label_test_suite_edit) %>",
-        testCaseEdit:  "<%=l(:label_test_case_edit) %>",
+        testCaseEdit: "<%=l(:label_test_case_edit) %>",
         textAreYouSure: "<%=l(:text_are_you_sure)%>",
         noticeSuccessfulUpdate: "<%=l(:notice_successful_update)%>",
         noticeSuccessfulCreate: "<%=l(:notice_successful_create)%>"
@@ -50,43 +50,44 @@
 
 <div class="contextual">
   <% if @setting.can_manage_requirements? and User.current.allowed_to?(:manage_testcases, nil, :global => true) %>
-    <a id="button-requirement-issues" href="#" class="icon icon-copy"><%=l(:label_requirement_plural)%></a>
+    <a id="button-requirement-issues" href="#" class="icon icon-copy"><%= l(:label_requirement_plural) %></a>
   <% end %>
   <% if User.current.allowed_to?(:manage_testcases, nil, :global => true) %>
-    <a id="button-copy-cases" href="#" class="icon icon-copy"><%=l(:button_copy)%></a>
+    <a id="button-copy-cases" href="#" class="icon icon-copy"><%= l(:button_copy) %></a>
   <% end %>
 </div>
-<h2><%= l(:label_impasse)%></h2>
+<h2><%= l(:label_impasse) %></h2>
 
 <div class="tab-content">
   <div class="splitcontentleft">
     <fieldset id="filters" class="collapsible collapsed">
       <legend onclick="toggleFieldset(this);"><%= l(:label_filter_plural) %></legend>
       <div style="display:none;">
-	<table>
-	  <tr class="filter">
-	    <td><%= label_tag "filters_query", l(:label_filters_query) %></td>
-	    <td><%= text_field_tag "filters[query]", "", :id => "filters_query" %></td>
-	  </tr>
-	  <tr class="filter">
-	    <td><%= label_tag "filters_keywords", l(:label_filters_keywords) %></td>
-	    <td><%= text_field_tag "filters[keywords]", "", :id => "filters_keywords" %></td>
-	  </tr>
-	  <tr class="filter">
-	    <td><%= label_tag "filters_inactive", l(:label_filters_inactive) %></td>
-	    <td><%= check_box_tag "filters[inactive]", true, false, :id => "filters_inactive" %></td>
-	  </tr>
-	</table>
+        <table>
+          <tr class="filter">
+            <td><%= label_tag "filters_query", l(:label_filters_query) %></td>
+            <td><%= text_field_tag "filters[query]", "", :id => "filters_query" %></td>
+          </tr>
+          <tr class="filter">
+            <td><%= label_tag "filters_keywords", l(:label_filters_keywords) %></td>
+            <td><%= text_field_tag "filters[keywords]", "", :id => "filters_keywords" %></td>
+          </tr>
+          <tr class="filter">
+            <td><%= label_tag "filters_inactive", l(:label_filters_inactive) %></td>
+            <td><%= check_box_tag "filters[inactive]", true, false, :id => "filters_inactive" %></td>
+          </tr>
+        </table>
       </div>
     </fieldset>
     <p class="buttons hide-when-print">
-      <%=link_to_function l(:button_apply),
-	 'jQuery("#testcase-tree").jstree("refresh", jQuery("#testcase-tree li[rel=test_project]"));',
-	 :class => 'icon icon-checked'%>
-      <%=link_to_function l(:button_clear),
-	 'jQuery(".filter :input").val("");jQuery("#testcase-tree").jstree("refresh", jQuery("#testcase-tree li[rel=test_project]"));',
-	 :class => 'icon icon-reload'%>
+      <%= link_to_function l(:button_apply),
+                           'jQuery("#testcase-tree").jstree("refresh", jQuery("#testcase-tree li[rel=test_project]"));',
+                           :class => 'icon icon-checked' %>
+      <%= link_to_function l(:button_clear),
+                           'jQuery(".filter :input").val("");jQuery("#testcase-tree").jstree("refresh", jQuery("#testcase-tree li[rel=test_project]"));',
+                           :class => 'icon icon-reload' %>
     </p>
+
     <div id="testcase-tree">
     </div>
   </div>
@@ -94,68 +95,71 @@
   <div class="splitcontentright" style="position: relative">
     <div id="copy-tests-view" class="box" style="display: none;">
       <% if @allowed_projects.present? %>
-	<p><%=l(:notice_copy_cases_to_another_project)%></p>
-	<% if Rails::VERSION::MAJOR < 3 %>
-          <% labelled_form_for :copy_tests, @project, { :action => :copy_to_another_project } do |f| %>
-	    <p>
-	      <label for="dest_project_id"><%= l(:field_project) %></label>
-	      <%= select_tag('dest_project_id', project_tree_options_for_select(@allowed_projects, :selected => @target_project)) %>
-	    </p>
-	  <% end %>
-	<% else %>
-          <% output = labelled_form_for @project, :as => :copy_tests, :url => { :action => :copy_to_another_project } do |f| %>
-	    <p>
-	      <label for="dest_project_id"><%= l(:field_project) %></label>
-	      <%= select_tag('dest_project_id', project_tree_options_for_select(@allowed_projects, :selected => @target_project)) %>
-	    </p>
-	  <% end %>
+        <p><%= l(:notice_copy_cases_to_another_project) %></p>
+        <% if Rails::VERSION::MAJOR < 3 %>
+          <% labelled_form_for :copy_tests, @project, {:action => :copy_to_another_project} do |f| %>
+            <p>
+              <label for="dest_project_id"><%= l(:field_project) %></label>
+              <%= select_tag('dest_project_id', project_tree_options_for_select(@allowed_projects, :selected => @target_project)) %>
+            </p>
+          <% end %>
+        <% else %>
+          <% output = labelled_form_for @project, :as => :copy_tests, :url => {:action => :copy_to_another_project} do |f| %>
+            <p>
+              <label for="dest_project_id"><%= l(:field_project) %></label>
+              <%= select_tag('dest_project_id', project_tree_options_for_select(@allowed_projects, :selected => @target_project)) %>
+            </p>
+          <% end %>
           <%= output %>
         <% end %>
-	<p>
-	  <button id="button-copy-exec" type="button"><%= l(:button_copy)%></button>
-	  <button id="button-copy-cancel" type="button"><%= l(:button_cancel)%></button>
-	</p>
+        <p>
+          <button id="button-copy-exec" type="button"><%= l(:button_copy) %></button>
+          <button id="button-copy-cancel" type="button"><%= l(:button_cancel) %></button>
+        </p>
       <% else %>
-	<p class="nodata"><%=l(:notice_no_projects_to_copy_cases)%></p>
+        <p class="nodata"><%= l(:notice_no_projects_to_copy_cases) %></p>
       <% end %>
     </div>
     <div class="floating" style="width : 100%;">
       <div id="requirements-view" style="width: 100%;"></div>
       <div id="test-case-view" style="width: 100%;"></div>
     </div>
-    <div style="position: absolute;bottom: 30px;width: 100%"></div>
+  </div>
+
+  <div style="clear: both">
     <% other_formats_links do |f| %>
-        <%= f.link_to 'CSV', :url => params.merge(:format => 'csv', :page=>nil)%>
+      <%= f.link_to 'CSV', :url => params.merge(:format => 'csv', :page => nil) %>
     <% end %>
   </div>
 </div>
 
 <% content_for :sidebar do %>
-  <h3><%=l(:label_test_plan_plural)%></h3>
+  <h3><%= l(:label_test_plan_plural) %></h3>
   <div class="contextual">
-    <%= link_to_if_authorized l(:label_test_plan_new), {:controller=>:impasse_test_plans, :action=>:new, :project_id=>@project}, :class=>"icon icon-add" %>
+    <%= link_to_if_authorized l(:label_test_plan_new), {:controller => :impasse_test_plans, :action => :new, :project_id => @project}, :class => "icon icon-add" %>
   </div>
   <% plans, versions = Impasse::TestPlan.find_all_by_version(@project, params[:completed]) %>
-    <% versions.each do |version| %>
-  <h4><%=h version.name%></h4>
-      <% plans[version].each do |test_plan| %>
-  <%= link_to test_plan.name, :controller=>:impasse_test_plans, :action=>:show, :project_id=>@project, :id=>test_plan%><br/>
-      <% end %>
+  <% versions.each do |version| %>
+    <h4><%= h version.name %></h4>
+    <% plans[version].each do |test_plan| %>
+      <%= link_to test_plan.name, :controller => :impasse_test_plans, :action => :show, :project_id => @project, :id => test_plan %>
+      <br/>
+    <% end %>
   <% end %>
   <% if Rails::VERSION::MAJOR < 3 %>
     <% form_tag({}, :method => :get) do %>
       <p>
-	<label for="completed"><%= check_box_tag "completed", true, params[:completed] %> <%= l(:label_show_completed_versions) %></label>
-	<br/>
-	<%= submit_tag l(:button_apply), :class => 'button-small', :name => nil %>
+        <label for="completed"><%= check_box_tag "completed", true, params[:completed] %> <%= l(:label_show_completed_versions) %></label>
+        <br/>
+        <%= submit_tag l(:button_apply), :class => 'button-small', :name => nil %>
       </p>
     <% end %>
   <% else %>
     <% output = form_tag({}, :method => :get) do %>
       <p>
-	<label for="completed"><%= check_box_tag "completed", true, params[:completed] %> <%= l(:label_show_completed_versions) %></label>
-	<br/>
-	<%= submit_tag l(:button_apply), :class => 'button-small', :name => nil %>
+        <label for="completed"><%= check_box_tag "completed", true, params[:completed] %> <%= l(:label_show_completed_versions) %></label>
+        <br/>
+        <%= submit_tag l(:button_apply), :class => 'button-small', :name => nil %>
       </p>
     <% end %>
     <%= output %>
