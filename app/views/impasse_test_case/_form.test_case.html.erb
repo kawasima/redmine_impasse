@@ -43,7 +43,7 @@
       <tbody class="sortable">
       <% @test_case.test_steps.each_with_index do |test_step, i| %>
           <tr>
-            <td class="ui-sort-handle"><%= h i+1 %></td>
+            <td class="ui-sort-handle"><%= h test_step.step_number %></td>
             <td><%= text_area_tag "test_steps[#{i+1}][actions]", test_step.actions, :rows => 3, :style => 'width:100%' %>
               <%= hidden_field_tag "test_steps[#{i+1}][step_number]", test_step.step_number %>
               <%= hidden_field_tag "test_steps[#{i+1}][id]", test_step.id %>

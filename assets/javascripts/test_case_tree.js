@@ -149,6 +149,22 @@ jQuery(document).ready(function ($) {
         });
     }
 
+    var dynamically_set_test_step_number = function (test_table){
+        var input_value = 1;
+        var step_number =1;
+        test_table.find("td.ui-sort-handle").each(function () {
+            if (step_number < Number($(this).text())){
+                $(this).text(step_number);
+            }
+            step_number += 1;
+        });
+        test_table.find("input[name*=step_number]").each(function () {
+            if (input_value < Number($(this).val())){
+                $(this).val(input_value);
+            }
+            input_value += 1;
+        });
+    };
     var openDialog = function (data, viewed_testCase_id, edit_type) {
         var node = $(data.rslt.obj);
         var node_type = node.attr("rel");
@@ -190,6 +206,7 @@ jQuery(document).ready(function ($) {
                 });
                 $(".sortable .icon-del", dialog[node_type]).click(function (e) {
                     $(this).parents("tr:last").remove();
+                    dynamically_set_test_step_number(dialog[node_type]);
                 });
 
                 $(".screenshots", dialog[node_type]).tinycarousel();
@@ -441,6 +458,16 @@ jQuery(document).ready(function ($) {
             });
         });
 
+    $("#testcase-dialog span.icon-del").bind("click", function () {
+        var test_steps = $("#testcase-dialog table.test-steps");
+            var new_id = 1;
+            test_steps.find("td.ui-sort-handle").each(function () {
+                if (new_id < Number($(this).text()))
+                    $(this).text(new_id);
+                new_id += 1;
+            });
+    });
+
     $("#testcase-dialog .add-test-step").live("click", function () {
         var id = 0;
         var test_steps = $("#testcase-dialog table.test-steps");
@@ -466,11 +493,12 @@ jQuery(document).ready(function ($) {
             .append(del_button);
         del_button.append($("<span class='icon icon-del'/>").click(function (e) {
             test_step.remove();
+            dynamically_set_test_step_number(test_steps);
         }));
         test_steps.append(test_step);
-
         return false;
     });
+
 
     $("li[rel=test_case]", testcaseTree).live("click", function () {
         $("#test-case-view").block(impasse_loading_options());
