@@ -90,18 +90,18 @@ module ImpasseTestCaseHelper
     nodes = Impasse::Node.find_children(root.id)
     nodes.unshift(root)
     tree, depth = convert_node(nodes)
-
     #$FB create simplier sheet
     sheet = Sheet.new
     #$FB my way to create colums header
     sheet.setHeaderAtIndice(0, "Id")
-    sheet.setHeaderAtIndice(1, "Node type id")
+    sheet.setHeaderAtIndice(1, "Node_type_id")
     sheet.setHeaderAtIndice(depth + 1, "Details")
     sheet.setHeaderAtIndice(depth + 2, "Summary")
     sheet.setHeaderAtIndice(depth + 3, "Preconditions")
     sheet.setHeaderAtIndice(depth + 4, "Keywords")
-    sheet.setHeaderAtIndice(depth + 5, "Actions")
-    sheet.setHeaderAtIndice(depth + 6, "Expected results")
+    sheet.setHeaderAtIndice(depth + 5, "Step")
+    sheet.setHeaderAtIndice(depth + 6, "Actions")
+    sheet.setHeaderAtIndice(depth + 7, "Expected results")
     puts "Sheet header"
     traverse(tree[0], 0, sheet)
     puts "Traverse done"
@@ -128,6 +128,8 @@ module ImpasseTestCaseHelper
       sheet.setCellRowValue(sheet.headerIndice("Preconditions"), test_case.preconditions)
       test_case.test_steps.each_with_index do |step, i|
         sheet.nextRow unless i == 0
+        #sheet.cell("Step").value = step.actions
+        sheet.setCellRowValue(sheet.headerIndice("Step"), step.step_number)
         #$FB my way to set a cell
         #sheet.cell("Actions").value = step.actions
         sheet.setCellRowValue(sheet.headerIndice("Actions"), step.actions)
