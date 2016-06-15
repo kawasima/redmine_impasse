@@ -1,5 +1,13 @@
 jQuery.noConflict();
 jQuery(document).ready(function ($) {
+	var getNodeIdFromUrl = function(){
+		var testcase_id = null;
+		if (location.hash && location.hash.lastIndexOf("#testcase-", 0) == 0) {
+			testcase_id = location.hash.replace(/^#testcase-/, "");
+			//show_test_case(testcase_id);
+		}
+		return testcase_id;
+	};
     var AJAX_URL = {
         "new": IMPASSE.url.testCaseNew,
         "edit": IMPASSE.url.testCaseEdit
@@ -10,13 +18,14 @@ jQuery(document).ready(function ($) {
                 label: IMPASSE.label.buttonEdit,
                 icon: IMPASSE.url.iconEdit,
                 action: function (node) {
-                    openDialog({
+					var viewedTestCase = getNodeIdFromUrl();
+					openDialog({
                         rslt: {
                             name: $("#testcase-tree").jstree("get_text", node),
                             obj: node,
                             parent: $(node).parents("li:first")
                         }
-                    }, 'edit');
+                    }, viewedTestCase, 'edit');
                 }
             },
             copy: {
@@ -140,7 +149,7 @@ jQuery(document).ready(function ($) {
         });
     }
 
-    var openDialog = function (data, edit_type) {
+    var openDialog = function (data, viewed_testCase_id, edit_type) {
         var node = $(data.rslt.obj);
         var node_type = node.attr("rel");
         var request = {node_type: node_type};
@@ -206,10 +215,24 @@ jQuery(document).ready(function ($) {
                                 dialog[node_type].unbind("dialogbeforeclose");
                                 node.attr("id", "node_" + id);
                                 node.data("jstree", (node_type == 'test_case') ? LEAF_MENU : FOLDER_MENU);
-                                $.jstree._reference(node).set_text(node, tc["node[name]"]);
+                                if ($.jstree._reference(node) != null) {
+                                    $.jstree._reference(node).set_text(node, tc["node[name]"]);
+
+                                } else {
+                                    $.jstree._reference(0).set_text(node, tc["node[name]"]);
+                                }
+
                             });
                             dialog[node_type].dialog('close');
                             show_notification_dialog(r.status, r.message);
+							if (edit_type == 'new' && node_type == 'test_case') {
+								data.inst.refresh(data.inst._get_parent(data.rslt.oc));
+							}
+							var node_id = node.attr("id").replace("node_", "");
+							if (edit_type == 'edit' && viewed_testCase_id == node_id){
+								$("#test-case-view").block(impasse_loading_options());
+								show_test_case(viewed_testCase_id);
+							}
                         },
                         error: ajax_error_handler
                     };
@@ -348,7 +371,8 @@ jQuery(document).ready(function ($) {
             dialog[$(data.rslt.obj).attr("rel")].bind('dialogbeforeclose', function (e) {
                 $.jstree.rollback(data.rlbk);
             });
-            openDialog(data, 'new');
+			var viewedTestCase = getNodeIdFromUrl();
+            openDialog(data, viewedTestCase, 'new');
         })
         .bind("remove.jstree", function (e, data) {
             var request = {"node[id]": []};
