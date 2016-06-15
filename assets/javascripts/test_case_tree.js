@@ -160,7 +160,6 @@ jQuery(document).ready(function ($) {
         });
         test_table.find("input[name*=step_number]").each(function () {
             if (input_value < Number($(this).val())){
-                console.log("INPUT VALUE", $(this).val());
                 $(this).val(input_value);
             }
             input_value += 1;
