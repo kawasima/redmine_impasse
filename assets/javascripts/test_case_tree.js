@@ -150,10 +150,16 @@ jQuery(document).ready(function ($) {
     }
 
     var dynamically_set_test_step_number = function (test_table){
-        var new_id = 1;
         test_table.find("td.ui-sort-handle").each(function () {
+            var new_id = 1;
             if (new_id < Number($(this).text()))
                 $(this).text(new_id);
+            new_id += 1;
+        });
+        test_table.find("input[name*=step_number]").each(function () {
+            var new_id = 1;
+            if (new_id < Number($(this).val()))
+                $(this).val(new_id);
             new_id += 1;
         });
     };
