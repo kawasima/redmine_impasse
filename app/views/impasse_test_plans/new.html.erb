@@ -1,5 +1,5 @@
 <% if Rails::VERSION::MAJOR < 3 %>
-  <% labelled_tabular_form_for :test_plan, @test_plan, {} do |f| %>
+  <% labelled_form_for :test_plan, @test_plan, {} do |f| %>
     <%= render :partial => "form", :locals => {:form => f} %>
     <%= submit_tag l(:button_create) %>
   <% end %>
