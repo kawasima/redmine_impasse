@@ -64,6 +64,7 @@ module ImpassePlugin
         return '' unless issue.project && !issue.project.blank? && issue.project.module_enabled?('impasse')
 
         project = context[:project]
+        return '' unless project && project.blank? && project.module_enabled?('impasse')
         
         setting = Impasse::Setting.find_by(:project_id => project.id) || Impasse::Setting.create(:project_id => project.id)
 
