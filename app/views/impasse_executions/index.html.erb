@@ -86,7 +86,7 @@
 	  <tr class="filter">
 	    <th><%= l(:field_expected_date) %></th>
 	    <td>
-	      <%= text_field_tag 'expected_date' %><%= calendar_for('expected_date') %>
+	      <%= date_field_tag 'expected_date' %><%= calendar_for('expected_date') %>
 	      <select name="expected_date_op">
 		<option value=""></option>
 		<option value="<="><%=l(:label_includes_before)%></option>
