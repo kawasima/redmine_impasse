@@ -61,7 +61,7 @@ module ImpassePlugin
       begin
         snippet = ''
         issue = context[:issue]
-        return '' unless issue.project.module_enabled?('impasse')
+        return '' unless issue.project && !issue.project.blank? && issue.project.module_enabled?('impasse')
 
         project = context[:project]
         
