@@ -171,7 +171,7 @@ jQuery(document).ready(function ($) {
 	return false;
     });
 
-    $("#executions-view").floatmenu();
+    //$("#executions-view").floatmenu();
     if (location.hash && location.hash.lastIndexOf("#testcase-", 0) == 0) {
 	var testcase_id = location.hash.replace(/^#testcase-/, "");
 	show_test_case(testcase_id);
