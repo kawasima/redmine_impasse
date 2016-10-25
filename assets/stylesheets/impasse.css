@@ -67,7 +67,6 @@ li[rel="test_case"][data-inactive="true"] a {
 }
 
 .screenshots {
-    overflow: hidden;
     height: 100px;
 }
 .screenshots .buttons {
