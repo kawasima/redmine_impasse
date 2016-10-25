@@ -12,8 +12,8 @@ module Impasse
     has_many :requirement_issues, :through => :requirement_cases
 
     acts_as_customizable
-    acts_as_attachable :view_permission => :view_files,
-                       :delete_permission => :manage_files
+    acts_as_attachable :view_permission => :view_testcases,
+                       :delete_permission => :manage_testcases
 
     def project
       root_id = node.path.split(/\./)[1].to_i
