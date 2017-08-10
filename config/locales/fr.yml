@@ -47,7 +47,7 @@ fr:
   label_filters_inactive: "Incluant les tests invalides"
   label_includes_before: "incluant les précédents"
   label_includes_after: "incluant les suivants"
-  label_execution_histories: "enregistrer"
+  label_execution_histories: "historique"
 
   field_details: "Details"
   field_preconditions: "Pré-conditions"

@@ -50,11 +50,18 @@ function show_notification_dialog(type, message) {
 	    var $this = $(this);
 	    var menuPosition = $this.offset().top;
 	    $this.css({zIndex: 10});
+            $this.css("max-height", $(window).height());
+
+            $(window).resize(function() {
+                $this.width( $('.splitcontentright').width() );
+                $this.css("max-height", $(window).height());
+            });
 
 	    $(window).scroll(function(e) {
 			var offsetTop = $(window).scrollTop() - menuPosition;
 			if(offsetTop > 0) {
-		    $this.css({position: "absolute"});
+		    $this.css({position: "fixed", top: "64px", overflowY: "auto"});
+                    $this.width( $('.splitcontentright').width() );
 		} else {
 		    $this.css("position", "static");
 		}
