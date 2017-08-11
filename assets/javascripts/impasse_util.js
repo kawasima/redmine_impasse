@@ -68,7 +68,6 @@ function show_notification_dialog(type, message) {
                     $this.width( $('.splitcontentright').width() );
                 } else if(offsetTop <0 ) {
                     $this.css({position: "static"  });
-                    isAdded = false;
                 }
             });
         });
