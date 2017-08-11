@@ -64,7 +64,7 @@ function show_notification_dialog(type, message) {
 
                 var offsetTop = $(window).scrollTop() - menuPosition;
                 if(offsetTop >= 0) {
-                    $this.css({position: "fixed", top: "0px", overflowY: "auto" });
+                    $this.css({position: "fixed", top: "64px", overflowY: "auto" });
                     $this.width( $('.splitcontentright').width() );
                 } else if(offsetTop <0 ) {
                     $this.css({position: "static"  });
