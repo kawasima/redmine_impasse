@@ -51,7 +51,7 @@ function show_notification_dialog(type, message) {
             var menuPosition = $this.offset().top;
             $this
               .css('z-index', 10)
-              .css('max-height', $(window).height());
+              .css('max-height', $(window).height()-50);
 
             $(window).resize(function() {
                 $this.width( $('.splitcontentright').width() );
