@@ -28,10 +28,10 @@ class ImpasseExecutionsController < ImpasseAbstractController
     status = 'success'
     errors = []
     for test_case_id in test_case_ids
-      test_plan_case = Impasse::TestPlanCase.where("test_plan_id=? AND test_case_id=?",params[:test_plan_case][:test_plan_id],
-                                                                        test_case_id).first
-      next if test_plan_case.nil?
-      execution = Impasse::Execution.find_or_initialize_by(:test_plan_case_id => test_plan_case.id)
+      test_plan_case = Impasse::TestPlanCase.where(
+        test_plan_id: params[:test_plan_case][:test_plan_id], test_case_id: test_case_id).first
+      next unless test_plan_case
+      execution = Impasse::Execution.where(test_plan_case_id: test_plan_case.id).first_or_initialize
       execution.update_attributes(params[:execution])
       if params[:record]
         execution.execution_ts = Time.now.to_datetime
