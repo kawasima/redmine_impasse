@@ -9,7 +9,7 @@ class ImpasseTestCaseController < ImpasseAbstractController
   include ImpasseTestCaseHelper
 
   menu_item :impasse
-  before_filter :find_project, :authorize
+  before_action :find_project, :authorize
 
   def index
     if User.current.allowed_to?(:move_issues, @project)

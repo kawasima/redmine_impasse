@@ -68,7 +68,7 @@
             <tbody>
             <% for requirement in @test_case.requirement_issues %>
                 <% issue = requirement.issue %>
-                <tr id="requirement-<%= h(requirement.id) %>-testcase-<%= h(@test_case.id) %>" class="<%= cycle('odd', 'even') %> <%= issue.css_classes %>">
+                <tr id="requirement-<%= h(requirement.id) %>-testcase-<%= h(@test_case.id) %>" class="<%= issue.css_classes %>">
                   <td class="id">
                     <%= link_to h(issue.id), :controller => 'issues', :action => 'show', :id => issue %>
                   </td>

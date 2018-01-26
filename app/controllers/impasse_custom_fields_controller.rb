@@ -4,7 +4,7 @@ class ImpasseCustomFieldsController < ImpasseAbstractController
   helper CustomFieldsHelper
   helper ImpasseSettingsHelper
 
-  before_filter :require_admin
+  before_action :require_admin
 
   def index
     @custom_fields_by_type = CustomField.all.group_by {|f| f.class.name }

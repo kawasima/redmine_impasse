@@ -18,7 +18,7 @@
 	</tr></thead>
       <tbody>
 	<% for issue in @issues %>
-	  <tr id="issue-<%= h(issue.id) %>" class="jstree-draggable <%= cycle('odd', 'even') %> <%= issue.css_classes %>">
+	  <tr id="issue-<%= h(issue.id) %>" class="jstree-draggable <%= issue.css_classes %>">
 	    <td class="id">
               <%= h(issue.id) %>
 	    </td>

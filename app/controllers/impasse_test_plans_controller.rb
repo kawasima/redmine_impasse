@@ -8,7 +8,7 @@ class ImpasseTestPlansController < ImpasseAbstractController
   include CustomFieldsHelper
 
   menu_item :impasse
-  before_filter :find_project_by_project_id, :authorize
+  before_action :find_project_by_project_id, :authorize
 
   def index
     @test_plans_by_version, @versions = Impasse::TestPlan.find_all_by_version(@project, params[:completed])

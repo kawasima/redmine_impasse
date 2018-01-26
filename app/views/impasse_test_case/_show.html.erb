@@ -48,7 +48,7 @@
           <th><%= l(:field_expected_results) %></th>
         </tr>
         <% @test_case.test_steps.each_with_index do |test_step, i| %>
-            <tr class="<%= cycle 'odd', 'even' %>">
+            <tr>
               <td class="id"><%= simple_format(h(test_step.step_number)) %></td>
               <td align="left"><%= simple_format(h(test_step.actions)) %></td>
               <td align="left"><%= simple_format(h(test_step.expected_results)) %></td>
@@ -68,7 +68,7 @@
         <tbody>
         <% for requirement in @test_case.requirement_issues %>
             <% issue = requirement.issue %>
-            <tr id="issue-<%= h(issue.id) %>" class="jstree-draggable <%= cycle('odd', 'even') %> <%= issue.css_classes %>">
+            <tr id="issue-<%= h(issue.id) %>" class="jstree-draggable <%= issue.css_classes %>">
               <td class="id">
                 <%= link_to h(issue.id), :controller => 'issues', :action => 'show', :id => issue %>
               </td>

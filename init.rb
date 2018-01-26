@@ -58,6 +58,8 @@ Redmine::Plugin.register :redmine_impasse do
   url 'http://unit8.net/redmine_impasse'
   author_url 'http://unit8.net/'
 
+  requires_redmine :version_or_higher => '3.4.0'
+
   settings :partial => 'redmine_impasse/setting'
 
   project_module :impasse do
