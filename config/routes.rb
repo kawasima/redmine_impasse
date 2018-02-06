@@ -12,7 +12,7 @@ if Rails::VERSION::MAJOR < 3
   end
 else
   match 'projects/:project_id/impasse/test_case/(:action(/:id))', :controller => 'impasse_test_case', via: [:get, :post, :patch]
-  match 'projects/:project_id/impasse/test_plans/(:action(/:id))', :controller => 'impasse_test_plans', via: [:get, :post]
+  match 'projects/:project_id/impasse/test_plans/(:action(/:id))', :controller => 'impasse_test_plans', via: [:get, :post, :patch]
   match 'projects/:project_id/impasse/executions/(:action(/:id))', :controller => 'impasse_executions', via: [:get, :post, :patch]
   match 'projects/:project_id/impasse/execution_bugs/(:action(/:id))', :controller => 'impasse_execution_bugs', via: [:get, :post]
   match 'projects/:project_id/impasse/settings/(:action(/:id))', :controller => 'impasse_settings', via: [:get, :post, :patch]
