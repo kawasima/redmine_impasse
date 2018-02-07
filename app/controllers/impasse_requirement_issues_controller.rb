@@ -32,7 +32,7 @@ class ImpasseRequirementIssuesController < ImpasseAbstractController
                               :order => sort_clause,
                               :offset => @offset,
                               :limit => @limit)
-      @issue_count_by_group = @query.issue_count_by_group
+      @issue_count_by_group = @query.result_count_by_group
 
       render :index, :layout => !request.xhr?
     end
