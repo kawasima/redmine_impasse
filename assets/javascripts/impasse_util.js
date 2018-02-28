@@ -55,7 +55,7 @@ function show_notification_dialog(type, message) {
 
             $(window).resize(function() {
                 $this.width( $('.splitcontentright').width() );
-                $this.css('max-height', $(window).height());
+                $this.css('max-height', $(window).height()-50);
             });
 
             $(window).scroll(function(e) {
