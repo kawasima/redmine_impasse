@@ -40,11 +40,11 @@ module Impasse
     end
 
     def active?
-      !attributes['active'] or attributes['active'].to_i == 1 or attributes['active'].is_a? TrueClass or attributes['active'] == 't'
+      !attributes['active'] or attributes['active'].is_a? TrueClass or attributes['active'].to_i == 1 or attributes['active'] == 't'
     end
 
     def planned?
-      attributes['planned'].to_i == 1 or attributes['planned'].is_a? TrueClass or attributes['planned'] == 't'
+      attributes['planned'].is_a? TrueClass or attributes['planned'].to_i == 1 or attributes['planned'] == 't'
     end
 
     def self.find_children(node_id, test_plan_id=nil, filters=nil, limit=300)
