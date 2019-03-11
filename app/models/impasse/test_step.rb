@@ -3,7 +3,7 @@ module Impasse
     unloadable
     self.table_name = "impasse_test_steps"
 
-    attr_accessible :actions, :step_number, :expected_results
+    attr_accessor :actions, :step_number, :expected_results
 
     belongs_to :test_case
     

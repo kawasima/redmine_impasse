@@ -5,13 +5,13 @@ module ImpasseVersionsControllerPatch
     base.send(:include, InstanceMethods)
 
     base.class_eval do
-      alias_method_chain :destroy, :impasse
+      # alias_method_chain :destroy, :impasse
     end
 
   end
 
   module InstanceMethods
-    def destroy_with_impasse
+    def destroy
       test_plans = Impasse::TestPlan.find_by(:version_id => @version.id)
       if test_plans
         respond_to do |format|
@@ -22,7 +22,7 @@ module ImpasseVersionsControllerPatch
           format.api  { head :unprocessable_entity }
         end
       else
-        destroy_without_impasse
+        super
       end
     end
   end

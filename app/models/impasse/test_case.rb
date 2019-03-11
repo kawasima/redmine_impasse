@@ -4,7 +4,7 @@ module Impasse
     self.table_name = "impasse_test_cases"
     self.include_root_in_json = false
     
-    attr_accessible :summary, :preconditions, :importance
+    attr_accessor :summary, :preconditions, :importance
 
     has_many :test_steps, :dependent=>:destroy
     belongs_to :node, :foreign_key=>"id"

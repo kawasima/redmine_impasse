@@ -4,7 +4,7 @@ module Impasse
     self.table_name = "impasse_test_plans"
     self.include_root_in_json = false
 
-    attr_accessible :name, :notes, :version_id
+    attr_accessor :name, :notes, :version_id
 
     has_many :test_plan_cases
     has_many :test_cases, :through => :test_plan_cases
