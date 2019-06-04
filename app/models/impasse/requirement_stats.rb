@@ -1,6 +1,8 @@
 module Impasse
   class RequirementStats < ActiveRecord::Base
     unloadable
+    #dummy table
+    self.table_name = "impasse_requirement_stats"
 
     def self.columns
       @columns ||= [];

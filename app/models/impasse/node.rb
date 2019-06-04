@@ -1,10 +1,12 @@
 module Impasse
   class Node < ActiveRecord::Base
+    #include Redmine::SafeAttributes
+
     unloadable
     self.table_name = "impasse_nodes"
     self.include_root_in_json = false
 
-    attr_accessor :id, :name, :node_type_id, :node_order, :parent_id
+    #safe_attributes :id, :name, :node_type_id, :node_order, :parent_id
 
     belongs_to :parent, :class_name=>'Node', :foreign_key=> :parent_id
     has_many   :children, :class_name=> 'Node', :foreign_key=> :parent_id

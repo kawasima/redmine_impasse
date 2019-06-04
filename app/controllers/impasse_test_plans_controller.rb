@@ -11,11 +11,13 @@ class ImpasseTestPlansController < ImpasseAbstractController
   before_action :find_project_by_project_id, :authorize
 
   def index
-    @test_plans_by_version, @versions = Impasse::TestPlan.find_all_by_version(@project, params[:completed])
+    plan_params = params.permit!.to_h
+    @test_plans_by_version, @versions = Impasse::TestPlan.find_all_by_version(@project, plan_params[:completed])
   end
 
   def show
-    @test_plan = Impasse::TestPlan.where(:id => params[:id]).includes(:version).first
+    plan_params = params.permit!.to_h
+    @test_plan = Impasse::TestPlan.where(:id => plan_params[:id]).includes(:version).first
     @setting = Impasse::Setting.find_by(:project_id => @project) || Impasse::Setting.create(:project_id => @project.id)
   end
 
@@ -29,8 +31,9 @@ class ImpasseTestPlansController < ImpasseAbstractController
   end
 
   def edit
-    @test_plan = Impasse::TestPlan.find(params[:id])
-    @test_plan.update_attributes(params[:test_plan])
+    plan_params = params.permit!.to_h
+    @test_plan = Impasse::TestPlan.find(plan_params[:id])
+    @test_plan.update_attributes(plan_params[:test_plan]) if plan_params.include? :test_plan
     if (request.post? or request.put? or request.patch?) and @test_plan.save
       flash[:notice] = l(:notice_successful_update)
       redirect_to :action => :show, :project_id => @project, :id => @test_plan
@@ -39,7 +42,8 @@ class ImpasseTestPlansController < ImpasseAbstractController
   end
 
   def destroy
-    @test_plan = Impasse::TestPlan.find(params[:id])
+    plan_params = params.permit!.to_h
+    @test_plan = Impasse::TestPlan.find(plan_params[:id])
     if (request.post? or request.patch?) and @test_plan.destroy
       flash[:notice] = l(:notice_successful_delete)
       redirect_to :action => :index, :project_id => @project
@@ -47,14 +51,15 @@ class ImpasseTestPlansController < ImpasseAbstractController
   end
 
   def copy
-    @test_plan = Impasse::TestPlan.find(params[:id])
-    @test_plan.update_attributes(params[:test_plan])
+    plan_params = params.permit!.to_h
+    @test_plan = Impasse::TestPlan.find(plan_params[:id])
+    @test_plan.update_attributes(plan_params[:test_plan])
     if request.post? or request.put? or request.patch?
       ActiveRecord::Base.transaction do
         new_test_plan = @test_plan.dup
         new_test_plan.save!
 
-        test_plan_cases = Impasse::TestPlanCase.find_all_by_test_plan_id(params[:id])
+        test_plan_cases = Impasse::TestPlanCase.find_all_by_test_plan_id(plan_params[:id])
         for test_plan_case in test_plan_cases
           Impasse::TestPlanCase.create(:test_plan_id => new_test_plan.id, :test_case_id => test_plan_case.test_case_id)
         end

@@ -4,7 +4,7 @@ module Impasse
     self.table_name = "impasse_test_suites"
     self.include_root_in_json = false
 
-    attr_accessor :details
+    #attr_accessor :details
 
     belongs_to :node, :foreign_key => :id
 

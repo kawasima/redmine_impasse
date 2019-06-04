@@ -1,3 +1,7 @@
+.theme-Abacus .ui-widget-overlay {
+   z-index: 25 !important;
+}
+
 #test-case-view .details{
     background: #ffd;
     padding: 6px;

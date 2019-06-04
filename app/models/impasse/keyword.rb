@@ -4,7 +4,7 @@ module Impasse
     self.table_name = "impasse_keywords"
     self.include_root_in_json = false
 
-    attr_accessor :keyword, :project_id
+    #attr_accessor :keyword, :project_id
 
     belongs_to :project
   end

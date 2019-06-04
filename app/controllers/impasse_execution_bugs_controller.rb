@@ -38,7 +38,8 @@ class ImpasseExecutionBugsController < ImpasseAbstractController
   def create
     call_hook(:controller_issues_new_before_save, { :params => params, :issue => @issue })
     if @issue.save
-      execution_bug = Impasse::ExecutionBug.new(:execution_id => params[:execution_bug][:execution_id], :bug_id => @issue.id)
+      execution_params = params.permit!.to_h
+      execution_bug = Impasse::ExecutionBug.new(:execution_id => execution_params[:execution_bug][:execution_id], :bug_id => @issue.id)
       execution_bug.save!
 
       flash[:notice] = l(:notice_successful_create)

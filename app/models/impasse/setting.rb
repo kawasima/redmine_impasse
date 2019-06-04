@@ -3,7 +3,7 @@ module Impasse
     unloadable
     self.table_name = "impasse_settings"
 
-    attr_accessor :project_id, :bug_tracker_id, :requirement_tracker
+    #attr_accessor :project_id, :bug_tracker_id, :requirement_tracker
 
     serialize :requirement_tracker
 

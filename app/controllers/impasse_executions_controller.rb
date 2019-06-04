@@ -19,21 +19,22 @@ class ImpasseExecutionsController < ImpasseAbstractController
   end
 
   def put
-    @node = Impasse::Node.find(params[:test_plan_case][:test_case_id])
+    execution_params = params.permit!.to_h
+    @node = Impasse::Node.find(execution_params[:test_plan_case][:test_case_id])
     test_case_ids = (@node.is_test_case?) ? [ @node.id ] : @node.all_decendant_cases.collect{|tc| tc.id}
-    if params[:execution] and params[:execution][:expected_date]
-      params[:execution][:expected_date] = Time.at(params[:execution][:expected_date].to_i)
+    if execution_params[:execution] and execution_params[:execution][:expected_date]
+      execution_params[:execution][:expected_date] = Time.at(execution_params[:execution][:expected_date].to_i)
     end
 
     status = 'success'
     errors = []
     for test_case_id in test_case_ids
       test_plan_case = Impasse::TestPlanCase.where(
-        test_plan_id: params[:test_plan_case][:test_plan_id], test_case_id: test_case_id).first
+        test_plan_id: execution_params[:test_plan_case][:test_plan_id], test_case_id: test_case_id).first
       next unless test_plan_case
       execution = Impasse::Execution.where(test_plan_case_id: test_plan_case.id).first_or_initialize
-      execution.update_attributes(params[:execution])
-      if params[:record]
+      execution.update_attributes(execution_params[:execution])
+      if execution_params[:record]
         execution.execution_ts = Time.now.to_datetime
         execution.executor_id = User.current.id
       end
@@ -41,7 +42,7 @@ class ImpasseExecutionsController < ImpasseAbstractController
       begin
         ActiveRecord::Base.transaction do
           execution.save!
-          if params[:record]
+          if execution_params[:record]
             @execution_history = Impasse::ExecutionHistory.new(execution.attributes)
             @execution_history.save!
           end

@@ -128,7 +128,7 @@
 
   <div style="clear: both">
     <% other_formats_links do |f| %>
-      <%= f.link_to 'CSV', :url => params.merge(:format => 'csv', :page => nil) %>
+      <%= f.link_to 'CSV', :url => params.to_unsafe_h.merge(:format => 'csv', :page => nil) %>
     <% end %>
   </div>
 </div>

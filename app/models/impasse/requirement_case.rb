@@ -3,7 +3,7 @@ module Impasse
     unloadable
     self.table_name = "impasse_requirement_cases"
 
-    attr_accessor :requirement_id, :test_case_id
+    #attr_accessor :requirement_id, :test_case_id
 
     belongs_to :test_case
     belongs_to :requirement_issue, :foreign_key => "requirement_id"
