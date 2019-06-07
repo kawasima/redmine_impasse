@@ -60,7 +60,7 @@ function show_notification_dialog(type, message) {
 
             $(window).scroll(function(e) {
                 //To avoid document resizing when passing to fixed position
-                $('.splitcontentright').css("min-height", $this.height());
+                //$('.splitcontentright').css("min-height", $this.height());
 
                 var offsetTop = $(window).scrollTop() - menuPosition;
                 if(offsetTop >= 0) {

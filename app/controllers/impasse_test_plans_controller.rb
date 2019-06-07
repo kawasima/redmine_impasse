@@ -22,7 +22,8 @@ class ImpasseTestPlansController < ImpasseAbstractController
   end
 
   def new
-    @test_plan = Impasse::TestPlan.new(params[:test_plan])
+    plan_params = params.permit!.to_h
+    @test_plan = Impasse::TestPlan.new(plan_params[:test_plan])
     if (request.post? or request.patch?) and @test_plan.save
       flash[:notice] = l(:notice_successful_create)
       redirect_to :action => :tc_assign, :project_id => @project, :id => @test_plan

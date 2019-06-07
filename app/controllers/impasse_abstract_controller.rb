@@ -3,10 +3,11 @@ class ImpasseAbstractController < ApplicationController
   def require_login
     if !User.current.logged?
       # Extract only the basic url parameters on non-GET requests
+      local_params = params.permit!.to_h
       if request.get?
-        url = url_for(params)
+        url = url_for(local_params)
       else
-        url = url_for(:controller => "/params[:controller]", :action => params[:action], :id => params[:id], :project_id => params[:project_id])
+        url = url_for(:controller => "/params[:controller]", :action => local_params[:action], :id => local_params[:id], :project_id => local_params[:project_id])
       end
 
       respond_to do |format|

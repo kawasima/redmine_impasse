@@ -36,9 +36,9 @@ class ImpasseExecutionBugsController < ImpasseAbstractController
   end
 
   def create
-    call_hook(:controller_issues_new_before_save, { :params => params, :issue => @issue })
+    execution_params = params.permit!.to_h
+    call_hook(:controller_issues_new_before_save, { :params => execution_params, :issue => @issue })
     if @issue.save
-      execution_params = params.permit!.to_h
       execution_bug = Impasse::ExecutionBug.new(:execution_id => execution_params[:execution_bug][:execution_id], :bug_id => @issue.id)
       execution_bug.save!
 
@@ -54,8 +54,9 @@ class ImpasseExecutionBugsController < ImpasseAbstractController
   end
 
   def upload_attachments
-    issue = Issue.find(params[:issue_id])
-    attachments = Attachment.attach_files(issue, params[:attachments])
+    execution_params = params.permit!.to_h
+    issue = Issue.find(execution_params[:issue_id])
+    attachments = Attachment.attach_files(issue, execution_params[:attachments])
 
     respond_to do |format|
       format.html { render :text => 'ok' }
@@ -63,16 +64,18 @@ class ImpasseExecutionBugsController < ImpasseAbstractController
   end
 
   def build_new_issue_from_params
-    if params[:id].blank?
+    issue_params = params.permit!.to_h
+
+    if issue_params[:id].blank?
       @issue = Issue.new
-      @issue.copy_from(params[:copy_from]) if params[:copy_from]
+      @issue.copy_from(issue_params[:copy_from]) if issue_params[:copy_from]
       @issue.project = @project
     else
-      @issue = @project.issues.visible.find(params[:id])
+      @issue = @project.issues.visible.find(issue_params[:id])
     end
     @issue.project = @project    # Tracker must be set before custom field values
-    if (params[:issue] && params[:issue][:tracker_id]) || params[:tracker_id]
-      @issue.tracker ||= @project.trackers.find((params[:issue] && params[:issue][:tracker_id]) || params[:tracker_id])
+    if (issue_params[:issue] && issue_params[:issue][:tracker_id]) || issue_params[:tracker_id]
+      @issue.tracker ||= @project.trackers.find((issue_params[:issue] && issue_params[:issue][:tracker_id]) || issue_params[:tracker_id])
     else
       @issue.tracker ||= @project.trackers.first
     end
@@ -81,8 +84,8 @@ class ImpasseExecutionBugsController < ImpasseAbstractController
       return false
     end
 
-    if params[:issue].is_a?(Hash)
-      @issue.safe_attributes = params[:issue]
+    if issue_params[:issue].is_a?(Hash)
+      @issue.safe_attributes = issue_params[:issue]
     end
     @issue.start_date ||= Date.today
     @issue.author = User.current
