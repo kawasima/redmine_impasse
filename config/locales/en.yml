@@ -72,7 +72,8 @@ en:
   button_create_test_plan: "Create a test plan"
   
   permission_view_testcases: "View test cases"
-  permission_manage_test_cases: "Manage test cases"
+  permission_manage_testcases: "Manage test cases"
+  permission_setting_testcases: "Setting test cases"
 
   notice_delete_test_plans_first: "Delete related test plans first."
   notice_copy_cases_to_another_project: "Check cases you want to copy and select a destination project."

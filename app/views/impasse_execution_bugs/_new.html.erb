@@ -1,31 +1,44 @@
 <div class="box">
-<% if Rails::VERSION::MAJOR < 3 %>
-  <% labelled_tabular_form_for :issue, @issue, :url => {:controller => 'issues', :action => 'create', :project_id => @project},
-                               :html => {:multipart => true, :id => 'issue-form', :class => 'tabular new-issue-form'} do |f| %>
-    <%= error_messages_for 'issue' %>
+<%= call_hook(:view_issues_new_top, {:issue => @issue}) %>
+
+<%= labelled_form_for @issue, :url => _project_issues_path(@project),
+                             :html => {:id => 'issue-form', :multipart => true} do |f| %>
+  <%= error_messages_for 'issue' %>
+  <%= hidden_field_tag 'copy_from', params[:copy_from] if params[:copy_from] %>
+  <div class="box tabular">
+    <div id="all_attributes">
     <%= render :partial => 'form', :locals => {:f => f} %>
-  <% end %>
-<% else %>
-  <% output = labelled_form_for @issue,
-       :url => {:controller => 'issues', :action => 'create', :project_id => @project},
-       :as  => :issue,
-       :html => {:multipart => true, :id => 'issue-form', :class => 'tabular new-issue-form'} do |f| %>
-    <%= error_messages_for 'issue' %>
-    <%= render :partial => 'form', :locals => {:f => f} %>
-  <% end %>
-  <%= output %>
+    </div>
+
+    <% if @copy_from && Setting.link_copied_issue == 'ask' %>
+    <p>
+      <label for="link_copy"><%= l(:label_link_copied_issue) %></label>
+      <%= check_box_tag 'link_copy', '1', @link_copy %>
+    </p>
+    <% end %>
+    <% if @copy_from && @copy_from.attachments.any? %>
+    <p>
+      <label for="copy_attachments"><%= l(:label_copy_attachments) %></label>
+      <%= check_box_tag 'copy_attachments', '1', @copy_attachments %>
+    </p>
+    <% end %>
+    <% if @copy_from && !@copy_from.leaf? %>
+    <p>
+      <label for="copy_subtasks"><%= l(:label_copy_subtasks) %></label>
+      <%= check_box_tag 'copy_subtasks', '1', @copy_subtasks %>
+    </p>
+    <% end %>
+
+    <p id="attachments_form"><label><%= l(:label_attachment_plural) %></label><%= render :partial => 'attachments/form', :locals => {:container => @issue} %></p>
+
+    <div id="watchers_form_container">
+      <%= render :partial => 'issues/watchers_form' %>
+    </div>
+  </div>
+
+  <button id="button-create-issue"><%=l(:button_create)%></button>
 <% end %>
 
-<form id="attachments-form" class="tabular" target="upload-target" action="<%=url_for :action => 'upload_attachments', :project_id => @project %>" method="post" enctype="multipart/form-data">
-<%= hidden_field_tag "authenticity_token", form_authenticity_token %>
-<input type="hidden" name="issue_id" value=""/>
-<p id="attachments_form"><%= label_tag('attachments[1][file]', l(:label_attachment_plural))%><%= render :partial => 'attachments/form' %></p>
-</form>
-<iframe name="upload-target" width="0" height="0"></iframe>
-<div id="preview" class="wiki"></div>
-
-<button id="button-create-issue"><%=l(:button_create)%></button>
-</div>
 <% content_for :header_tags do %>
-    <%= stylesheet_link_tag 'scm' %>
+    <%= robot_exclusion_tag %>
 <% end %>

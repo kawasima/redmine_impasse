@@ -1,90 +1,98 @@
 <div id="errorExplanation" style="display:none"></div>
 <div class="box tabular">
-  <p><label><span class="required">*</span><%=l :field_name %></label><%= text_field_tag 'node[name]', @node.name, :size => 50, :required=>true %></p>
+  <p><label><span class="required">*</span><%= l :field_name %>
+  </label><%= text_field_tag 'node[name]', @node.name, :size => 50, :required => true %></p>
+
   <p><%= form.text_area :summary,
-         :class => 'wiki-edit', :rows => 5 %></p>
+                        :class => 'wiki-edit', :rows => 5 %></p>
+
   <p><%= form.text_area :preconditions,
-         :class => 'wiki-edit', :rows => 5 %></p>
-  <p><%= form.select :importance, [[l(:default_priority_high),1], [l(:default_priority_normal),2], [l(:default_priority_low),3]] %></p>
+                        :class => 'wiki-edit', :rows => 5 %></p>
+
+  <p><%= form.select :importance, [[l(:default_priority_high), 1], [l(:default_priority_normal), 2], [l(:default_priority_low), 3]] %></p>
+
   <p>
     <label><%= l(:field_keywords) %></label>
-    <input type="text" name="node_keywords" value="<%= @node.keywords.collect{|w| w.keyword}.join(",")%>"/>
+    <input type="text" name="node_keywords" value="<%= @node.keywords.collect { |w| w.keyword }.join(",") %>"/>
   </p>
   <% @test_case.custom_field_values.each do |value| %>
-    <p><%= custom_field_tag_with_label :test_case, value %></p>
+      <p><%= custom_field_tag_with_label :test_case, value %></p>
   <% end %>
   <div style="margin:0; padding: 5px 0 8px 0; padding-left: 180px; height: 1%; clear: left;">
     <label>Screenshot</label>
+
     <div class="contextual">
-      <a href="#" class="icon icon-add add-screenshot"><%=l(:button_add)%></a>
+      <a href="#" class="icon icon-add add-screenshot"><%= l(:button_add) %></a>
     </div>
-    <%= render :partial => "impasse_screenshots/list", :locals => { :attachments => @test_case.attachments, :mode => :edit } %>
+    <%= render :partial => "impasse_screenshots/list", :locals => {:attachments => @test_case.attachments, :mode => :edit} %>
     <div class="clear"/>
-    <label><%=l(:field_test_steps) %></label>
-      <div class="contextual">
-	<a href="#" class="icon icon-add add-test-step"><%=l(:button_add)%></a>
-      </div>
-      <table class="list test-steps">
-	<thead>
-	  <tr class="entry">
-	    <th>#</th>
-	    <th><%=l(:field_actions)%></th>
-	    <th><%=l(:field_expected_results)%></th>
-	    <th></th>
-	  </tr>
-	</thead>
-	<tbody class="sortable">
-	  <% @test_case.test_steps.each_with_index do |test_step, i| %>
-	  <tr>
-	    <td class="ui-sort-handle"><%=h test_step.step_number %></td>
-	    <td><%=text_area_tag "test_steps[#{i+1}][actions]", test_step.actions, :rows=>3, :style=>'width:100%' %>
-	      <%= hidden_field_tag "test_steps[#{i+1}][step_number]", test_step.step_number %>
-	      <%= hidden_field_tag "test_steps[#{i+1}][id]", test_step.id %>
-	    </td>
-	    <td><%=text_area_tag "test_steps[#{i+1}][expected_results]", test_step.expected_results, :rows=>3, :style=>'width:100%' %></td>
-	    <td><span class='icon icon-del'/></td>
-	  </tr>
-	  <% end %>
-	</tbody>
-      </table>
+    <label><%= l(:field_test_steps) %></label>
+
+    <div class="contextual">
+      <a href="#" class="icon icon-add add-test-step"><%= l(:button_add) %></a>
+    </div>
+    <table class="list test-steps">
+      <thead>
+      <tr class="entry">
+        <th>#</th>
+        <th><%= l(:field_actions) %></th>
+        <th><%= l(:field_expected_results) %></th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody class="sortable">
+      <% @test_case.test_steps.each_with_index do |test_step, i| %>
+          <tr>
+            <td class="ui-sort-handle"><%= h test_step.step_number %></td>
+            <td><%= text_area_tag "test_steps[#{i+1}][actions]", test_step.actions, :rows => 3, :style => 'width:100%' %>
+              <%= hidden_field_tag "test_steps[#{i+1}][step_number]", test_step.step_number %>
+              <%= hidden_field_tag "test_steps[#{i+1}][id]", test_step.id %>
+            </td>
+            <td><%= text_area_tag "test_steps[#{i+1}][expected_results]", test_step.expected_results, :rows => 3, :style => 'width:100%' %></td>
+            <td><span class='icon icon-del'/></td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
 
     <% if @setting.can_manage_requirements? and @test_case.requirement_issues.size > 0 %>
-      <div class="requirement-issues">
-	<label><%= l(:label_requirement_plural) %></label>
-	<table class="list">
-	  <tr>
-	    <th>#</th>
-	    <th><%=l(:field_tracker)%></th>
-	    <th><%=l(:field_subject)%></th>
-	    <th></th>
-	  </tr>
-	  <tbody>
-	    <% for requirement in @test_case.requirement_issues %>
-	      <% issue = requirement.issue %>
-	      <tr id="requirement-<%= h(requirement.id) %>-testcase-<%= h(@test_case.id)%>" class="<%= cycle('odd', 'even') %> <%= issue.css_classes %>">
-		<td class="id">
-		  <%= link_to h(issue.id), :controller => 'issues', :action => 'show', :id => issue %>
-		</td>
-		<td class="tracker"><%=h issue.tracker %></td>
-		<td class="subject">
-		  <%= link_to h(truncate(issue.subject, :length => 60)), :controller => 'issues', :action => 'show', :id => issue %> (<%=h issue.status %>)
-		</td>
-		<td class="buttons"><%= link_to(
-						image_tag('link_break.png'), {
-						  :controller => 'impasse_requirement_issues', :action => 'remove_test_case', :id => requirement.id,
-						  :test_case_id => @test_case.id, :project_id => @project},
-						:class => "remove_requirement"
-						
-						) %></td>
-	      </tr>
-	    <% end %>
-	  </tbody>      
-	</table>
-      </div>
+        <div class="requirement-issues">
+          <label><%= l(:label_requirement_plural) %></label>
+          <table class="list">
+            <tr>
+              <th>#</th>
+              <th><%= l(:field_tracker) %></th>
+              <th><%= l(:field_subject) %></th>
+              <th></th>
+            </tr>
+            <tbody>
+            <% for requirement in @test_case.requirement_issues %>
+                <% issue = requirement.issue %>
+                <tr id="requirement-<%= h(requirement.id) %>-testcase-<%= h(@test_case.id) %>" class="<%= issue.css_classes %>">
+                  <td class="id">
+                    <%= link_to h(issue.id), :controller => 'issues', :action => 'show', :id => issue %>
+                  </td>
+                  <td class="tracker"><%= h issue.tracker %></td>
+                  <td class="subject">
+                    <%= link_to h(truncate(issue.subject, :length => 60)), :controller => 'issues', :action => 'show', :id => issue %>
+                    (<%= h issue.status %>)
+                  </td>
+                  <td class="buttons"><%= link_to(
+                                                  image_tag('link_break.png'), {
+                                                                                     :controller => 'impasse_requirement_issues', :action => 'remove_test_case', :id => requirement.id,
+                                                                                     :test_case_id => @test_case.id, :project_id => @project},
+                                                  :class => "remove_requirement"
+
+                                          ) %></td>
+                </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
     <% end %>
   </div>
   <% unless @test_case.active %>
-  <p><%= form.check_box :active %></p>
+      <p><%= form.check_box :active %></p>
   <% end %>
 
 </div>

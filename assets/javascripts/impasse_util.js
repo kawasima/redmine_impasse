@@ -46,20 +46,31 @@ function show_notification_dialog(type, message) {
     });
 
     $.fn.floatmenu = function(options) {
-	return this.each(function() {
-	    var $this = $(this);
-	    var menuPosition = $this.offset().top;
-	    $this.css({zIndex: 10});
+        return this.each(function() {
+            var $this = $(this);
+            var menuPosition = $this.offset().top;
+            $this
+              .css('z-index', 10)
+              .css('max-height', $(window).height()-50);
 
-	    $(window).scroll(function(e) {
-		var offsetTop = $(window).scrollTop() - menuPosition;
-		if(offsetTop > 0) {
-		    $this.css({position: "absolute", top: offsetTop});
-		} else {
-		    $this.css("position", "static");
-		}
-	    });
-	});
+            $(window).resize(function() {
+                $this.width( $('.splitcontentright').width() );
+                $this.css('max-height', $(window).height()-50);
+            });
+
+            $(window).scroll(function(e) {
+                //To avoid document resizing when passing to fixed position
+                //$('.splitcontentright').css("min-height", $this.height());
+
+                var offsetTop = $(window).scrollTop() - menuPosition;
+                if(offsetTop >= 0) {
+                    $this.css({position: "fixed", top: "64px", overflowY: "auto" });
+                    $this.width( $('.splitcontentright').width() );
+                } else if(offsetTop <0 ) {
+                    $this.css({position: "static"  });
+                }
+            });
+        });
     }
 })(jQuery);
 

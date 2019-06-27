@@ -1,8 +1,12 @@
 module Impasse
   class Node < ActiveRecord::Base
+    #include Redmine::SafeAttributes
+
     unloadable
-    set_table_name "impasse_nodes"
+    self.table_name = "impasse_nodes"
     self.include_root_in_json = false
+
+    #safe_attributes :id, :name, :node_type_id, :node_order, :parent_id
 
     belongs_to :parent, :class_name=>'Node', :foreign_key=> :parent_id
     has_many   :children, :class_name=> 'Node', :foreign_key=> :parent_id
@@ -38,11 +42,11 @@ module Impasse
     end
 
     def active?
-      !attributes['active'] or attributes['active'].to_i == 1 or attributes['active'].is_a? TrueClass or attributes['active'] == 't'
+      !attributes['active'] or attributes['active'].is_a? TrueClass or attributes['active'].to_i == 1 or attributes['active'] == 't'
     end
 
     def planned?
-      attributes['planned'].to_i == 1 or attributes['planned'].is_a? TrueClass or attributes['planned'] == 't'
+      attributes['planned'].is_a? TrueClass or attributes['planned'].to_i == 1 or attributes['planned'] == 't'
     end
 
     def self.find_children(node_id, test_plan_id=nil, filters=nil, limit=300)
@@ -101,7 +105,7 @@ module Impasse
 
       unless node_id.to_i == -1
         node = find(node_id)
-        child_counts = self.count(:conditions => [ "path like ?", "#{node.path}_%"])
+        child_counts = self.where("path like ?", "#{node.path}_%").count
         if child_counts > limit
           conditions[:level] = node.path.count('.') + 1
         end
@@ -171,13 +175,13 @@ ORDER BY level, T.node_order
 
       unless node_id.to_i == -1
         node = self.find(node_id)
-        child_counts = self.count(:conditions => [ "path like ?", "#{node.path}_%"])
+        child_counts = self.where("path like ?", "#{node.path}_%").count
         if child_counts > limit
           conditions[:level] = node.path.count('.') + 1
         end
         conditions[:path] = "#{node.path}_%"
       else
-        child_counts = Impasse::TestPlanCase.count(:conditions => [ "test_plan_id=?", test_plan_id])
+        child_counts = Impasse::TestPlanCase.where(:test_plan_id => test_plan_id).count
         if child_counts > limit
           conditions[:level] = 3
         end
@@ -265,9 +269,7 @@ ORDER BY level, T.node_order
     end
 
     def update_siblings_order!
-      siblings = Node.find(:all,
-                           :conditions=>["parent_id=? and id != ?", self.parent_id, self.id],
-                           :order=>:node_order)
+      siblings = Node.where("parent_id=? and id != ?", self.parent_id, self.id).order(:node_order).to_a
       if self.node_order < siblings.size
         siblings.insert(self.node_order, self)
       else
@@ -291,7 +293,7 @@ ORDER BY level, T.node_order
       WHERE path like '#{old_path}_%'
       END_OF_SQL
       
-      connection.update(sql)
+      ActiveRecord::Base.connection.update(sql)
     end
 
     private

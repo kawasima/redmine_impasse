@@ -4,10 +4,10 @@ class ImpasseCustomFieldsController < ImpasseAbstractController
   helper CustomFieldsHelper
   helper ImpasseSettingsHelper
 
-  before_filter :require_admin
+  before_action :require_admin
 
   def index
-    @custom_fields_by_type = CustomField.find(:all).group_by {|f| f.class.name }
+    @custom_fields_by_type = CustomField.all.group_by {|f| f.class.name }
     @tab = params[:tab] || 'Impasse::TestCaseCustomField'
   end
 
@@ -19,23 +19,23 @@ class ImpasseCustomFieldsController < ImpasseAbstractController
     rescue
     end
     (redirect_to(:action => 'index'); return) unless @custom_field.is_a?(CustomField)
-    if request.post? and @custom_field.save
+    if (request.post? or request.patch?) and @custom_field.save
       flash[:notice] = l(:notice_successful_create)
       call_hook(:controller_custom_fields_new_after_save, :params => params, :custom_field => @custom_field)
       redirect_to :action => 'index', :tab => @custom_field.class.name
     else
-      @trackers = Tracker.find(:all, :order => 'position')
+      @trackers = Tracker.all.order(:position)
     end
   end
 
   def edit
     @custom_field = CustomField.find(params[:id])
-    if (request.post? || request.put?) and @custom_field.update_attributes(params[:custom_field])
+    if (request.post? || request.put? or request.patch?) and @custom_field.update_attributes(params[:custom_field])
       flash[:notice] = l(:notice_successful_update)
       call_hook(:controller_custom_fields_edit_after_save, :params => params, :custom_field => @custom_field)
       redirect_to :action => 'index', :tab => @custom_field.class.name
     else
-      @trackers = Tracker.find(:all, :order => 'position')
+      @trackers = Tracker.all.order(:position)
     end
   end
 

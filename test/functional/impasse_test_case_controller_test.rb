@@ -20,7 +20,7 @@ class ImpasseTestCaseControllerTest < ActionController::TestCase
     Project.find(2).enabled_module_names = [:impasse]
     post :copy_to_another_project, :project_id => 'onlinestore', :dest_project_id => 'ecookbook', :node_ids => [3]
     assert_redirected_to :action => :index, :project_id => 'ecookbook'
-    root = Impasse::Node.find_by_name_and_node_type_id('ecookbook', 1)
+    root = Impasse::Node.find_by(:name => 'ecookbook', :node_type_id => 1)
     assert !root.nil?
     assert root.children.size == 1
     suite = root.children[0]

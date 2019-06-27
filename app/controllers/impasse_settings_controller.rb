@@ -1,18 +1,18 @@
 class ImpasseSettingsController < ImpasseAbstractController
   unloadable
 
-  before_filter :find_project_by_project_id, :authorize
+  before_action :find_project_by_project_id, :authorize
 
   def index
   end
 
   def edit
-    @setting = Impasse::Setting.find_or_create_by_project_id(:project_id => @project.id)
+    @setting = Impasse::Setting.find_or_initialize_by(:project_id => @project.id)
     unless params[:setting][:requirement_tracker]
       params[:setting][:requirement_tracker] = []
     end
-    @setting.attributes = params[:setting]
-    if request.put? or request.post?
+    @setting.update_attributes(params[:setting])
+    if request.put? or request.post? or request.patch?
       ActiveRecord::Base.transaction do
         custom_fields_by_type = {
           'Impasse::TestCaseCustomField'  => [],
@@ -30,7 +30,7 @@ class ImpasseSettingsController < ImpasseAbstractController
         @project.execution_custom_fields  = custom_fields_by_type['Impasse::ExecutionCustomField']
         @setting.save!
         flash[:notice] = l(:notice_successful_update)
-        redirect_to :controller => '/projects', :action => 'settings', :id => @project, :tab => 'impasse'
+        redirect_to settings_project_path(@project, :tab => 'impasse')
       end
     end
   end

@@ -1,3 +1,7 @@
+.theme-Abacus .ui-widget-overlay {
+   z-index: 25 !important;
+}
+
 #test-case-view .details{
     background: #ffd;
     padding: 6px;
@@ -67,7 +71,6 @@ li[rel="test_case"][data-inactive="true"] a {
 }
 
 .screenshots {
-    overflow: hidden;
     height: 100px;
 }
 .screenshots .buttons {

@@ -34,7 +34,7 @@
       </thead>
       <tbody>
       <% for requirement_stat in @test_plan.related_requirements %>
-	<tr class="entry <%=cycle('odd', 'even')%>">
+	<tr class="entry">
 	  <td><%= link_to h(requirement_stat.subject), :controller => 'issues', :action => 'show', :id => requirement_stat.issue_id %></td>
 	  <td class="size"><%= requirement_stat.needed %></td>
 	  <td class="size"><%= requirement_stat.planned %></td>

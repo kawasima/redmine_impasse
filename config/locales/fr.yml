@@ -47,7 +47,7 @@ fr:
   label_filters_inactive: "Incluant les tests invalides"
   label_includes_before: "incluant les précédents"
   label_includes_after: "incluant les suivants"
-  label_execution_histories: "enregistrer"
+  label_execution_histories: "historique"
 
   field_details: "Details"
   field_preconditions: "Pré-conditions"
@@ -63,7 +63,8 @@ fr:
   button_create_test_plan: "Créer un plan de tests"
   
   permission_view_testcases: "Voir les cas de tests"
-  permission_manage_test_cases: "Gérer les cas de tests"
+  permission_manage_testcases: "Gérer les cas de tests"
+  permission_setting_testcases: "Configurer les cas de tests"
 
   error_can_not_manage_test_cases: "Vous n'êtes pas autorisé à gérer les cas de tests."
 

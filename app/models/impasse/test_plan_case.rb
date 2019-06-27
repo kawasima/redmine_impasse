@@ -1,9 +1,11 @@
 module Impasse
   class TestPlanCase < ActiveRecord::Base
     unloadable
-    set_table_name "impasse_test_plan_cases"
+    self.table_name = "impasse_test_plan_cases"
     self.include_root_in_json = false
 
+    #attr_accessor :test_case_id, :test_plan_id, :node_order
+   
     belongs_to :test_plan
     belongs_to :test_case
     has_many   :executions

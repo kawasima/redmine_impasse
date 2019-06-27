@@ -18,7 +18,7 @@
 	</tr></thead>
       <tbody>
 	<% for issue in @issues %>
-	  <tr id="issue-<%= h(issue.id) %>" class="jstree-draggable <%= cycle('odd', 'even') %> <%= issue.css_classes %>">
+	  <tr id="issue-<%= h(issue.id) %>" class="jstree-draggable <%= issue.css_classes %>">
 	    <td class="id">
               <%= h(issue.id) %>
 	    </td>
@@ -30,6 +30,6 @@
 	<% end %>
       </tbody>
     </table>
-    <p class="pagination"><%= pagination_links_full @issue_pages, @issue_count %></p>
+    <span class="pagination"><%= pagination_links_full @issue_pages, @issue_count %></span>
   <% end %>
 <% end %>
